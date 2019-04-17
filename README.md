@@ -10,7 +10,7 @@ This is what it looks like on out site.
 
 ![Image](https://s3.amazonaws.com/docsie-app-media/boo_n1TwSJpcgsSAN001Z/4e0b6646-8ae1-b0a7-be73-294555171710guided_tours_gif.gif)
 
-You can see a demo implemented in our own app by following this link. 
+You can see a demo implemented in our own app going to https://app.docsie.io/manager/
 
 Guidedtours.js is configured using simple json format
 
