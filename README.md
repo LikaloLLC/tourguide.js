@@ -8,7 +8,7 @@ A simple, clean and small guided tour for the web
 
 This is what it looks like on out site.
 
-![Image](https://cdn.docsie.io/boo_n1TwSJpcgsSAN001Z/4e0b6646-8ae1-b0a7-be73-294555171710guided_tours_gif.gif "Image")
+![Image](https://cdn.docsie.io/boo_n1TwSJpcgsSAN001Z/4e0b6646-8ae1-b0a7-be73-294555171710guided_tours_gif.gif)
 
 You can see a demo implemented in our own app by following this link. 
 
