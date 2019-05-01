@@ -8,7 +8,7 @@
 
 Every time you build you next awesome web app, you sit back and stare lovingly at your handy-work :) But then inevitably someone comes along asking one and the same inconvenient question: *"So, how do I use it?"*
 
-You try to explain, but people are just not getting it! You write [how-tos](https://www.docsie.io), [lengthy docs](https://wwww.docsie.io/documentation/), and [step-by-step guides](https://www.docsie.io/about/), and yet, nothing seems to be enough.
+You try to explain, but people are just not getting it! You write [how-tos](https://www.docsie.io), [lengthy docs](https://www.docsie.io/documentation/), and [step-by-step guides](https://www.docsie.io/about/), and yet, nothing seems to be enough.
 
 This is why we built **Tourguide.js** - a simple yet powerful explainer utility, designed to help you make the reply a little bit less painful. Because, let's face it - picture is worth a 1000 words:
 
