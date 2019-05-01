@@ -1,24 +1,6 @@
 var Tourguide = (function () {
 	'use strict';
 
-	
-
-	function ___$insertStyle(css) {
-	  if (!css) {
-	    return;
-	  }
-	  if (typeof window === 'undefined') {
-	    return;
-	  }
-
-	  var style = document.createElement('style');
-
-	  style.setAttribute('type', 'text/css');
-	  style.innerHTML = css;
-	  document.head.appendChild(style);
-	  return css;
-	}
-
 	function createCommonjsModule(fn, module) {
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
 	}
@@ -30,7 +12,7 @@ var Tourguide = (function () {
 	});
 	var umbrella_min_1 = umbrella_min.u;
 
-	var Icons = "<svg id=\"GuidedTourIconSet\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n<symbol id=\"tour-icon-close\" viewBox=\"0 0 20 20\"><path d=\"M16,16 L4,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.06\"></path><path d=\"M16,4 L4,16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.06\"></path></symbol>\n<symbol id=\"tour-icon-next\" viewBox=\"0 0 20 20\"><polyline points=\"7 4 13 10 7 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.03\"></polyline></symbol>\n<symbol id=\"tour-icon-complete\" viewBox=\"0 0 20 20\"><polyline points=\"4,10 8,15 17,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.1\"></polyline></symbol>\n</svg>";
+	var Icons = "<svg id=\"GuidedTourIconSet\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n<symbol id=\"tour-icon-close\" viewBox=\"0 0 20 20\"><path d=\"M16,16 L4,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path><path d=\"M16,4 L4,16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path></symbol>\n<symbol id=\"tour-icon-next\" viewBox=\"0 0 20 20\"><polyline points=\"7 4 13 10 7 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n<symbol id=\"tour-icon-complete\" viewBox=\"0 0 20 20\"><polyline points=\"4,10 8,15 17,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n</svg>";
 
 	var COMPLETE = 'complete',
 	    CANCELED = 'canceled';
@@ -285,480 +267,471 @@ var Tourguide = (function () {
 	};
 
 	function clamp(number, min, max) {
-	    min = isNaN(min) ? number : min;
-	    max = isNaN(max) ? number : max;
-	    return Math.max(min, Math.min(number, max));
+	  min = isNaN(min) ? number : min;
+	  max = isNaN(max) ? number : max;
+	  return Math.max(min, Math.min(number, max));
 	}
 
 	function getDataContents() {
-	    var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
-	    var defaults$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	  var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
+	  var defaults$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-	    var parts = data.split(";");
-	    var result = _extends({}, defaults$$1);
-	    parts.forEach(function (part) {
-	        var entries = (part || "").split(":");
-	        result[(entries[0] || "").trim()] = (entries[1] || "").trim();
-	    });
-	    return result;
+	  var parts = data.split(";");
+	  var result = _extends({}, defaults$$1);
+	  parts.forEach(function (part) {
+	    var entries = (part || "").split(":");
+	    result[(entries[0] || "").trim()] = (entries[1] || "").trim();
+	  });
+	  return result;
 	}
 
 	function getBoundingClientRect(el) {
-	    var rect = umbrella_min(el).size();
-	    var view = getViewportRect();
-	    return {
-	        width: rect.width,
-	        height: rect.height,
-	        top: rect.top,
-	        bottom: rect.bottom,
-	        left: rect.left,
-	        right: rect.right,
-	        viewtop: rect.top - view.scrollY,
-	        viewbottom: rect.bottom - view.scrollY,
-	        viewleft: rect.left - view.scrollX,
-	        viewright: rect.right - view.scrollX
-	    };
+	  var rect = umbrella_min(el).size();
+	  var view = getViewportRect();
+	  return {
+	    width: rect.width,
+	    height: rect.height,
+	    top: rect.top,
+	    bottom: rect.bottom,
+	    left: rect.left,
+	    right: rect.right,
+	    viewtop: rect.top - view.scrollY,
+	    viewbottom: rect.bottom - view.scrollY,
+	    viewleft: rect.left - view.scrollX,
+	    viewright: rect.right - view.scrollX
+	  };
 	}
 
 	function getViewportRect() {
-	    return {
-	        width: window.innerWidth,
-	        height: window.innerHeight,
-	        scrollX: window.scrollX,
-	        scrollY: window.scrollY,
-	        bodyWidth: document.body.clientWidth,
-	        bodyHeight: document.body.clientHeight
-	    };
+	  return {
+	    width: window.innerWidth,
+	    height: window.innerHeight,
+	    scrollX: window.scrollX,
+	    scrollY: window.scrollY,
+	    bodyWidth: document.body.clientWidth,
+	    bodyHeight: document.body.clientHeight
+	  };
 	}
 
 	// data-step="title: Step1; content: .../<>"
 
 	var Step = function () {
-	    createClass(Step, [{
-	        key: "el",
-	        get: function get$$1() {
-	            var _this = this;
+	  createClass(Step, [{
+	    key: "el",
+	    get: function get$$1() {
+	      var _this = this;
 
-	            if (!this.container) {
-	                var _image = umbrella_min("<div role=\"figure\" class=\"guided-tour-step-image\">" + (this.image ? "<img src=\"" + this.image + "\" />" : "") + "</div>");
-	                var _title = umbrella_min("<div role=\"heading\" class=\"guided-tour-step-title\">" + this.title + "</div>");
-	                var content = umbrella_min("<div class=\"guided-tour-step-content\">" + this.content + "</div>");
-	                var footer = umbrella_min("<div class=\"guided-tour-step-footer\">\n                <span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                    <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                </span>\n                " + (this.last ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use></svg>\n                    </span>" : "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use></svg>\n                    </span>") + "\n                " + (this.context._steps.length > 1 ? "<div class=\"guided-tour-step-footer-bullets\">\n                    <ul>" + this.context._steps.map(function (step, i) {
-	                    return "<li  title=\"Go to step " + (i + 1) + "\" data-index=\"" + i + "\" class=\"" + (step.index < _this.index ? "complete" : step.index == _this.index ? "current" : "") + "\"></li>";
-	                }).join("") + "</ul>\n                </div>" : "") + "\n            </div>");
-	                footer.find(".guided-tour-step-button-next").on("click", this.context.next);
-	                footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
-	                footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
-	                footer.find(".guided-tour-step-footer-bullets li").on("click", function (e) {
-	                    return _this.context.go(parseInt(umbrella_min(e.target).data("index")));
-	                });
-	                var highlight = this.highlight = umbrella_min("<div class=\"guided-tour-step-highlight\"></div>");
-	                highlight.on("click", this.context.action);
-	                var tooltip = this.tooltip = umbrella_min("<div role=\"tooltip\" class=\"guided-tour-step-tooltip\"></div>");
-	                var arrow = this.arrow = umbrella_min("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"></div>");
-	                tooltip.append(arrow).append(_image).append(_title).append(content).append(footer);
-	                this.container = umbrella_min("<div role=\"dialog\" class=\"guided-tour-step" + (this.first ? " guided-tour-step-first" : "") + (this.last ? " guided-tour-step-last" : "") + "\"></div>");
-	                this.container.append(highlight).append(tooltip);
-	            }
-	            return this.container;
-	        }
-	    }, {
-	        key: "target",
-	        get: function get$$1() {
-	            return this._target || umbrella_min(this.selector).first();
-	        },
-	        set: function set$$1(target) {
-	            this._target = target;
-	        }
-	    }]);
-
-	    function Step(step, context) {
-	        classCallCheck(this, Step);
-	        this.index = 0;
-	        this.first = false;
-	        this.last = false;
-	        this.target = null;
-	        this.container = null;
-	        this.highlight = null;
-	        this.tooltip = null;
-	        this.arrow = null;
-	        this.rect = {};
-	        this.image = null;
-	        this.title = "";
-	        this.content = "";
-	        this.active = false;
-	        this.context = null;
-	        this._target = null;
-
-	        this.context = context;
-	        if (step.hasOwnProperty("title")) {
-	            this.selector = step.selector;
-	            this.index = step.step || 0;
-	            this.title = step.title;
-	            this.content = step.content || "";
-	            this.image = step.image;
-	        } else {
-	            this.target = step;
-	            var data = getDataContents(umbrella_min(step).data("tour"));
-	            this.index = parseInt(data.step);
-	            this.title = data.title;
-	            this.content = data.content;
-	            this.image = data.image;
-	        }
+	      if (!this.container) {
+	        var _image = umbrella_min("<div role=\"figure\" class=\"guided-tour-step-image\">" + (this.image ? "<img src=\"" + this.image + "\" />" : "") + "</div>");
+	        var _title = umbrella_min("<div role=\"heading\" class=\"guided-tour-step-title\">" + this.title + "</div>");
+	        var content = umbrella_min("<div class=\"guided-tour-step-content\">" + this.content + "</div>");
+	        var footer = umbrella_min("<div class=\"guided-tour-step-footer\">\n                <span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                    <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                </span>\n                " + (this.last ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use></svg>\n                    </span>" : "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use></svg>\n                    </span>") + "\n                " + (this.context._steps.length > 1 ? "<div class=\"guided-tour-step-footer-bullets\">\n                    <ul>" + this.context._steps.map(function (step, i) {
+	          return "<li  title=\"Go to step " + (i + 1) + "\" data-index=\"" + i + "\" class=\"" + (step.index < _this.index ? "complete" : step.index == _this.index ? "current" : "") + "\"></li>";
+	        }).join("") + "</ul>\n                </div>" : "") + "\n            </div>");
+	        footer.find(".guided-tour-step-button-next").on("click", this.context.next);
+	        footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
+	        footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
+	        footer.find(".guided-tour-step-footer-bullets li").on("click", function (e) {
+	          return _this.context.go(parseInt(umbrella_min(e.target).data("index")));
+	        });
+	        var highlight = this.highlight = umbrella_min("<div class=\"guided-tour-step-highlight\"></div>");
+	        highlight.on("click", this.context.action);
+	        var tooltip = this.tooltip = umbrella_min("<div role=\"tooltip\" class=\"guided-tour-step-tooltip\"></div>");
+	        var arrow = this.arrow = umbrella_min("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"></div>");
+	        tooltip.append(arrow).append(_image).append(_title).append(content).append(footer);
+	        this.container = umbrella_min("<div role=\"dialog\" class=\"guided-tour-step" + (this.first ? " guided-tour-step-first" : "") + (this.last ? " guided-tour-step-last" : "") + "\"></div>");
+	        this.container.append(highlight).append(tooltip);
+	      }
+	      return this.container;
 	    }
+	  }, {
+	    key: "target",
+	    get: function get$$1() {
+	      return this._target || umbrella_min(this.selector).first();
+	    },
+	    set: function set$$1(target) {
+	      this._target = target;
+	    }
+	  }]);
 
-	    createClass(Step, [{
-	        key: "attach",
-	        value: function attach() {
-	            var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "body";
+	  function Step(step, context) {
+	    classCallCheck(this, Step);
 
-	            umbrella_min(root).append(this.el);
-	        }
-	    }, {
-	        key: "remove",
-	        value: function remove() {
-	            this.hide();
-	            this.el.remove();
-	        }
-	    }, {
-	        key: "position",
-	        value: function position() {
-	            // {"left":0,"right":400,"top":0,"height":300,"bottom":300,"width":400}
-	            if (this.target) {
-	                var rect = getBoundingClientRect(this.target);
-	                var view = getViewportRect();
-	                var style = this.highlight.first().style;
-	                style.top = rect.top - this.context.options.padding + "px";
-	                style.left = rect.left - this.context.options.padding + "px";
-	                style.width = rect.width + this.context.options.padding * 2 + "px";
-	                style.height = rect.height + this.context.options.padding * 2 + "px";
-	                var tooltip = this.tooltip;
-	                var arrow = this.arrow;
-	                style = tooltip.first().style;
-	                style.opacity = 0.1;
-	                // Compute vertical position
-	                if (view.height / 2 > rect.top) {
-	                    tooltip.addClass("guided-tour-arrow-top");
-	                    style.top = rect.top + rect.height + "px";
-	                } else {
-	                    tooltip.addClass("guided-tour-arrow-bottom");
-	                    style.bottom = view.height - rect.top + "px";
-	                }
-	                // Compute horizontal position
-	                if (view.width / 2 > rect.left) {
-	                    style.left = rect.left + "px";
-	                    arrow.first().style.left = rect.width > 400 ? "18px" : clamp(rect.width / 2, 14, 386) + "px";
-	                } else {
-	                    style.right = Math.max(view.width - rect.right, 40) + "px";
-	                    arrow.first().style.right = view.width - rect.right < 40 || rect.width > 400 ? "8px" : clamp(rect.width / 2 - 8, 14, 386) + "px";
-	                }
-	            } else {
-	                var _view = getViewportRect();
-	                var _style = this.highlight.first().style;
-	                _style.top = 0 + "px";
-	                _style.left = 0 + "px";
-	                _style.width = 0 + "px";
-	                _style.height = 0 + "px";
-	                var _tooltip = this.tooltip;
-	                _style = _tooltip.first().style;
-	                _style.opacity = 0.1;
-	                _style.top = _view.height / 2 + "px";
-	                _style.left = _view.width / 2 + "px";
-	                _tooltip.addClass("guided-tour-arrow-none");
-	                _tooltip.addClass("guided-tour-center");
-	            }
-	        }
-	    }, {
-	        key: "adjust",
-	        value: function adjust() {
-	            var rect = getBoundingClientRect(this.tooltip);
-	            var view = getViewportRect();
-	            var style = this.tooltip.first().style;
-	            if (rect.top < 0) {
-	                style.top = "8px";
-	            }
-	            if (rect.top > view.height - rect.height) {
-	                style.top = view.height - rect.height - 40 + "px";
-	            }
-	            if (rect.left < 0) {
-	                style.left = "8px";
-	            }
-	            if (rect.right < 40) {
-	                style.right = "40px";
-	            }
-	            style.opacity = 1;
-	        }
-	    }, {
-	        key: "show",
-	        value: function show() {
-	            var _this2 = this;
+	    this.index = 0;
+	    this.first = false;
+	    this.last = false;
+	    this.target = null;
+	    this.container = null;
+	    this.highlight = null;
+	    this.tooltip = null;
+	    this.arrow = null;
+	    this.rect = {};
+	    this.image = null;
+	    this.title = "";
+	    this.content = "";
+	    this.active = false;
+	    this.context = null;
+	    this._target = null;
+	    this.context = context;
+	    if (step.hasOwnProperty("title")) {
+	      this.selector = step.selector;
+	      this.index = step.step || 0;
+	      this.title = step.title;
+	      this.content = step.content || "";
+	      this.image = step.image;
+	    } else {
+	      this.target = step;
+	      var data = getDataContents(umbrella_min(step).data("tour"));
+	      this.index = parseInt(data.step);
+	      this.title = data.title;
+	      this.content = data.content;
+	      this.image = data.image;
+	    }
+	  }
 
-	            var show = function show() {
-	                _this2.position();
-	                _this2.el.addClass("active");
-	                _this2.adjust();
-	            };
-	            if (this.target) {
-	                scrollIntoView(this.target, {
-	                    time: this.context.options.animationspeed
-	                }, show);
-	            } else setTimeout(show, this.context.options.animationspeed);
-	        }
-	    }, {
-	        key: "hide",
-	        value: function hide() {
-	            this.el.removeClass("active");
-	            this.tooltip.removeClass("guided-tour-arrow-top");
-	        }
-	    }, {
-	        key: "toJSON",
-	        value: function toJSON() {
-	            var _ref;
+	  createClass(Step, [{
+	    key: "attach",
+	    value: function attach() {
+	      var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "body";
 
-	            return _ref = this, index = _ref.index, title = _ref.title, contnet = _ref.contnet, image = _ref.image, active = _ref.active, _ref;
+	      umbrella_min(root).append(this.el);
+	    }
+	  }, {
+	    key: "remove",
+	    value: function remove() {
+	      this.hide();
+	      this.el.remove();
+	    }
+	  }, {
+	    key: "position",
+	    value: function position() {
+	      // {"left":0,"right":400,"top":0,"height":300,"bottom":300,"width":400}
+	      if (this.target) {
+	        var rect = getBoundingClientRect(this.target);
+	        var view = getViewportRect();
+	        var style = this.highlight.first().style;
+	        style.top = rect.top - this.context.options.padding + "px";
+	        style.left = rect.left - this.context.options.padding + "px";
+	        style.width = rect.width + this.context.options.padding * 2 + "px";
+	        style.height = rect.height + this.context.options.padding * 2 + "px";
+	        var tooltip = this.tooltip;
+	        var arrow = this.arrow;
+	        style = tooltip.first().style;
+	        style.opacity = 0.1;
+	        // Compute vertical position
+	        if (view.height / 2 > rect.top) {
+	          tooltip.addClass("guided-tour-arrow-top");
+	          style.top = rect.top + rect.height + "px";
+	        } else {
+	          tooltip.addClass("guided-tour-arrow-bottom");
+	          style.bottom = view.height - rect.top + "px";
 	        }
-	    }]);
-	    return Step;
+	        // Compute horizontal position
+	        if (view.width / 2 > rect.left) {
+	          style.left = rect.left + "px";
+	          arrow.first().style.left = rect.width > 400 ? "18px" : clamp(rect.width / 2, 14, 386) + "px";
+	        } else {
+	          style.right = Math.max(view.width - rect.right, 40) + "px";
+	          arrow.first().style.right = view.width - rect.right < 40 || rect.width > 400 ? "8px" : clamp(rect.width / 2 - 8, 14, 386) + "px";
+	        }
+	      } else {
+	        var _view = getViewportRect();
+	        var _style = this.highlight.first().style;
+	        _style.top = 0 + "px";
+	        _style.left = 0 + "px";
+	        _style.width = 0 + "px";
+	        _style.height = 0 + "px";
+	        var _tooltip = this.tooltip;
+	        _style = _tooltip.first().style;
+	        _style.opacity = 0.1;
+	        _style.top = _view.height / 2 + "px";
+	        _style.left = _view.width / 2 + "px";
+	        _tooltip.addClass("guided-tour-arrow-none");
+	        _tooltip.addClass("guided-tour-center");
+	      }
+	    }
+	  }, {
+	    key: "adjust",
+	    value: function adjust() {
+	      var rect = getBoundingClientRect(this.tooltip);
+	      var view = getViewportRect();
+	      var style = this.tooltip.first().style;
+	      if (rect.top < 0) {
+	        style.top = "8px";
+	      }
+	      if (rect.top > view.height - rect.height) {
+	        style.top = view.height - rect.height - 40 + "px";
+	      }
+	      if (rect.left < 0) {
+	        style.left = "8px";
+	      }
+	      if (rect.right < 40) {
+	        style.right = "40px";
+	      }
+	      style.opacity = 1;
+	    }
+	  }, {
+	    key: "show",
+	    value: function show() {
+	      var _this2 = this;
+
+	      var show = function show() {
+	        _this2.position();
+	        _this2.el.addClass("active");
+	        _this2.adjust();
+	      };
+	      if (this.target) {
+	        scrollIntoView(this.target, {
+	          time: this.context.options.animationspeed
+	        }, show);
+	      } else setTimeout(show, this.context.options.animationspeed);
+	    }
+	  }, {
+	    key: "hide",
+	    value: function hide() {
+	      this.el.removeClass("active");
+	      this.tooltip.removeClass("guided-tour-arrow-top");
+	    }
+	  }, {
+	    key: "toJSON",
+	    value: function toJSON() {
+	      var _ref;
+
+	      // eslint-disable-next-line no-undef
+	      return _ref = this, index = _ref.index, title = _ref.title, contnet = _ref.contnet, image = _ref.image, active = _ref.active, _ref;
+	    }
+	  }]);
+	  return Step;
 	}();
 
-	___$insertStyle(".guided-tour{overflow:hidden}.guided-tour-step{display:none;text-rendering:optimizespeed;font-family:\"Open Sans\",Arimo,\"Droid Sans\",Helvetica,Arial,sans-serif;font-size:12pt;color:#333}.guided-tour-step.active{display:block;position:fixed;top:0;left:0;width:100%;height:100%;z-index:1024;pointer-events:all}.guided-tour-step.active .guided-tour-step-highlight{position:absolute;box-sizing:border-box;border-radius:4px;box-shadow:0 0 0 999em rgba(0,0,0,.5);z-index:1}.guided-tour-step.active .guided-tour-step-tooltip{position:absolute;padding:32px 32px 28px 32px;margin:16px 0;z-index:2;background-color:#fff;max-width:400px;border-radius:5px;box-sizing:border-box;box-shadow:0 0 8px -4px #000;transition:opacity 150ms}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-arrow{position:absolute;border-top:8px solid transparent;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:8px solid transparent;margin-left:-8px;margin-top:-8px}.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-arrow-none .guided-tour-arrow{display:none}.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-arrow-top .guided-tour-arrow{border-bottom-color:#fff;margin-top:-16px;top:0}.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-arrow-bottom .guided-tour-arrow{border-top-color:#fff;margin-bottom:-16px;bottom:0}.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-center{transform:translate(-50%, -50%)}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-image img{width:100%;height:auto;border-radius:4px;margin-bottom:28px}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-title{font-weight:bold;margin-bottom:1em}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-icon{display:inline-block;overflow:hidden}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-button{flex-direction:column;justify-content:center;display:inline-flex;text-align:center;cursor:pointer}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-button .guided-tour-icon{align-self:center}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-button-next,.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-button-complete{border:2px solid currentColor;box-shadow:5px 0 1em 0 rgba(0,0,0,.4);width:48px;height:48px;background:#fff;border-radius:50%;position:absolute;margin-top:-24px;right:-30px;top:50%}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-button-next{color:#ff4141}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-button-complete{color:#b50000}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-button-close{position:absolute;top:0;right:0;width:32px;height:32px}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-footer-bullets{text-align:center;line-height:16px}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-footer-bullets ul{margin:10px 0 -18px 0;list-style:none;padding:0}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-footer-bullets ul li{width:8px;height:8px;border-radius:50%;padding:0;display:inline-block;background-color:#ff4141;border:8px solid #fff;cursor:pointer}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-footer-bullets ul li.complete{background-color:#aaa}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-footer-bullets ul li.current{background-color:#b50000}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-footer-bullets ul li:last-of-type{margin-right:0}");
-
 	var StepsSource = {
-	    DOM: 0,
-	    JSON: 1,
-	    REMOTE: 2
+	  DOM: 0,
+	  JSON: 1,
+	  REMOTE: 2
 	};
 
 	var Tour = function () {
-	    createClass(Tour, [{
-	        key: "currentstep",
-	        get: function get$$1() {
-	            return this._steps[this._current];
-	        }
-	    }, {
-	        key: "length",
-	        get: function get$$1() {
-	            return this._steps.length;
-	        }
-	    }, {
-	        key: "steps",
-	        get: function get$$1() {
-	            return this._steps.map(function (step) {
-	                return step.toJSON();
-	            });
-	        }
-	    }, {
-	        key: "hasnext",
-	        get: function get$$1() {
-	            return this.nextstep !== this._current;
-	        }
-	    }, {
-	        key: "nextstep",
-	        get: function get$$1() {
-	            return clamp(this._current + 1, 0, this.length - 1);
-	        }
-	    }, {
-	        key: "previousstep",
-	        get: function get$$1() {
-	            return clamp(this._current - 1, 0);
-	        }
-	    }, {
-	        key: "options",
-	        get: function get$$1() {
-	            return this._options;
-	        }
-	    }]);
-
-	    function Tour() {
-	        var _this = this;
-
-	        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	        classCallCheck(this, Tour);
-	        this._options = {
-	            root: "body",
-	            selector: "[data-tour]",
-	            animationspeed: 300,
-	            padding: 5,
-	            steps: null,
-	            // [
-	            //     {
-	            //         selector: "" | null,
-	            //         step: 1,
-	            //         title: "",
-	            //         contnet: "",
-	            //         image?: http://... | undefined
-	            //     }
-	            // ]
-	            src: null,
-	            // http://somesever.cloud/tour.json
-	            request: {
-	                "options": {
-	                    "mode": "cors",
-	                    "cache": "no-cache",
-	                    "credentials": "include"
-	                },
-	                "headers": {
-	                    "Content-Type": "application/json",
-	                    "Connection": "keep-alive"
-	                }
-	            },
-	            onStart: function onStart() {},
-	            onStop: function onStop() {},
-	            onComplete: function onComplete() {},
-	            onStep: function onStep() {},
-	            onAction: function onAction() {}
-	        };
-	        this._steps = [];
-	        this._current = 0;
-	        this._active = false;
-	        this._stepsSrc = StepsSource.DOM;
-	        this._ready = false;
-
-	        Object.assign(this._options, options);
-	        this.start = this.start.bind(this);
-	        this.action = this.action.bind(this);
-	        this.next = this.next.bind(this);
-	        this.previous = this.previous.bind(this);
-	        this.go = this.go.bind(this);
-	        this.stop = this.stop.bind(this);
-	        this.complete = this.complete.bind(this);
-	        this._injectIcons();
-	        if (_typeof(this._options.steps) === "object" && Array.isArray(this._options.steps)) {
-	            this._stepsSrc = StepsSource.JSON;
-	            this._steps = this._options.steps.map(function (o) {
-	                return new Step(o, _this);
-	            });
-	            this._ready = true;
-	        } else if (typeof this._options.stc === "string" && this._options.src.indexOf("http") === 0) {
-	            this._stepsSrc = StepsSource.REMOTE;
-	            fetch(new Request(this._options.src, this._options.request)).then(function (response) {
-	                return response.json().then(function (data) {
-	                    data.map(function (o) {
-	                        return new Step(o, _this);
-	                    });
-	                    _this._ready = true;
-	                });
-	            });
-	        } else if (umbrella_min(this._options.selector).length > 0) {
-	            this._ready = true;
-	        } else {
-	            throw new Error("Tour is not configured properly. Check documentation.");
-	        }
+	  createClass(Tour, [{
+	    key: "currentstep",
+	    get: function get$$1() {
+	      return this._steps[this._current];
 	    }
+	  }, {
+	    key: "length",
+	    get: function get$$1() {
+	      return this._steps.length;
+	    }
+	  }, {
+	    key: "steps",
+	    get: function get$$1() {
+	      return this._steps.map(function (step) {
+	        return step.toJSON();
+	      });
+	    }
+	  }, {
+	    key: "hasnext",
+	    get: function get$$1() {
+	      return this.nextstep !== this._current;
+	    }
+	  }, {
+	    key: "nextstep",
+	    get: function get$$1() {
+	      return clamp(this._current + 1, 0, this.length - 1);
+	    }
+	  }, {
+	    key: "previousstep",
+	    get: function get$$1() {
+	      return clamp(this._current - 1, 0);
+	    }
+	  }, {
+	    key: "options",
+	    get: function get$$1() {
+	      return this._options;
+	    }
+	  }]);
 
-	    createClass(Tour, [{
-	        key: "_injectIcons",
-	        value: function _injectIcons() {
-	            if (umbrella_min("#GuidedTourIconSet").length === 0) {
-	                umbrella_min("body").append(umbrella_min(Icons));
-	            }
-	        }
-	    }, {
-	        key: "init",
-	        value: function init() {
-	            var _this2 = this;
+	  function Tour() {
+	    var _this = this;
 
-	            this.reset();
-	            if (this._stepsSrc === StepsSource.DOM) {
-	                var steps = umbrella_min(this._options.selector).nodes;
-	                this._steps = steps.map(function (el) {
-	                    return new Step(el, _this2);
-	                });
-	            }
-	            this._steps = this._steps.sort(function (a, b) {
-	                return a.index - b.index;
-	            });
-	            this._steps[0].first = true;
-	            this._steps[this.length - 1].last = true;
-	        }
-	    }, {
-	        key: "reset",
-	        value: function reset() {
-	            if (this._active) this.stop();
-	            if (this._stepsSrc === StepsSource.DOM) {
-	                this._steps = [];
-	            }
-	            this._current = 0;
-	        }
-	    }, {
-	        key: "start",
-	        value: function start() {
-	            var _this3 = this;
+	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	    classCallCheck(this, Tour);
 
-	            var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+	    this._options = Object.assign({
+	      root: "body",
+	      selector: "[data-tour]",
+	      animationspeed: 300,
+	      padding: 5,
+	      steps: null,
+	      src: null,
+	      request: {
+	        "options": {
+	          "mode": "cors",
+	          "cache": "no-cache"
+	        },
+	        "headers": {
+	          "Content-Type": "application/json"
+	        }
+	      },
+	      onStart: function onStart() {},
+	      onStop: function onStop() {},
+	      onComplete: function onComplete() {},
+	      onStep: function onStep() {},
+	      onAction: function onAction() {}
+	    }, options);
+	    this._steps = [];
+	    this._current = 0;
+	    this._active = false;
+	    this._stepsSrc = StepsSource.DOM;
+	    this._ready = false;
+	    this.start = this.start.bind(this);
+	    this.action = this.action.bind(this);
+	    this.next = this.next.bind(this);
+	    this.previous = this.previous.bind(this);
+	    this.go = this.go.bind(this);
+	    this.stop = this.stop.bind(this);
+	    this.complete = this.complete.bind(this);
+	    this._injectIcons();
+	    if (_typeof(this._options.steps) === "object" && Array.isArray(this._options.steps)) {
+	      this._stepsSrc = StepsSource.JSON;
+	      this._steps = this._options.steps.map(function (o) {
+	        return new Step(o, _this);
+	      });
+	      this._ready = true;
+	    } else if (typeof this._options.stc === "string" && this._options.src.indexOf("http") === 0) {
+	      this._stepsSrc = StepsSource.REMOTE;
+	      fetch(new Request(this._options.src, this._options.request)).then(function (response) {
+	        return response.json().then(function (data) {
+	          data.map(function (o) {
+	            return new Step(o, _this);
+	          });
+	          _this._ready = true;
+	        });
+	      });
+	    } else if (umbrella_min(this._options.selector).length > 0) {
+	      this._ready = true;
+	    } else {
+	      throw new Error("Tour is not configured properly. Check documentation.");
+	    }
+	  }
 
-	            if (this._ready) {
-	                if (!this._active) {
-	                    umbrella_min(this._options.root).addClass("guided-tour");
-	                    this.init();
-	                    this._steps.forEach(function (step) {
-	                        return step.attach(_this3._options.root);
-	                    });
-	                    this._current = step;
-	                    this.currentstep.show();
-	                    this._active = true;
-	                    this._options.onStart(this._options);
-	                } else {
-	                    this.go(step);
-	                }
-	            } else {
-	                throw new Error("Tour is not configured properly. Check documentation.");
-	            }
+	  createClass(Tour, [{
+	    key: "_injectIcons",
+	    value: function _injectIcons() {
+	      if (umbrella_min("#GuidedTourIconSet").length === 0) {
+	        umbrella_min("body").append(umbrella_min(Icons));
+	      }
+	    }
+	  }, {
+	    key: "init",
+	    value: function init() {
+	      var _this2 = this;
+
+	      this.reset();
+	      if (this._stepsSrc === StepsSource.DOM) {
+	        var steps = umbrella_min(this._options.selector).nodes;
+	        this._steps = steps.map(function (el) {
+	          return new Step(el, _this2);
+	        });
+	      }
+	      this._steps = this._steps.sort(function (a, b) {
+	        return a.index - b.index;
+	      });
+	      this._steps[0].first = true;
+	      this._steps[this.length - 1].last = true;
+	    }
+	  }, {
+	    key: "reset",
+	    value: function reset() {
+	      if (this._active) this.stop();
+	      if (this._stepsSrc === StepsSource.DOM) {
+	        this._steps = [];
+	      }
+	      this._current = 0;
+	    }
+	  }, {
+	    key: "start",
+	    value: function start() {
+	      var _this3 = this;
+
+	      var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+	      if (this._ready) {
+	        if (!this._active) {
+	          umbrella_min(this._options.root).addClass("guided-tour");
+	          this.init();
+	          this._steps.forEach(function (step) {
+	            return step.attach(_this3._options.root);
+	          });
+	          this._current = step;
+	          this.currentstep.show();
+	          this._active = true;
+	          this._options.onStart(this._options);
+	        } else {
+	          this.go(step);
 	        }
-	    }, {
-	        key: "action",
-	        value: function action(e) {
-	            if (this._active) {
-	                this._options.onAction(this.currentstep, e);
-	            }
+	      } else {
+	        throw new Error("Tour is not configured properly. Check documentation.");
+	      }
+	    }
+	  }, {
+	    key: "action",
+	    value: function action(e) {
+	      if (this._active) {
+	        var currentstep = this.currentstep;
+
+	        if (currentstep.actiontarget) {
+	          umbrella_min(e.target).find(currentstep.actiontarget).click();
 	        }
-	    }, {
-	        key: "next",
-	        value: function next() {
-	            if (this._active) {
-	                this.go(this.nextstep, "next");
-	            }
-	        }
-	    }, {
-	        key: "previous",
-	        value: function previous() {
-	            if (this._active) {
-	                this.go(this.previousstep, "previous");
-	            }
-	        }
-	    }, {
-	        key: "go",
-	        value: function go(step, type) {
-	            if (this._active && this._current !== step) {
-	                this.currentstep.hide();
-	                this._current = clamp(step, 0, this.length - 1);
-	                this.currentstep.show();
-	                this._options.onStep(this.currentstep, type);
-	            }
-	        }
-	    }, {
-	        key: "stop",
-	        value: function stop() {
-	            if (this._active) {
-	                this.currentstep.hide();
-	                this._active = false;
-	                this._steps.forEach(function (step) {
-	                    return step.remove();
-	                });
-	                umbrella_min(this._options.root).removeClass("guided-tour");
-	                this._options.onStop(this._options);
-	            }
-	        }
-	    }, {
-	        key: "complete",
-	        value: function complete() {
-	            if (this._active) {
-	                this.stop();
-	                this._options.onComplete();
-	            }
-	        }
-	    }]);
-	    return Tour;
+	        this._options.onAction(currentstep, e);
+	      }
+	    }
+	  }, {
+	    key: "next",
+	    value: function next() {
+	      if (this._active) {
+	        this.go(this.nextstep, "next");
+	      }
+	    }
+	  }, {
+	    key: "previous",
+	    value: function previous() {
+	      if (this._active) {
+	        this.go(this.previousstep, "previous");
+	      }
+	    }
+	  }, {
+	    key: "go",
+	    value: function go(step, type) {
+	      if (this._active && this._current !== step) {
+	        this.currentstep.hide();
+	        this._current = clamp(step, 0, this.length - 1);
+	        this.currentstep.show();
+	        this._options.onStep(this.currentstep, type);
+	      }
+	    }
+	  }, {
+	    key: "stop",
+	    value: function stop() {
+	      if (this._active) {
+	        this.currentstep.hide();
+	        this._active = false;
+	        this._steps.forEach(function (step) {
+	          return step.remove();
+	        });
+	        umbrella_min(this._options.root).removeClass("guided-tour");
+	        this._options.onStop(this._options);
+	      }
+	    }
+	  }, {
+	    key: "complete",
+	    value: function complete() {
+	      if (this._active) {
+	        this.stop();
+	        this._options.onComplete();
+	      }
+	    }
+	  }]);
+	  return Tour;
 	}();
 
 	return Tour;

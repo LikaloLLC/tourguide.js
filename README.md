@@ -20,7 +20,7 @@ There are a few ways you can use **Tourguide.js**
 
 ### Fiddle with it
 
-Want to see how it works right away? **Tr[y on JSFiddle**](https://jsfiddle.net/eugenetrue/pwqshcLk/) 
+Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/eugenetrue/pwqshcLk/) 
 
 ###  CommonJS
 
