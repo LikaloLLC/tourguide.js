@@ -12,45 +12,6 @@ const StepsSource = {
 };
 
 export default class Tour {
-    _options = {
-        root: "body",
-        selector: "[data-tour]",
-        animationspeed: 300,
-        padding: 5,
-        steps: null,
-        // [
-        //     {
-        //         selector: "" | null,
-        //         step: 1,
-        //         title: "",
-        //         contnet: "",
-        //         image?: http://... | undefined
-        //     }
-        // ]
-        src: null,
-        // http://somesever.cloud/tour.json
-        request: {
-            "options": {
-                "mode": "cors",
-                "cache": "no-cache",
-                "credentials": "include"
-            },
-            "headers": {
-                "Content-Type": "application/json",
-                "Connection": "keep-alive"
-            }
-        },
-        onStart: () => { },
-        onStop: () => { },
-        onComplete: () => { },
-      	onStep: () => { },
-      	onAction: () => { }
-    };
-    _steps = [];
-    _current = 0;
-    _active = false;
-    _stepsSrc = StepsSource.DOM;
-    _ready = false;
     get currentstep() {
         return this._steps[this._current];
     }
@@ -73,7 +34,34 @@ export default class Tour {
         return this._options;
     }
     constructor(options = {}) {
-        Object.assign(this._options, options);
+        this._options =
+            Object.assign({
+                root: "body",
+                selector: "[data-tour]",
+                animationspeed: 300,
+                padding: 5,
+                steps: null,
+                src: null,
+                request: {
+                    "options": {
+                        "mode": "cors",
+                        "cache": "no-cache"
+                    },
+                    "headers": {
+                        "Content-Type": "application/json"
+                    }
+                },
+                onStart: () => { },
+                onStop: () => { },
+                onComplete: () => { },
+                onStep: () => { },
+                onAction: () => { }
+            }, options);
+        this._steps = [];
+        this._current = 0;
+        this._active = false;
+        this._stepsSrc = StepsSource.DOM;
+        this._ready = false;
         this.start = this.start.bind(this);
         this.action = this.action.bind(this);
         this.next = this.next.bind(this);
@@ -149,7 +137,11 @@ export default class Tour {
     }
     action(e) {
         if (this._active) {
-    		this._options.onAction(this.currentstep, e);
+            const { currentstep } = this;
+            if (currentstep.actiontarget) {
+                u(e.target).find(currentstep.actiontarget).click();
+            }
+            this._options.onAction(currentstep, e);
         }
     }
     next() {
@@ -167,7 +159,7 @@ export default class Tour {
             this.currentstep.hide();
             this._current = clamp(step, 0, this.length - 1);
             this.currentstep.show();
-          	this._options.onStep(this.currentstep, type);
+            this._options.onStep(this.currentstep, type);
         }
     }
     stop() {

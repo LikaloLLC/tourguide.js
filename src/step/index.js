@@ -3,21 +3,6 @@ import scrollIntoView from "scroll-into-view";
 import { clamp, getDataContents, getBoundingClientRect, getViewportRect } from "../utils";
 // data-step="title: Step1; content: .../<>"
 export default class Step {
-    index = 0;
-    first = false;
-    last = false;
-    target = null;
-    container = null;
-    highlight = null;
-    tooltip = null;
-    arrow = null;
-    rect = {};
-    image = null;
-    title = "";
-    content = "";
-    active = false;
-    context = null;
-    _target = null;
     get el() {
         if (!this.container) {
             const image = u(`<div role="figure" class="guided-tour-step-image">${this.image ? `<img src="${this.image}" />` : ""}</div>`);
@@ -58,6 +43,21 @@ export default class Step {
         this._target = target;
     }
     constructor(step, context) {
+        this.index = 0;
+        this.first = false;
+        this.last = false;
+        this.target = null;
+        this.container = null;
+        this.highlight = null;
+        this.tooltip = null;
+        this.arrow = null;
+        this.rect = {};
+        this.image = null;
+        this.title = "";
+        this.content = "";
+        this.active = false;
+        this.context = null;
+        this._target = null;
         this.context = context;
         if (step.hasOwnProperty("title")) {
             this.selector = step.selector;
