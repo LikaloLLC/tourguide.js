@@ -1,1 +1,0 @@
-export const Tooltip = `<div role="dialog" class="guided-tour-step"></div>`;
