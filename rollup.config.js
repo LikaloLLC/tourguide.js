@@ -46,11 +46,14 @@ export default [{
     file: pkg.module
   },
   plugins: [
-    sass({ insert: true, options: { outputStyle: "compressed" } }),
+    sass({ insert: false }),
     resolve({ mainFields: ["module", "jsnext:main", "node"], browser: true, preferBuiltins: true }),
     commonjs({
       exclude: "node_modules/process-es6/**",
       include: pkg.commonjs
+    }),
+    babel({
+      exclude: pkg.commonjs
     })
   ]
 }];
