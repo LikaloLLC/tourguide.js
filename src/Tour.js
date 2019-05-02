@@ -139,7 +139,14 @@ export default class Tour {
     if (this._active) {
       const { currentstep } = this;
       if (currentstep.actiontarget) {
-        u(e.target).find(currentstep.actiontarget).click();
+        let actiontarget;
+        if (actiontarget = u(currentstep.target).find(currentstep.actiontarget)) {
+          try {
+            actiontarget.first().click();
+          } catch(e) {
+            console.warn(`Could not find actiontarget: ${currentstep.actiontarget} on step #${currentstep.index}`);
+          }
+        }
       }
       this._options.onAction(currentstep, e);
     }
