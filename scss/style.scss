@@ -163,6 +163,7 @@ $next: #ff4141;
                         display: inline-block;
                         background-color: $next;
                         border: 8px solid $background;
+                        box-sizing: content-box;
                         cursor: pointer;
 
                         &.complete {
