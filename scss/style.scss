@@ -6,6 +6,7 @@ $current: #b50000;
 $next: #ff4141;
 $complete: #b50000;
 $fontFamily: "Open Sans", Arimo, "Droid Sans", Helvetica, Arial, sans-serif;
+$fontSize: 12pt;
 
 .guided-tour {
     overflow: hidden;
@@ -15,7 +16,7 @@ $fontFamily: "Open Sans", Arimo, "Droid Sans", Helvetica, Arial, sans-serif;
     display: none;
     text-rendering: optimizespeed;
     font-family: $fontFamily;
-    font-size: 12pt;
+    font-size: $fontSize;
     color: $font;
 
     &.active {
