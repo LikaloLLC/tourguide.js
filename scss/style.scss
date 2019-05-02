@@ -3,6 +3,7 @@ $font: #333;
 $visited: #aaa;
 $current: #b50000;
 $next: #ff4141;
+$complete: #b50000;
 
 .guided-tour {
     overflow: hidden;
@@ -135,7 +136,7 @@ $next: #ff4141;
             }
 
             .guided-tour-step-button-complete {
-                color: $current;
+                color: $complete;
             }
 
             .guided-tour-step-button-close {
