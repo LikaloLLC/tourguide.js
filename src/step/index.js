@@ -64,6 +64,7 @@ export default class Step {
       this.index = step.step || 0;
       this.title = step.title;
       this.content = step.content || "";
+      this.actiontarget = step.actiontarget;
       this.image = step.image;
     } else {
       this.target = step;
@@ -71,6 +72,7 @@ export default class Step {
       this.index = parseInt(data.step);
       this.title = data.title;
       this.content = data.content;
+      this.actiontarget = data.actiontarget;
       this.image = data.image;
     }
   }
