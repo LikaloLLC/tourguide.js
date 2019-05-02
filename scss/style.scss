@@ -48,11 +48,14 @@ $fontSize: 12pt;
             box-sizing: border-box;
             box-shadow: 0 0 8px -4px #000;
             transition: opacity 150ms;
-
-            // @media screen and (max-width: 767px) {
-            //     left: 0! important;
-            //     right: 0! important;
-            // }
+            
+            @media screen and (max-width: 760px) {
+              max-width: unset;
+              width: calc(100% - 30px);
+              left: 15px!important;
+              right: 15px!important;
+            }
+                
             .guided-tour-arrow {
                 position: absolute;
                 border-top: 8px solid transparent;
@@ -87,6 +90,9 @@ $fontSize: 12pt;
 
             &.guided-tour-center {
                 transform: translate(-50%, -50%);
+                @media screen and (max-width: 760px) {
+                  transform: translate(0, -50%);;
+                }
             }
 
             .guided-tour-step-image {
@@ -99,8 +105,17 @@ $fontSize: 12pt;
             }
 
             .guided-tour-step-title {
-                font-weight: bold;
-                margin-bottom: 1em;
+              font-weight: bold;
+              margin-bottom: 1em;
+              @media screen and (max-width: 760px) {
+                padding-right: 15px;
+              }
+            }
+            
+            .guided-tour-step-content {
+              @media screen and (max-width: 760px) {
+                padding-right: 15px;
+              }
             }
 
             .guided-tour-icon {
@@ -132,6 +147,9 @@ $fontSize: 12pt;
                 margin-top: -24px;
                 right: -30px;
                 top: 50%;
+                @media screen and (max-width: 760px) {
+                  right: -10px;
+                }
             }
 
             .guided-tour-step-button-next {
