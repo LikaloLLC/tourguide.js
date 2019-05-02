@@ -1,6 +1,6 @@
 {
   "name": "tourguidejs",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "src": "src/Tour.js",
   "main": "tourguide.js",
   "module": "tourguide.esm.js",
