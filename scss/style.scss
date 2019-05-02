@@ -1,9 +1,11 @@
+$overlay: rgba(0, 0, 0, 0.5);
 $background: #fff;
 $font: #333;
 $visited: #aaa;
 $current: #b50000;
 $next: #ff4141;
 $complete: #b50000;
+$fontFamily: "Open Sans", Arimo, "Droid Sans", Helvetica, Arial, sans-serif;
 
 .guided-tour {
     overflow: hidden;
@@ -12,7 +14,7 @@ $complete: #b50000;
 .guided-tour-step {
     display: none;
     text-rendering: optimizespeed;
-    font-family: "Open Sans", Arimo, "Droid Sans", Helvetica, Arial, sans-serif;
+    font-family: $fontFamily;
     font-size: 12pt;
     color: $font;
 
@@ -30,7 +32,7 @@ $complete: #b50000;
             position: absolute;
             box-sizing: border-box;
             border-radius: 4px;
-            box-shadow: 0 0 0 999em rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 999em $overlay;
             z-index: 1;
         }
 
