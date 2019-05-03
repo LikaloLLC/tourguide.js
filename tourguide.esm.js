@@ -375,6 +375,7 @@ var Step = function () {
       this.index = step.step || 0;
       this.title = step.title;
       this.content = step.content || "";
+      this.actiontarget = step.actiontarget;
       this.image = step.image;
     } else {
       this.target = step;
@@ -382,6 +383,7 @@ var Step = function () {
       this.index = parseInt(data.step);
       this.title = data.title;
       this.content = data.content;
+      this.actiontarget = data.actiontarget;
       this.image = data.image;
     }
   }
@@ -677,7 +679,15 @@ var Tour = function () {
         var currentstep = this.currentstep;
 
         if (currentstep.actiontarget) {
-          umbrella_min(e.target).find(currentstep.actiontarget).click();
+          var actiontarget = umbrella_min(currentstep.target).find(currentstep.actiontarget);
+          if (actiontarget) {
+            try {
+              actiontarget.first().click();
+            } catch (e) {
+              // eslint-disable-next-line no-console
+              console.warn("Could not find actiontarget: " + currentstep.actiontarget + " on step #" + currentstep.index);
+            }
+          }
         }
         this._options.onAction(currentstep, e);
       }
