@@ -139,11 +139,12 @@ export default class Tour {
     if (this._active) {
       const { currentstep } = this;
       if (currentstep.actiontarget) {
-        let actiontarget;
-        if (actiontarget = u(currentstep.target).find(currentstep.actiontarget)) {
+        let actiontarget = u(currentstep.target).find(currentstep.actiontarget);
+        if (actiontarget) {
           try {
             actiontarget.first().click();
           } catch(e) {
+            // eslint-disable-next-line no-console
             console.warn(`Could not find actiontarget: ${currentstep.actiontarget} on step #${currentstep.index}`);
           }
         }
