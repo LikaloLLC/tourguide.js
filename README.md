@@ -12,7 +12,7 @@ You try to explain, but people are just not getting it! You write [how-tos](http
 
 This is why we built **Tourguide.js** - a simple yet powerful explainer utility, designed to help you make the reply a little bit less painful. Because, let's face it - picture is worth a 1000 words:
 
-![](https://cdn.docsie.io/boo_n1TwSJpcgsSAN001Z/4e0b6646-8ae1-b0a7-be73-294555171710guided_tours_gif.gif)
+![](https://github.com/LikaloLLC/tourguide.js/blob/master/ezgif.com-optimize.gif?raw=true)
 
 ## Getting started
 
