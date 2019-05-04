@@ -24,16 +24,18 @@ Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/euge
 
 ###  CommonJS
 
-Download `tourguide.min.js`, add it to your project libraries, and then include it on page:
+Download `tourguide.css` and `tourguide.min.js`, add it to your project libraries, and then include it on page:
 
 ```
+<link rel="stylesheet" type="text/css" href="tourguide.css">
 <script src="tourguide.min.js"></script>
 ```
 ### ES Module support
 
-If you use ES modules in your project ([Webpack](https://webpack.js.org/), [Rollup](https://rollupjs.org)) import **Tourguide.js** like so:
+If you use ES modules in your project ([Webpack](https://webpack.js.org/), [Rollup](https://rollupjs.org)) import **Tourguide.css** and **Tourguide.js** like so:
 
 ```
+import "tourguide/tourguide.css";
 import Tourguide from "tourguide/tourguide.esm.js";
 ```
 ## Usage
