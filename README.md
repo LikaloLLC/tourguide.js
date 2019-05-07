@@ -22,6 +22,8 @@ Tourguide.js works great for creating your product tours if you are looking to c
 3. Vue product tour
 4. Angular product tour
 
+We have plenty of examples and this library is really simple to use.
+
 There are a few ways you can use our guided tour javascript library **Tourguide.js** 
 
 
