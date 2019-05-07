@@ -1,0 +1,66 @@
+<div data-component="angular-conduit-intro"></div>
+<div class="home-page">
+
+  <div class="banner" *appShowAuthed="false">
+    <div class="container">
+      <h1 class="logo-font">conduit</h1>
+      <p>A place to share your <i>Angular 2</i> knowledge.</p>
+    </div>
+  </div>
+
+  <div class="container page">
+    <div class="row">
+      <!-- <div className="content"> -->
+
+      <div class="col-md-8">
+        <button style="background: lightseagreen;
+            border: none;position: relative;left:15px;bottom: 14px;height: 30px" (click)="startTour()">Click this
+          button
+          to start Tourguide.js demo</button>
+        <div class="feed-toggle">
+          <ul class="nav nav-pills outline-active">
+            <li class="nav-item" data-component="your-feed">
+              <a class="nav-link" [ngClass]="{'active': listConfig.type === 'feed'}" (click)="setListTo('feed')">
+                Your Feed
+              </a>
+            </li>
+            <li class="nav-item" data-component="global-feed">
+              <a class="nav-link" [ngClass]="{'active': listConfig.type === 'all' && !listConfig.filters.tag}"
+                (click)="setListTo('all')">
+                Global Feed
+              </a>
+            </li>
+            <li class="nav-item" [hidden]="!listConfig.filters.tag">
+              <a class="nav-link active">
+                <i class="ion-pound"></i> {{ listConfig.filters.tag }}
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div data-component="article-list">
+          <app-article-list [limit]="10" [config]="listConfig"></app-article-list>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="sidebar" data-component="popular-tags">
+          <p>Popular Tags</p>
+
+          <div class="tag-list">
+            <a *ngFor="let tag of tags" (click)="setListTo('all', {tag: tag})" class="tag-default tag-pill">
+              {{ tag }}
+            </a>
+          </div>
+
+          <div [hidden]="tagsLoaded">
+            Loading tags...
+          </div>
+
+          <div [hidden]="!tagsLoaded || tags.length > 0">
+            No tags are here... yet.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
