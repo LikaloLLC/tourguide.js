@@ -1,6 +1,6 @@
 # Tourguide.js
 
-######  Simple, lightweight library for creating guided tours for your web, apps and more.
+######  Simple, lightweight product tour js library for creating guided tours for your web, apps and more.
 
 >  A **tour guide** is a  person who provides assistance, information on cultural, historical and  contemporary heritage to people on organized [tours](https://en.wikipedia.org/wiki/Tourism)  and individual clients at educational establishments, religious and  historical sites, museums, and at venues of other significant interest,  attractions sites. [[https://en.wikipedia.org/wiki/Tour_guide](https://en.wikipedia.org/wiki/Tour_guide)]
 
@@ -16,7 +16,7 @@ This is why we built **Tourguide.js** - a simple yet powerful product tours and 
 
 ## Getting started
 
-There are a few ways you can use **Tourguide.js**
+There are a few ways you can use guided tour javascript library **Tourguide.js** 
 
 ### Fiddle with it
 
