@@ -23,6 +23,7 @@ There are a few ways you can use **Tourguide.js**
 Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/eugenetrue/pwqshcLk/) 
 
 ### Checkout examples
+
 How Tourguide.js can be configured in react, angular is shown at /tourguide.js/examples. Make sure you read the Readme.md in /examples/example_angular and /examples/example_reactjs
 
 ###  CommonJS
