@@ -22,6 +22,9 @@ There are a few ways you can use **Tourguide.js**
 
 Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/eugenetrue/pwqshcLk/) 
 
+### Checkout examples
+Demonstrating how Tourguide.js is integrated at /tourguide.js/examples
+
 ###  CommonJS
 
 Download `tourguide.css` and `tourguide.min.js`, add it to your project libraries, and then include it on page:
