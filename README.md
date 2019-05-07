@@ -16,7 +16,14 @@ This is why we built **Tourguide.js** - a simple yet powerful product tours and 
 
 ## Getting started
 
-There are a few ways you can use guided tour javascript library **Tourguide.js** 
+Tourguide.js works great for creating your product tours if you are looking to create
+1. Regular javascript guided tour
+2. React product tour
+3. Vue product tour
+4. Angular product tour
+
+There are a few ways you can use our guided tour javascript library **Tourguide.js** 
+
 
 ### Fiddle with it
 
