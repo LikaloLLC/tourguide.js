@@ -10,7 +10,7 @@ Every time you build you next awesome web app, you sit back and stare lovingly a
 
 You try to explain, but people are just not getting it! You write [how-tos](https://www.docsie.io), [lengthy docs](https://www.docsie.io/documentation/), and [step-by-step guides](https://www.docsie.io/about/), and yet, nothing seems to be enough.
 
-This is why we built **Tourguide.js** - a simple yet powerful explainer utility, designed to help you make the reply a little bit less painful. Because, let's face it - picture is worth a 1000 words:
+This is why we built **Tourguide.js** - a simple yet powerful product tours and explainer utility, designed to help you make the reply a little bit less painful. Because, let's face it - picture is worth a 1000 words:
 
 ![](https://github.com/LikaloLLC/tourguide.js/blob/master/ezgif.com-optimize.gif?raw=true)
 
