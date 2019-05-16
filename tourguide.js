@@ -599,7 +599,7 @@ var Tourguide = (function () {
 	        return new Step(o, _this);
 	      });
 	      this._ready = true;
-	    } else if (typeof this._options.stc === "string" && this._options.src.indexOf("http") === 0) {
+	    } else if (typeof this._options.src === "string") {
 	      this._stepsSrc = StepsSource.REMOTE;
 	      fetch(new Request(this._options.src, this._options.request)).then(function (response) {
 	        return response.json().then(function (data) {
