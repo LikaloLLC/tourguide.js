@@ -352,6 +352,8 @@ var Step = function () {
   }]);
 
   function Step(step, context) {
+    var _this2 = this;
+
     classCallCheck(this, Step);
 
     this.index = 0;
@@ -368,23 +370,30 @@ var Step = function () {
     this.content = "";
     this.active = false;
     this.context = null;
+    this.visible = false;
     this._target = null;
     this.context = context;
+    var data = void 0;
     if (step.hasOwnProperty("title")) {
+      data = step;
       this.selector = step.selector;
-      this.index = step.step || 0;
-      this.title = step.title;
-      this.content = step.content || "";
-      this.actiontarget = step.actiontarget;
-      this.image = step.image;
     } else {
       this.target = step;
-      var data = getDataContents(umbrella_min(step).data("tour"));
-      this.index = parseInt(data.step);
-      this.title = data.title;
-      this.content = data.content;
-      this.actiontarget = data.actiontarget;
-      this.image = data.image;
+      data = getDataContents(umbrella_min(step).data("tour"));
+    }
+    this.index = parseInt(data.step);
+    this.title = data.title;
+    this.content = data.content;
+    this.actiontarget = data.actiontarget;
+    this.image = data.image;
+    if (data.image && context.options.preloadimages && !/^data:/i.test(data.image)) {
+      var preload = new Image();
+      // preload.onload = (e) => {
+      // };
+      preload.onerror = function () {
+        _this2.image = null;
+      };
+      preload.src = this.image;
     }
   }
 
@@ -405,7 +414,7 @@ var Step = function () {
     key: "position",
     value: function position() {
       // {"left":0,"right":400,"top":0,"height":300,"bottom":300,"width":400}
-      if (this.target) {
+      if (this.target && this.target.offsetParent !== null) {
         var rect = getBoundingClientRect(this.target);
         var view = getViewportRect();
         var style = this.highlight.first().style;
@@ -472,24 +481,34 @@ var Step = function () {
   }, {
     key: "show",
     value: function show() {
-      var _this2 = this;
+      var _this3 = this;
 
-      var show = function show() {
-        _this2.position();
-        _this2.el.addClass("active");
-        _this2.adjust();
-      };
-      if (this.target) {
-        scrollIntoView(this.target, {
-          time: this.context.options.animationspeed
-        }, show);
-      } else setTimeout(show, this.context.options.animationspeed);
+      if (!this.visible) {
+        var show = function show() {
+          _this3.position();
+          _this3.el.addClass("active");
+          _this3.adjust();
+          _this3.visible = true;
+        };
+        if (this.target) {
+          scrollIntoView(this.target, {
+            time: this.context.options.animationspeed
+          }, show);
+        } else setTimeout(show, this.context.options.animationspeed);
+        return true;
+      }
+      return false;
     }
   }, {
     key: "hide",
     value: function hide() {
-      this.el.removeClass("active");
-      this.tooltip.removeClass("guided-tour-arrow-top");
+      if (this.visible) {
+        this.el.removeClass("active");
+        this.tooltip.removeClass("guided-tour-arrow-top");
+        this.visible = false;
+        return true;
+      }
+      return false;
     }
   }, {
     key: "toJSON",
@@ -562,6 +581,8 @@ var Tour = function () {
       padding: 5,
       steps: null,
       src: null,
+      restoreinitialposition: true,
+      preloadimages: false,
       request: {
         "options": {
           "mode": "cors",
@@ -582,6 +603,7 @@ var Tour = function () {
     this._active = false;
     this._stepsSrc = StepsSource.DOM;
     this._ready = false;
+    this._initialposition = null;
     this.start = this.start.bind(this);
     this.action = this.action.bind(this);
     this.next = this.next.bind(this);
@@ -600,7 +622,7 @@ var Tour = function () {
       this._stepsSrc = StepsSource.REMOTE;
       fetch(new Request(this._options.src, this._options.request)).then(function (response) {
         return response.json().then(function (data) {
-          data.map(function (o) {
+          _this._steps = data.map(function (o) {
             return new Step(o, _this);
           });
           _this._ready = true;
@@ -655,6 +677,13 @@ var Tour = function () {
       var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
       if (this._ready) {
+        if (this._options.restoreinitialposition) {
+          this._initialposition = {
+            top: window.scrollX,
+            left: window.screenY,
+            behavior: "smooth"
+          };
+        }
         if (!this._active) {
           umbrella_min(this._options.root).addClass("guided-tour");
           this.init();
@@ -726,6 +755,9 @@ var Tour = function () {
           return step.remove();
         });
         umbrella_min(this._options.root).removeClass("guided-tour");
+        if (this._options.restoreinitialposition) {
+          window.scrollTo(this._initialposition);
+        }
         this._options.onStop(this._options);
       }
     }
