@@ -1,8 +1,12 @@
+$overlay: rgba(0, 0, 0, 0.5);
 $background: #fff;
 $font: #333;
 $visited: #aaa;
 $current: #b50000;
 $next: #ff4141;
+$complete: #b50000;
+$fontFamily: "Open Sans", Arimo, "Droid Sans", Helvetica, Arial, sans-serif;
+$fontSize: 12pt;
 
 .guided-tour {
     overflow: hidden;
@@ -11,8 +15,8 @@ $next: #ff4141;
 .guided-tour-step {
     display: none;
     text-rendering: optimizespeed;
-    font-family: "Open Sans", Arimo, "Droid Sans", Helvetica, Arial, sans-serif;
-    font-size: 12pt;
+    font-family: $fontFamily;
+    font-size: $fontSize;
     color: $font;
 
     &.active {
@@ -29,7 +33,7 @@ $next: #ff4141;
             position: absolute;
             box-sizing: border-box;
             border-radius: 4px;
-            box-shadow: 0 0 0 999em rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 999em $overlay;
             z-index: 1;
         }
 
@@ -44,11 +48,14 @@ $next: #ff4141;
             box-sizing: border-box;
             box-shadow: 0 0 8px -4px #000;
             transition: opacity 150ms;
-
-            // @media screen and (max-width: 767px) {
-            //     left: 0! important;
-            //     right: 0! important;
-            // }
+            
+            @media screen and (max-width: 760px) {
+              max-width: unset;
+              width: calc(100% - 30px);
+              left: 15px!important;
+              right: 15px!important;
+            }
+                
             .guided-tour-arrow {
                 position: absolute;
                 border-top: 8px solid transparent;
@@ -83,6 +90,9 @@ $next: #ff4141;
 
             &.guided-tour-center {
                 transform: translate(-50%, -50%);
+                @media screen and (max-width: 760px) {
+                  transform: translate(0, -50%);;
+                }
             }
 
             .guided-tour-step-image {
@@ -95,8 +105,17 @@ $next: #ff4141;
             }
 
             .guided-tour-step-title {
-                font-weight: bold;
-                margin-bottom: 1em;
+              font-weight: bold;
+              margin-bottom: 1em;
+              @media screen and (max-width: 760px) {
+                padding-right: 15px;
+              }
+            }
+            
+            .guided-tour-step-content {
+              @media screen and (max-width: 760px) {
+                padding-right: 15px;
+              }
             }
 
             .guided-tour-icon {
@@ -128,6 +147,9 @@ $next: #ff4141;
                 margin-top: -24px;
                 right: -30px;
                 top: 50%;
+                @media screen and (max-width: 760px) {
+                  right: -10px;
+                }
             }
 
             .guided-tour-step-button-next {
@@ -135,7 +157,7 @@ $next: #ff4141;
             }
 
             .guided-tour-step-button-complete {
-                color: $current;
+                color: $complete;
             }
 
             .guided-tour-step-button-close {
@@ -163,6 +185,7 @@ $next: #ff4141;
                         display: inline-block;
                         background-color: $next;
                         border: 8px solid $background;
+                        box-sizing: content-box;
                         cursor: pointer;
 
                         &.complete {

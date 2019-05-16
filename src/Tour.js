@@ -42,6 +42,8 @@ export default class Tour {
         padding: 5,
         steps: null,
         src: null,
+        restoreinitialposition: true,
+        preloadimages: false,
         request: {
           "options": {
             "mode": "cors",
@@ -62,6 +64,7 @@ export default class Tour {
     this._active = false;
     this._stepsSrc = StepsSource.DOM;
     this._ready = false;
+    this._initialposition = null;
     this.start = this.start.bind(this);
     this.action = this.action.bind(this);
     this.next = this.next.bind(this);
@@ -77,11 +80,11 @@ export default class Tour {
         this
       ));
       this._ready = true;
-    } else if (typeof this._options.stc === "string" && this._options.src.indexOf("http") === 0) {
+    } else if (typeof this._options.src === "string") {
       this._stepsSrc = StepsSource.REMOTE;
       fetch(new Request(this._options.src, this._options.request))
         .then(response => response.json().then(data => {
-          data.map(o => new Step(
+          this._steps = data.map(o => new Step(
             o,
             this
           ));
@@ -120,6 +123,13 @@ export default class Tour {
   }
   start(step = 0) {
     if (this._ready) {
+      if (this._options.restoreinitialposition) {
+        this._initialposition = {
+          top: window.scrollX,
+          left: window.screenY,
+          behavior: "smooth"
+        };
+      }
       if (!this._active) {
         u(this._options.root).addClass("guided-tour");
         this.init();
@@ -139,7 +149,15 @@ export default class Tour {
     if (this._active) {
       const { currentstep } = this;
       if (currentstep.actiontarget) {
-        u(e.target).find(currentstep.actiontarget).click();
+        let actiontarget = u(currentstep.target).find(currentstep.actiontarget);
+        if (actiontarget) {
+          try {
+            actiontarget.first().click();
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.warn(`Could not find actiontarget: ${currentstep.actiontarget} on step #${currentstep.index}`);
+          }
+        }
       }
       this._options.onAction(currentstep, e);
     }
@@ -168,6 +186,9 @@ export default class Tour {
       this._active = false;
       this._steps.forEach(step => step.remove());
       u(this._options.root).removeClass("guided-tour");
+      if (this._options.restoreinitialposition) {
+        window.scrollTo(this._initialposition);
+      }
       this._options.onStop(this._options);
     }
   }

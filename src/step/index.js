@@ -14,8 +14,7 @@ export default class Step {
                 </span>
                 ${this.last ? `<span role="button" class="guided-tour-step-button guided-tour-step-button-complete" title="Complete tour">
                         <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-complete"></use></svg>
-                    </span>`:
-    `<span role="button" class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
+                    </span>`: `<span role="button" class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
                         <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-next"></use></svg>
                     </span>`}
                 ${this.context._steps.length > 1 ? `<div class="guided-tour-step-footer-bullets">
@@ -57,21 +56,32 @@ export default class Step {
     this.content = "";
     this.active = false;
     this.context = null;
+    this.visible = false;
     this._target = null;
     this.context = context;
+    let data;
     if (step.hasOwnProperty("title")) {
+      data = step;
       this.selector = step.selector;
-      this.index = step.step || 0;
-      this.title = step.title;
-      this.content = step.content || "";
-      this.image = step.image;
     } else {
       this.target = step;
-      const data = getDataContents(u(step).data("tour"));
-      this.index = parseInt(data.step);
-      this.title = data.title;
-      this.content = data.content;
-      this.image = data.image;
+      data = getDataContents(u(step).data("tour"));
+    }
+    this.index = parseInt(data.step);
+    this.title = data.title;
+    this.content = data.content;
+    this.actiontarget = data.actiontarget;
+    this.image = data.image;
+    if (data.image &&
+      context.options.preloadimages &&
+      !(/^data:/i.test(data.image))) {
+      const preload = new Image();
+      // preload.onload = (e) => {
+      // };
+      preload.onerror = () => {
+        this.image = null;
+      };
+      preload.src = this.image;
     }
   }
   attach(root = "body") {
@@ -83,7 +93,7 @@ export default class Step {
   }
   position() {
     // {"left":0,"right":400,"top":0,"height":300,"bottom":300,"width":400}
-    if (this.target) {
+    if (this.target && this.target.offsetParent !== null) {
       const rect = getBoundingClientRect(this.target);
       const view = getViewportRect();
       let style = this.highlight.first().style;
@@ -110,7 +120,7 @@ export default class Step {
       } else {
         style.right = `${Math.max(view.width - rect.right, 40)}px`;
         arrow.first().style.right = (view.width - rect.right) < 40 ||
-                    (rect.width > 400) ? "8px" : `${clamp(rect.width / 2 - 8, 14, 386)}px`;
+          (rect.width > 400) ? "8px" : `${clamp(rect.width / 2 - 8, 14, 386)}px`;
       }
     } else {
       const view = getViewportRect();
@@ -147,20 +157,30 @@ export default class Step {
     style.opacity = 1;
   }
   show() {
-    const show = () => {
-      this.position();
-      this.el.addClass("active");
-      this.adjust();
-    };
-    if (this.target) {
-      scrollIntoView(this.target, {
-        time: this.context.options.animationspeed
-      }, show);
-    } else setTimeout(show, this.context.options.animationspeed);
+    if (!this.visible) {
+      const show = () => {
+        this.position();
+        this.el.addClass("active");
+        this.adjust();
+        this.visible = true;
+      };
+      if (this.target) {
+        scrollIntoView(this.target, {
+          time: this.context.options.animationspeed
+        }, show);
+      } else setTimeout(show, this.context.options.animationspeed);
+      return true;
+    }
+    return false;
   }
   hide() {
-    this.el.removeClass("active");
-    this.tooltip.removeClass("guided-tour-arrow-top");
+    if (this.visible) {
+      this.el.removeClass("active");
+      this.tooltip.removeClass("guided-tour-arrow-top");
+      this.visible = false;
+      return true;
+    }
+    return false;
   }
   toJSON() {
     // eslint-disable-next-line no-undef
