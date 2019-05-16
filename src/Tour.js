@@ -42,6 +42,7 @@ export default class Tour {
         padding: 5,
         steps: null,
         src: null,
+        preloadimages: false,
         request: {
           "options": {
             "mode": "cors",
@@ -81,7 +82,7 @@ export default class Tour {
       this._stepsSrc = StepsSource.REMOTE;
       fetch(new Request(this._options.src, this._options.request))
         .then(response => response.json().then(data => {
-          data.map(o => new Step(
+          this._steps = data.map(o => new Step(
             o,
             this
           ));
