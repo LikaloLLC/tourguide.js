@@ -14,8 +14,7 @@ export default class Step {
                 </span>
                 ${this.last ? `<span role="button" class="guided-tour-step-button guided-tour-step-button-complete" title="Complete tour">
                         <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-complete"></use></svg>
-                    </span>`:
-    `<span role="button" class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
+                    </span>`: `<span role="button" class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
                         <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-next"></use></svg>
                     </span>`}
                 ${this.context._steps.length > 1 ? `<div class="guided-tour-step-footer-bullets">
@@ -75,6 +74,17 @@ export default class Step {
       this.actiontarget = data.actiontarget;
       this.image = data.image;
     }
+    if (this.image &&
+      context.options.preloadimages &&
+      !(/^data:/i.test(this.image))) {
+      const preload = new Image();
+      // preload.onload = (e) => {
+      // };
+      preload.onerror = () => {
+        this.image = null;
+      };
+      preload.src = this.image;
+    }
   }
   attach(root = "body") {
     u(root).append(this.el);
@@ -112,7 +122,7 @@ export default class Step {
       } else {
         style.right = `${Math.max(view.width - rect.right, 40)}px`;
         arrow.first().style.right = (view.width - rect.right) < 40 ||
-                    (rect.width > 400) ? "8px" : `${clamp(rect.width / 2 - 8, 14, 386)}px`;
+          (rect.width > 400) ? "8px" : `${clamp(rect.width / 2 - 8, 14, 386)}px`;
       }
     } else {
       const view = getViewportRect();
