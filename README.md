@@ -1,6 +1,6 @@
 # Tourguide.js
 
-######  Simple, lightweight product tour js library for creating guided tours for your web, apps and more.
+###### Simple, lightweight product tour js library for creating guided tours for your web, apps and more. (Thursday, 16 May 2019)
 
 >  A **tour guide** is a  person who provides assistance, information on cultural, historical and  contemporary heritage to people on organized [tours](https://en.wikipedia.org/wiki/Tourism)  and individual clients at educational establishments, religious and  historical sites, museums, and at venues of other significant interest,  attractions sites. [[https://en.wikipedia.org/wiki/Tour_guide](https://en.wikipedia.org/wiki/Tour_guide)]
 
@@ -12,11 +12,12 @@ You try to explain, but people are just not getting it! You write [how-tos](http
 
 This is why we built **Tourguide.js** - a simple yet powerful product tours and explainer utility, designed to help you make the reply a little bit less painful. Because, let's face it - picture is worth a 1000 words:
 
-![](https://github.com/LikaloLLC/tourguide.js/blob/master/ezgif.com-optimize.gif?raw=true)
+![](https://cdn.docsie.io/boo_nwRtiJnYrdiJp6YvD/3d607303-7efc-179f-9147-9d3c3f396c8cScreenshot_from_2019_05_15_23_27_43.png)
 
 ## Getting started
 
 Tourguide.js works great for creating your product tours if you are looking to create
+
 1. Regular javascript guided tour
 2. React product tour
 3. Vue product tour
@@ -24,18 +25,19 @@ Tourguide.js works great for creating your product tours if you are looking to c
 
 We have plenty of examples and this library is really simple to use.
 
-There are a few ways you can use our guided tour javascript library **Tourguide.js** 
+Read the [documentation](https://sites.docsie.io/sewing-necessary/Documentation/)
 
+There are a few ways you can use our guided tour javascript library **Tourguide.js** 
 
 ### Fiddle with it
 
-Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/eugenetrue/pwqshcLk/) 
+Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/eugenetrue/q465gb7L/) 
 
 ### Checkout examples
 
 How Tourguide.js can be configured in react, angular is shown at /tourguide.js/examples. Make sure you read the Readme.md in /examples/example_angular and /examples/example_reactjs
 
-###  CommonJS
+### CommonJS
 
 Download `tourguide.css` and `tourguide.min.js`, add it to your project libraries, and then include it on page:
 
@@ -43,6 +45,7 @@ Download `tourguide.css` and `tourguide.min.js`, add it to your project librarie
 <link rel="stylesheet" type="text/css" href="tourguide.css">
 <script src="tourguide.min.js"></script>
 ```
+
 ### ES Module support
 
 If you use ES modules in your project ([Webpack](https://webpack.js.org/), [Rollup](https://rollupjs.org)) import **Tourguide.css** and **Tourguide.js** like so:
@@ -51,6 +54,7 @@ If you use ES modules in your project ([Webpack](https://webpack.js.org/), [Roll
 import "tourguide/tourguide.css";
 import Tourguide from "tourguide/tourguide.esm.js";
 ```
+
 ## Usage
 
 Before use **Tourguide.js** must be instantiated:
@@ -58,6 +62,7 @@ Before use **Tourguide.js** must be instantiated:
 ```
 var tourguide = new Tourguide({options});
 ```
+
 **Tourguide.js** accepts the following options:
 
 * `root`: root element the tour steps will attach to; default is document.body
@@ -72,6 +77,8 @@ var tourguide = new Tourguide({options});
 
 * `src`: if you want to load the tour from a remote URL you may specify it here; default is null
 
+* `restoreinitialposition`: save initial window scroll position and restore it after tour is complete; default is true
+
 * `request`: if you want to load the tour from a remote URL you may provide request headers here
 
 * `onStart`: callback function triggered when the tour starts
@@ -84,6 +91,8 @@ var tourguide = new Tourguide({options});
 
 * `onAction`: callback triggered when user clicks on the highlighted element
 
+* `preloadimages`: pre-load all image used in tour; default is false
+
 Once instantiated you can use tourguide instance a several different ways:
 
 ### Content based approach
@@ -95,6 +104,7 @@ Simplest approach is to read the descriptions right off the elements on page. Th
   Collaborate
 </button>
 ```
+
 data-tour understands the following step properties:
 
 * `step<number>`: tour step sequence number
@@ -105,6 +115,8 @@ data-tour understands the following step properties:
 
 * `image?<url>`: tour step illustration
 
+* `actiontarget?<string>`: target element to propagate the `onClick` action to
+
 > **?** *indicates the property is optional*
 
 In this mode you can simply use **Tourguide.js** as-is:
@@ -113,6 +125,7 @@ In this mode you can simply use **Tourguide.js** as-is:
 var tourguide = new Tourguide();
 tourguide.start();
 ```
+
 ### JSON based approach
 
 You may also write your own steps definition using [JSON](https://www.json.org/) notation:
@@ -134,6 +147,7 @@ You may also write your own steps definition using [JSON](https://www.json.org/)
   }
 ]
 ```
+
 Each tour step expects the following JSON object properties:
 
 * `selector?<string>`: [CSS selector](https://www.w3schools.com/cssref/css_selectors.asp) used to find the target element *(optional)*
@@ -146,6 +160,8 @@ Each tour step expects the following JSON object properties:
 
 * `image?<url>`: tour step illustration
 
+* `actiontarget?<string>`: target element to propagate the `onClick` action to
+
 > **?** *indicates the property is optional*
 
 Once you have the complete JSON description for each of your tour steps you will have to initialize **Tourguide.js** passing your JSON as `steps:` property:
@@ -155,6 +171,7 @@ var steps = [...];
 var tourguide = new Tourguide({steps: steps});
 tourguide.start();
 ```
+
 ### Remote URL approach
 
 You may also want to load the steps remotely. To do so simply provide the target `src` as one of the **Tourguide.js** init params:
@@ -163,6 +180,7 @@ You may also want to load the steps remotely. To do so simply provide the target
 var tourguide = new Tourguide({src: "https://somedomain.com/tours/guide.json"});
 tourguide.start();
 ```
+
 ## Controlling the tour
 
 Once your tour has started you have several ways to manually control the tour flow:
@@ -174,6 +192,7 @@ Start the tour at any time by calling start(). You may optionally provide the st
 ```
 tourguide.start(2)
 ```
+
 ### tourguide.stop()
 
 Stop the tour at any moment by calling stop()
@@ -193,6 +212,7 @@ Causes tour to go to the step specified
 ```
 tourguide.go(2)
 ```
+
 ### Additional properties
 
 * `tourguide.currentstep`: returns the current [step object](#step_object)
@@ -218,6 +238,7 @@ var tourguide = new Tourguide({
   onAction:function(currentstep, e){...}
 });
 ```
+
 ### onStart
 
 Fires when the guided tour is started. The callback function will receive a single param:
@@ -240,7 +261,7 @@ Fires when the guided tour is complete. The callback function will receives no p
 
 Fires when tour step is activated. The callback function receives two params:
 
-*  `currentstep`: tour [step object](#step_object)
+* `currentstep`: tour [step object](#step_object)
 
 * `type`: string representing the current direction of the tor; can be one of: "previous" | "next"
 
@@ -271,6 +292,9 @@ var currentstep = tourguide.currentstep;
 var stepTarget = currentstep.target;
 var stepView = currentstep.el;
 ```
+
+You can find additional detailed documentation at [https://sites.docsie.io/sewing-necessary/Documentation/](https://sites.docsie.io/sewing-necessary/Documentation/)
+
 ## License
 
 **Tourguide.js** is licensed under BSD 3-Clause "New" or "Revised" License
