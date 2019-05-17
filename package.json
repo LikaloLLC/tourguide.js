@@ -9,6 +9,9 @@
   "bugs": {
     "url": "https://github.com/LikaloLLC/tourguide.js/issues"
   },
+  "files": [
+    "tourguide.*"
+  ],
   "author": {
     "name": "Likalo LLC",
     "url": "https://likalo.com/"
