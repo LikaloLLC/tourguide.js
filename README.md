@@ -34,7 +34,7 @@ There are a few ways you can use our guided tour javascript library **Tourguide.
 Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/eugenetrue/q465gb7L/) 
 
 ### Checkout examples
-
+Examples can be found here -> https://github.com/LikaloLLC/tourguide.js/tree/examples
 How Tourguide.js can be configured in react, angular is shown at /tourguide.js/examples. Make sure you read the Readme.md in /examples/example_angular and /examples/example_reactjs
 
 ### CommonJS
