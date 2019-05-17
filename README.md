@@ -89,7 +89,7 @@ var tourguide = new Tourguide({options});
 
 * `onAction`: callback triggered when user clicks on the highlighted element
 
-- `preloadimages`: pre-load all image used in tour; default is false
+* `preloadimages`: pre-load all image used in tour; default is false
 
 Once instantiated you can use tourguide instance a several different ways:
 
