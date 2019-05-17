@@ -1,6 +1,6 @@
 # Tourguide.js
 
-###### Simple, lightweight product tour js library for creating guided tours for your web, apps and more. (Thursday, 16 May 2019)
+###### Simple, lightweight product tour js library for creating guided tours for your web, apps and more. (Thursday, 16 May 2019)
 
 >  A **tour guide** is a  person who provides assistance, information on cultural, historical and  contemporary heritage to people on organized [tours](https://en.wikipedia.org/wiki/Tourism)  and individual clients at educational establishments, religious and  historical sites, museums, and at venues of other significant interest,  attractions sites. [[https://en.wikipedia.org/wiki/Tour_guide](https://en.wikipedia.org/wiki/Tour_guide)]
 
@@ -24,6 +24,8 @@ Tourguide.js works great for creating your product tours if you are looking to c
 4. Angular product tour
 
 We have plenty of examples and this library is really simple to use.
+
+Read the [documentation](https://sites.docsie.io/sewing-necessary/Documentation/)
 
 There are a few ways you can use our guided tour javascript library **Tourguide.js** 
 
@@ -290,6 +292,8 @@ var currentstep = tourguide.currentstep;
 var stepTarget = currentstep.target;
 var stepView = currentstep.el;
 ```
+
+You can find additional detailed documentation at [https://sites.docsie.io/sewing-necessary/Documentation/](https://sites.docsie.io/sewing-necessary/Documentation/)
 
 ## License
 
