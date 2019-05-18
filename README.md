@@ -1,5 +1,10 @@
 # Tourguide.js
 
+### Fiddle with it
+
+Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/eugenetrue/q465gb7L/) 
+
+
 ###### Simple, lightweight product tour js library for creating guided tours for your web, apps and more. (Thursday, 16 May 2019)
 
 >  A **tour guide** is a  person who provides assistance, information on cultural, historical and  contemporary heritage to people on organized [tours](https://en.wikipedia.org/wiki/Tourism)  and individual clients at educational establishments, religious and  historical sites, museums, and at venues of other significant interest,  attractions sites. [[https://en.wikipedia.org/wiki/Tour_guide](https://en.wikipedia.org/wiki/Tour_guide)]
@@ -29,9 +34,6 @@ Read the [documentation](https://sites.docsie.io/sewing-necessary/Documentation/
 
 There are a few ways you can use our guided tour javascript library **Tourguide.js** 
 
-### Fiddle with it
-
-Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/eugenetrue/q465gb7L/) 
 
 ### Checkout examples
 Examples can be found here -> https://github.com/LikaloLLC/tourguide.js/tree/examples
