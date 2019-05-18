@@ -30,7 +30,7 @@ Tourguide.js works great for creating your product tours if you are looking to c
 
 We have plenty of examples and this library is really simple to use.
 
-Read the [documentation](https://sites.docsie.io/sewing-necessary/Documentation/)
+Read the [documentation](https://sites.docsie.io/sewing-necessary/Documentation/) or just try it on JS Fiddle [Try on JSFiddle](https://jsfiddle.net/eugenetrue/q465gb7L/) 
 
 There are a few ways you can use our guided tour javascript library **Tourguide.js** 
 
