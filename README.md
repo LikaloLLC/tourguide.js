@@ -6,7 +6,7 @@
 
 ### Fiddle with It
 
-Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/eugenetrue/pwqshcLk/) 
+Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/eugenetrue/q465gb7L/) 
 
 ## Install Tourguide.js
 
@@ -29,7 +29,7 @@ There are a few ways you can use **Tourguide.js**
 
 ### Fiddle with it
 
-Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/eugenetrue/pwqshcLk/) 
+Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/eugenetrue/q465gb7L/) 
 
 ###  CommonJS
 
