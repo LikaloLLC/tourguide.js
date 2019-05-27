@@ -21,7 +21,7 @@ You try to explain, but people are just not getting it! You write [how-tos](http
 
 This is why we built **Tourguide.js** - a simple yet powerful explainer utility, designed to help you make the reply a little bit less painful. Because, let's face it - picture is worth a 1000 words:
 
-![](https://cdn.docsie.io/boo_n1TwSJpcgsSAN001Z/279c1704-2019-5c9a-e259-07086b5b3e68tourgudie_demo.png)
+![](https://cdn.docsie.io/tourgudie_demo.png)
 
 ## Getting started
 
