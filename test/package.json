@@ -1,0 +1,37 @@
+{
+    "name": "es6-tutorial",
+    "version": "1.0.0",
+    "description": "Start the tutorial [here](http://ccoenraets.github.io/es6-tutorial).",
+    "main": "index.js",
+    "scripts": {
+        "babel": "babel --presets es2015 js/tourguideJs.js -o build/tourguideJs.bundle.js",
+        "start": "http-server",
+        "test": "mocha -r jsdom-global/register"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ccoenraets/es6-tutorial.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/ccoenraets/es6-tutorial/issues"
+    },
+    "homepage": "https://github.com/ccoenraets/es6-tutorial#readme",
+    "devDependencies": {
+        "babel-cli": "^6.26.0",
+        "babel-core": "^6.26.3",
+        "babel-preset-es2015": "^6.24.1",
+        "http-server": "^0.11.1",
+        "mocha": "^6.1.4"
+    },
+    "dependencies": {
+        "chai": "^4.2.0",
+        "isomorphic-fetch": "^2.2.1",
+        "jsdom": "^15.1.1",
+        "jsdom-global": "^3.0.2",
+        "lodash": "^4.17.11",
+        "mocha-jsdom": "^2.0.0",
+        "node-fetch": "^2.6.0"
+    }
+}
