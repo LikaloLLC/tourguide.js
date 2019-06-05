@@ -101,13 +101,17 @@
 
 @media screen and (max-width: 760px) {
     .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-title {
-        padding-right: 15px
+        padding-right: 15px;
+        position: relative;
+        left: 14px;
     }
 }
 
 @media screen and (max-width: 760px) {
     .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-content {
-        padding-right: 15px
+        padding-right: 15px;
+        position: relative;
+        left: 14px;
     }
 }
 
@@ -169,7 +173,7 @@
 
 @media screen and (max-width: 760px) {
     .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-button-previous {
-        right: -10px
+        left: -10px
     }
 }
 
