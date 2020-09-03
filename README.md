@@ -43,7 +43,7 @@ Download `tourguide.min.js`, add it to your project libraries, and then include 
 If you use ES modules in your project ([Webpack](https://webpack.js.org/), [Rollup](https://rollupjs.org)) import **Tourguide.js** like so:
 
 ```
-import Tourguide from "tourguide/tourguide.esm.js";
+import Tourguide from "tourguidejs";
 ```
 ## Usage
 
