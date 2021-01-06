@@ -585,6 +585,75 @@ var Tourguide = (function () {
 	  return Step;
 	}();
 
+	var Step$1 = function () {
+	  createClass(Step, [{
+	    key: "el",
+	    get: function get$$1() {
+	      if (!this.container) {
+	        this.container = umbrella_min("<div role=\"dialog\" class=\"guided-tour-background\"></div>");
+	      }
+	      return this.container;
+	    }
+	  }]);
+
+	  function Step(context) {
+	    classCallCheck(this, Step);
+
+	    this.container = null;
+	    this.active = false;
+	    this.context = context;
+	  }
+
+	  createClass(Step, [{
+	    key: "attach",
+	    value: function attach() {
+	      var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "body";
+
+	      umbrella_min(root).append(this.el);
+	    }
+	  }, {
+	    key: "remove",
+	    value: function remove() {
+	      this.hide();
+	      this.el.remove();
+	    }
+	  }, {
+	    key: "show",
+	    value: function show() {
+	      if (!this.visible) {
+	        this.el.addClass("active");
+	        this.visible = true;
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: "hide",
+	    value: function hide() {
+	      var _this = this;
+
+	      if (this.visible) {
+	        var hide = function hide() {
+	          _this.el.removeClass("active");
+	          _this.visible = false;
+	        };
+	        setTimeout(hide, this.context.options.animationspeed);
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: "toJSON",
+	    value: function toJSON() {
+	      var _ref;
+
+	      // eslint-disable-next-line no-undef
+	      return _ref = this, active = _ref.active, _ref;
+	    }
+	  }]);
+	  return Step;
+	}();
+
 	var StepsSource = {
 	  DOM: 0,
 	  JSON: 1,
@@ -661,6 +730,7 @@ var Tourguide = (function () {
 	      onStep: function onStep() {},
 	      onAction: function onAction() {}
 	    }, options);
+	    this._background = null;
 	    this._steps = [];
 	    this._current = 0;
 	    this._active = false;
@@ -711,6 +781,7 @@ var Tourguide = (function () {
 	      var _this2 = this;
 
 	      this.reset();
+	      this._background = new Step$1(this);
 	      if (this._stepsSrc === StepsSource.DOM) {
 	        var steps = umbrella_min(this._options.selector).nodes;
 	        this._steps = steps.map(function (el) {
@@ -750,6 +821,7 @@ var Tourguide = (function () {
 	        if (!this._active) {
 	          umbrella_min(this._options.root).addClass("guided-tour");
 	          this.init();
+	          this._background.attach(this._options.root);
 	          this._steps.forEach(function (step) {
 	            return step.attach(_this3._options.root);
 	          });
@@ -803,7 +875,9 @@ var Tourguide = (function () {
 	    value: function go(step, type) {
 	      if (this._active && this._current !== step) {
 	        this.currentstep.hide();
+	        this._background.show();
 	        this._current = clamp(step, 0, this.length - 1);
+	        this._background.hide();
 	        this.currentstep.show();
 	        this._options.onStep(this.currentstep, type);
 	      }
@@ -814,6 +888,7 @@ var Tourguide = (function () {
 	      if (this._active) {
 	        this.currentstep.hide();
 	        this._active = false;
+	        this._background.remove();
 	        this._steps.forEach(function (step) {
 	          return step.remove();
 	        });
