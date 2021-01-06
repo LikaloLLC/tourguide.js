@@ -12,6 +12,21 @@ $fontSize: 12pt;
     overflow: hidden;
 }
 
+.guided-tour-background {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1024;
+    background-color: transparent;
+
+    &.active {
+        background-color: $overlay;
+    }
+}
+
 .guided-tour-step {
     display: none;
     text-rendering: optimizespeed;
