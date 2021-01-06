@@ -60,7 +60,14 @@ export default class Step {
     this._target = null;
     this.context = context;
     let data;
-    if (step.hasOwnProperty("title")) {
+    if (typeof step === "object") {
+      if(!(step.hasOwnProperty("title") && step.hasOwnProperty("content") && step.hasOwnProperty("step"))) {
+        throw new Error(
+          "invalid step parameter:\n" +
+          JSON.stringify(step, null, 2) + "\n" +
+          "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach"
+        );
+      }
       data = step;
       this.selector = step.selector;
     } else {
