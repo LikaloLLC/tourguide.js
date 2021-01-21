@@ -59,6 +59,8 @@ export default class Step {
     this.visible = false;
     this._target = null;
     this.context = context;
+    this._timerHandler = null;
+    this._scrollCancel = null;
     let data;
     if (typeof step === "object") {
       if(!(step.hasOwnProperty("title") && step.hasOwnProperty("content") && step.hasOwnProperty("step"))) {
@@ -163,7 +165,12 @@ export default class Step {
     }
     style.opacity = 1;
   }
+  cancel() {
+    if(this._timerHandler) clearTimeout(this._timerHandler);
+    if(this._scrollCancel) this._scrollCancel();
+  }
   show() {
+    this.cancel();
     if (!this.visible) {
       const show = () => {
         this.position();
@@ -172,15 +179,17 @@ export default class Step {
         this.visible = true;
       };
       if (this.target) {
-        scrollIntoView(this.target, {
-          time: this.context.options.animationspeed
+        this._scrollCancel = scrollIntoView(this.target, {
+          time: this.context.options.animationspeed,
+          cancellable: true,
         }, show);
-      } else setTimeout(show, this.context.options.animationspeed);
+      } else this._timerHandler = setTimeout(show, this.context.options.animationspeed);
       return true;
     }
     return false;
   }
   hide() {
+    this.cancel();
     if (this.visible) {
       this.el.removeClass("active");
       this.tooltip.removeClass("guided-tour-arrow-top");

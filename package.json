@@ -35,7 +35,7 @@
     "node": ">=6.0.0"
   },
   "dependencies": {
-    "scroll-into-view": "^1.9.5",
+    "scroll-into-view": "^1.15.0",
     "umbrellajs": "^3.1.0"
   },
   "devDependencies": {
