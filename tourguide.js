@@ -512,6 +512,7 @@ var Tourguide = (function () {
 	        _style.left = 0 + "px";
 	        _style.width = 0 + "px";
 	        _style.height = 0 + "px";
+	        _style.boxShadow = "none";
 	        var _tooltip = this.tooltip;
 	        _style = _tooltip.first().style;
 	        _style.opacity = 0.1;
@@ -519,6 +520,8 @@ var Tourguide = (function () {
 	        _style.left = _view.width / 2 + "px";
 	        _tooltip.addClass("guided-tour-arrow-none");
 	        _tooltip.addClass("guided-tour-center");
+
+	        if (this.context._background) this.context._background.show();
 	      }
 	    }
 	  }, {

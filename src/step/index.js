@@ -138,6 +138,7 @@ export default class Step {
       style.left = `${0}px`;
       style.width = `${0}px`;
       style.height = `${0}px`;
+      style.boxShadow = "none";
       const tooltip = this.tooltip;
       style = tooltip.first().style;
       style.opacity = 0.1;
@@ -145,6 +146,9 @@ export default class Step {
       style.left = `${view.width / 2}px`;
       tooltip.addClass("guided-tour-arrow-none");
       tooltip.addClass("guided-tour-center");
+
+      if (this.context._background)
+        this.context._background.show();
     }
   }
   adjust() {
