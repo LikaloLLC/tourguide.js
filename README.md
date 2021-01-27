@@ -64,6 +64,8 @@ var tourguide = new Tourguide({options});
 
 * `src`: if you want to load the tour from a remote URL you may specify it here; default is null
 
+* `preloadimages`: if you want to preload images, you may set this attribute to true; default is false
+
 * `request`: if you want to load the tour from a remote URL you may provide request headers here
 
 * `onStart`: callback function triggered when the tour starts
