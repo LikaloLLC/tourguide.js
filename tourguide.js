@@ -433,6 +433,8 @@ var Tourguide = (function () {
 	    this.visible = false;
 	    this._target = null;
 	    this.context = context;
+	    this._timerHandler = null;
+	    this._scrollCancel = null;
 	    var data = void 0;
 	    if ((typeof step === "undefined" ? "undefined" : _typeof(step)) === "object") {
 	      if (!(step.hasOwnProperty("title") && step.hasOwnProperty("content") && step.hasOwnProperty("step"))) {
@@ -545,10 +547,17 @@ var Tourguide = (function () {
 	      style.opacity = 1;
 	    }
 	  }, {
+	    key: "cancel",
+	    value: function cancel() {
+	      if (this._timerHandler) clearTimeout(this._timerHandler);
+	      if (this._scrollCancel) this._scrollCancel();
+	    }
+	  }, {
 	    key: "show",
 	    value: function show() {
 	      var _this3 = this;
 
+	      this.cancel();
 	      if (!this.visible) {
 	        var show = function show() {
 	          _this3.position();
@@ -557,10 +566,11 @@ var Tourguide = (function () {
 	          _this3.visible = true;
 	        };
 	        if (this.target) {
-	          scrollIntoView(this.target, {
-	            time: this.context.options.animationspeed
+	          this._scrollCancel = scrollIntoView(this.target, {
+	            time: this.context.options.animationspeed,
+	            cancellable: true
 	          }, show);
-	        } else setTimeout(show, this.context.options.animationspeed);
+	        } else this._timerHandler = setTimeout(show, this.context.options.animationspeed);
 	        return true;
 	      }
 	      return false;
@@ -568,6 +578,7 @@ var Tourguide = (function () {
 	  }, {
 	    key: "hide",
 	    value: function hide() {
+	      this.cancel();
 	      if (this.visible) {
 	        this.el.removeClass("active");
 	        this.tooltip.removeClass("guided-tour-arrow-top");
