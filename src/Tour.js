@@ -2,7 +2,7 @@ import u from "umbrellajs";
 import Icons from "./icons";
 import Step from "./step";
 import Background from "./background";
-import { clamp } from "./utils";
+import { clamp, getViewportRect } from "./utils";
 
 import "../scss/style.scss";
 
@@ -127,9 +127,10 @@ export default class Tour {
   start(step = 0) {
     if (this._ready) {
       if (this._options.restoreinitialposition) {
+        const { scrollX, scrollY } = getViewportRect();
         this._initialposition = {
-          top: window.scrollX,
-          left: window.screenY,
+          left: scrollX,
+          top: scrollY,
           behavior: "smooth"
         };
       }
