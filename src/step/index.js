@@ -201,6 +201,7 @@ export default class Step {
     this.cancel();
     if (!this.visible) {
       const show = () => {
+        this.context._background.hide();
         this.position();
         this.el.addClass("active");
         this.adjust();
@@ -223,6 +224,7 @@ export default class Step {
       this.tooltip.removeClass("guided-tour-arrow-top");
       this.tooltip.removeClass("guided-tour-arrow-bottom");
       this.visible = false;
+      this.context._background.show();
       return true;
     }
     return false;

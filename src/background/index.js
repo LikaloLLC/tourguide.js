@@ -29,11 +29,8 @@ export default class Step {
   }
   hide() {
     if (this.visible) {
-      const hide = () => {
-        this.el.removeClass("active");
-        this.visible = false;
-      };
-      setTimeout(hide, this.context.options.animationspeed);
+      this.el.removeClass("active");
+      this.visible = false;
       return true;
     }
     return false;

@@ -180,9 +180,7 @@ export default class Tour {
   go(step, type) {
     if (this._active && this._current !== step) {
       this.currentstep.hide();
-      this._background.show();
       this._current = clamp(step, 0, this.length - 1);
-      this._background.hide();
       this.currentstep.show();
       this._options.onStep(this.currentstep, type);
     }
