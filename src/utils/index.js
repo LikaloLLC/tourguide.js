@@ -44,4 +44,25 @@ export function getViewportRect() {
   };
 }
 
+// { top, left, right, bottom, width, height }
+export function setPosAndSize(uEl, object) {
+  if(!Object.prototype.toString.call(object) === "[object Object]") return;
+  if(Object.entries(object).length === 0) return;
+
+  const originalEl = uEl.first();
+  const styleStr = Object.entries(object).reduce((str, [key, value]) => {
+    let s = str;
+    s += key;
+    s += ": ";
+    if(typeof value === "number")
+      s += `${value}px`;
+    else
+      s += value;
+    s += ";";
+
+    return s;
+  }, "");
+  originalEl.setAttribute("style", styleStr);
+}
+
 export const isMobile = false;
