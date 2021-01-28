@@ -323,6 +323,44 @@ var Tourguide = (function () {
 	  return target;
 	};
 
+	var slicedToArray = function () {
+	  function sliceIterator(arr, i) {
+	    var _arr = [];
+	    var _n = true;
+	    var _d = false;
+	    var _e = undefined;
+
+	    try {
+	      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+	        _arr.push(_s.value);
+
+	        if (i && _arr.length === i) break;
+	      }
+	    } catch (err) {
+	      _d = true;
+	      _e = err;
+	    } finally {
+	      try {
+	        if (!_n && _i["return"]) _i["return"]();
+	      } finally {
+	        if (_d) throw _e;
+	      }
+	    }
+
+	    return _arr;
+	  }
+
+	  return function (arr, i) {
+	    if (Array.isArray(arr)) {
+	      return arr;
+	    } else if (Symbol.iterator in Object(arr)) {
+	      return sliceIterator(arr, i);
+	    } else {
+	      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+	    }
+	  };
+	}();
+
 	function clamp(number, min, max) {
 	  min = isNaN(min) ? number : min;
 	  max = isNaN(max) ? number : max;
@@ -348,14 +386,14 @@ var Tourguide = (function () {
 	  return {
 	    width: rect.width,
 	    height: rect.height,
-	    top: rect.top,
-	    bottom: rect.bottom,
-	    left: rect.left,
-	    right: rect.right,
-	    viewtop: rect.top - view.scrollY,
-	    viewbottom: rect.bottom - view.scrollY,
-	    viewleft: rect.left - view.scrollX,
-	    viewright: rect.right - view.scrollX
+	    top: rect.top + view.scrollY,
+	    bottom: rect.bottom + view.scrollY,
+	    left: rect.left + view.scrollX,
+	    right: rect.right + view.scrollX,
+	    viewtop: rect.top,
+	    viewbottom: rect.bottom,
+	    viewleft: rect.left,
+	    viewright: rect.right
 	  };
 	}
 
@@ -363,11 +401,33 @@ var Tourguide = (function () {
 	  return {
 	    width: window.innerWidth,
 	    height: window.innerHeight,
-	    scrollX: window.scrollX,
-	    scrollY: window.scrollY,
+	    scrollX: window.pageXOffset,
+	    scrollY: window.pageYOffset,
 	    bodyWidth: document.body.clientWidth,
 	    bodyHeight: document.body.clientHeight
 	  };
+	}
+
+	// { top, left, right, bottom, width, height }
+	function setPosAndSize(uEl, object) {
+	  if (!Object.prototype.toString.call(object) === "[object Object]") return;
+	  if (Object.entries(object).length === 0) return;
+
+	  var originalEl = uEl.first();
+	  var styleStr = Object.entries(object).reduce(function (str, _ref) {
+	    var _ref2 = slicedToArray(_ref, 2),
+	        key = _ref2[0],
+	        value = _ref2[1];
+
+	    var s = str;
+	    s += key;
+	    s += ": ";
+	    if (typeof value === "number") s += value + "px";else s += value;
+	    s += ";";
+
+	    return s;
+	  }, "");
+	  originalEl.setAttribute("style", styleStr);
 	}
 
 	// data-step="title: Step1; content: .../<>"
@@ -382,20 +442,22 @@ var Tourguide = (function () {
 	        var _image = umbrella_min("<div role=\"figure\" class=\"guided-tour-step-image\">" + (this.image ? "<img src=\"" + this.image + "\" />" : "") + "</div>");
 	        var _title = umbrella_min("<div role=\"heading\" class=\"guided-tour-step-title\">" + this.title + "</div>");
 	        var content = umbrella_min("<div class=\"guided-tour-step-content\">" + this.content + "</div>");
-	        var footer = umbrella_min("<div class=\"guided-tour-step-footer\">\n                <span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                    <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                </span>\n                " + (this.last ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use></svg>\n                    </span>" : "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use></svg>\n                    </span>") + "\n                " + (this.context._steps.length > 1 ? "<div class=\"guided-tour-step-footer-bullets\">\n                    <ul>" + this.context._steps.map(function (step, i) {
+	        var footer = umbrella_min("<div class=\"guided-tour-step-footer\">\n                <span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                    <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                </span>\n                " + (this.last ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use></svg>\n                    </span>" : "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use></svg>\n                    </span>") + "\n                " + (this.context._steps.length > 1 ? "<div class=\"guided-tour-step-bullets\">\n                    <ul>" + this.context._steps.map(function (step, i) {
 	          return "<li  title=\"Go to step " + (i + 1) + "\" data-index=\"" + i + "\" class=\"" + (step.index < _this.index ? "complete" : step.index == _this.index ? "current" : "") + "\"></li>";
 	        }).join("") + "</ul>\n                </div>" : "") + "\n            </div>");
 	        footer.find(".guided-tour-step-button-next").on("click", this.context.next);
 	        footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
 	        footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
-	        footer.find(".guided-tour-step-footer-bullets li").on("click", function (e) {
+	        footer.find(".guided-tour-step-bullets li").on("click", function (e) {
 	          return _this.context.go(parseInt(umbrella_min(e.target).data("index")));
 	        });
 	        var highlight = this.highlight = umbrella_min("<div class=\"guided-tour-step-highlight\"></div>");
 	        highlight.on("click", this.context.action);
 	        var tooltip = this.tooltip = umbrella_min("<div role=\"tooltip\" class=\"guided-tour-step-tooltip\"></div>");
+	        var tooltipinner = umbrella_min("<div class=\"guided-tour-step-tooltip-inner\"></div>");
 	        var arrow = this.arrow = umbrella_min("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"></div>");
-	        tooltip.append(arrow).append(_image).append(_title).append(content).append(footer);
+	        tooltipinner.append(arrow).append(_image).append(_title).append(content).append(footer);
+	        tooltip.append(tooltipinner);
 	        this.container = umbrella_min("<div role=\"dialog\" class=\"guided-tour-step" + (this.first ? " guided-tour-step-first" : "") + (this.last ? " guided-tour-step-last" : "") + "\"></div>");
 	        this.container.append(highlight).append(tooltip);
 	      }
@@ -478,73 +540,97 @@ var Tourguide = (function () {
 	  }, {
 	    key: "position",
 	    value: function position() {
+	      var view = getViewportRect();
 	      // {"left":0,"right":400,"top":0,"height":300,"bottom":300,"width":400}
 	      if (this.target && this.target.offsetParent !== null) {
-	        var rect = getBoundingClientRect(this.target);
-	        var view = getViewportRect();
-	        var style = this.highlight.first().style;
-	        style.top = rect.top - this.context.options.padding + "px";
-	        style.left = rect.left - this.context.options.padding + "px";
-	        style.width = rect.width + this.context.options.padding * 2 + "px";
-	        style.height = rect.height + this.context.options.padding * 2 + "px";
+	        var highlight = this.highlight;
 	        var tooltip = this.tooltip;
 	        var arrow = this.arrow;
-	        style = tooltip.first().style;
-	        style.opacity = 0.1;
+
+	        var highlightPAS = {};
+	        var tootipPAS = {};
+	        var arrowPAS = {};
+
+	        var rect = getBoundingClientRect(this.target);
+
+	        highlightPAS.top = rect.top - this.context.options.padding;
+	        highlightPAS.left = rect.left - this.context.options.padding;
+	        highlightPAS.width = rect.width + this.context.options.padding * 2;
+	        highlightPAS.height = rect.height + this.context.options.padding * 2;
+
 	        // Compute vertical position
-	        if (view.height / 2 > rect.top) {
+	        if (view.height / 2 > (rect.viewtop + rect.viewbottom) / 2) {
 	          tooltip.addClass("guided-tour-arrow-top");
-	          style.top = rect.top + rect.height + "px";
+	          tootipPAS.top = rect.top + rect.height;
 	        } else {
 	          tooltip.addClass("guided-tour-arrow-bottom");
-	          style.bottom = view.height - rect.top + "px";
+	          tootipPAS.bottom = view.bodyHeight - rect.top;
 	        }
 	        // Compute horizontal position
-	        if (view.width / 2 > rect.left) {
-	          style.left = rect.left + "px";
-	          arrow.first().style.left = rect.width > 400 ? "18px" : clamp(rect.width / 2, 14, 386) + "px";
+	        if (view.width / 2 > (rect.viewleft + rect.viewright) / 2) {
+	          tootipPAS.left = rect.left;
+	          arrowPAS.left = rect.width > 400 ? 18 : clamp(rect.width / 2, 14, 386);
 	        } else {
-	          style.right = Math.max(view.width - rect.right, 40) + "px";
-	          arrow.first().style.right = view.width - rect.right < 40 || rect.width > 400 ? "8px" : clamp(rect.width / 2 - 8, 14, 386) + "px";
+	          tootipPAS.right = Math.max(view.width - rect.viewright, 40) + view.scrollX;
+	          arrowPAS.right = view.width - rect.viewright < 40 || rect.width > 400 ? 8 : clamp(rect.width / 2 - 8, 14, 386);
 	        }
+
+	        setPosAndSize(highlight, highlightPAS);
+	        setPosAndSize(tooltip, tootipPAS);
+	        setPosAndSize(arrow, arrowPAS);
+	        tooltip.first().style.opacity = 0.1;
 	      } else {
-	        var _view = getViewportRect();
-	        var _style = this.highlight.first().style;
-	        _style.top = 0 + "px";
-	        _style.left = 0 + "px";
-	        _style.width = 0 + "px";
-	        _style.height = 0 + "px";
-	        _style.boxShadow = "none";
+	        var _highlight = this.highlight;
 	        var _tooltip = this.tooltip;
-	        _style = _tooltip.first().style;
-	        _style.opacity = 0.1;
-	        _style.top = _view.height / 2 + "px";
-	        _style.left = _view.width / 2 + "px";
+
+	        var _highlightPAS = {};
+	        var _tootipPAS = {};
+
+	        _highlightPAS.top = 0;
+	        _highlightPAS.left = 0;
+	        _highlightPAS.width = 0;
+	        _highlightPAS.height = 0;
+
+	        _tootipPAS.top = view.height / 2 + view.scrollY;
+	        _tootipPAS.left = view.width / 2 + view.scrollX;
+
 	        _tooltip.addClass("guided-tour-arrow-none");
 	        _tooltip.addClass("guided-tour-center");
 
-	        if (this.context._background) this.context._background.show();
+	        setPosAndSize(_highlight, _highlightPAS);
+	        setPosAndSize(_tooltip, _tootipPAS);
+	        _highlight.first().style.boxShadow = "none";
+	        _tooltip.first().style.opacity = 0.1;
+	        this.context._background.show();
 	      }
 	    }
 	  }, {
 	    key: "adjust",
 	    value: function adjust() {
-	      var rect = getBoundingClientRect(this.tooltip);
 	      var view = getViewportRect();
-	      var style = this.tooltip.first().style;
-	      if (rect.top < 0) {
-	        style.top = "8px";
+
+	      var tooltip = this.tooltip;
+	      var rect = getBoundingClientRect(tooltip);
+
+	      var tootipPAS = {};
+
+	      if (rect.viewtop < 0) {
+	        tootipPAS.top = 8 + view.scrollY;
+	        tootipPAS.bottom = "none";
+	      } else if (rect.viewbottom > view.height) {
+	        tootipPAS.top = "none";
+	        tootipPAS.bottom = view.bodyHeight - rect.height - view.scrollY + 8;
 	      }
-	      if (rect.top > view.height - rect.height) {
-	        style.top = view.height - rect.height - 40 + "px";
+	      if (rect.viewleft < 0) {
+	        tootipPAS.left = 8 + view.scrollX;
+	        tootipPAS.right = "none";
+	      } else if (rect.viewright > view.width) {
+	        tootipPAS.left = "none";
+	        tootipPAS.right = view.bodyWidth - view.width - view.scrollX + 8;
 	      }
-	      if (rect.left < 0) {
-	        style.left = "8px";
-	      }
-	      if (rect.right < 40) {
-	        style.right = "40px";
-	      }
-	      style.opacity = 1;
+
+	      setPosAndSize(tooltip, tootipPAS);
+	      tooltip.first().style.opacity = 1;
 	    }
 	  }, {
 	    key: "cancel",
@@ -560,6 +646,7 @@ var Tourguide = (function () {
 	      this.cancel();
 	      if (!this.visible) {
 	        var show = function show() {
+	          _this3.context._background.hide();
 	          _this3.position();
 	          _this3.el.addClass("active");
 	          _this3.adjust();
@@ -568,7 +655,7 @@ var Tourguide = (function () {
 	        if (this.target) {
 	          this._scrollCancel = scrollIntoView(this.target, {
 	            time: this.context.options.animationspeed,
-	            cancellable: true
+	            cancellable: false
 	          }, show);
 	        } else this._timerHandler = setTimeout(show, this.context.options.animationspeed);
 	        return true;
@@ -582,7 +669,9 @@ var Tourguide = (function () {
 	      if (this.visible) {
 	        this.el.removeClass("active");
 	        this.tooltip.removeClass("guided-tour-arrow-top");
+	        this.tooltip.removeClass("guided-tour-arrow-bottom");
 	        this.visible = false;
+	        this.context._background.show();
 	        return true;
 	      }
 	      return false;
@@ -644,14 +733,9 @@ var Tourguide = (function () {
 	  }, {
 	    key: "hide",
 	    value: function hide() {
-	      var _this = this;
-
 	      if (this.visible) {
-	        var hide = function hide() {
-	          _this.el.removeClass("active");
-	          _this.visible = false;
-	        };
-	        setTimeout(hide, this.context.options.animationspeed);
+	        this.el.removeClass("active");
+	        this.visible = false;
 	        return true;
 	      }
 	      return false;
@@ -826,9 +910,13 @@ var Tourguide = (function () {
 
 	      if (this._ready) {
 	        if (this._options.restoreinitialposition) {
+	          var _getViewportRect = getViewportRect(),
+	              scrollX = _getViewportRect.scrollX,
+	              scrollY = _getViewportRect.scrollY;
+
 	          this._initialposition = {
-	            top: window.scrollX,
-	            left: window.screenY,
+	            left: scrollX,
+	            top: scrollY,
 	            behavior: "smooth"
 	          };
 	        }
@@ -889,9 +977,7 @@ var Tourguide = (function () {
 	    value: function go(step, type) {
 	      if (this._active && this._current !== step) {
 	        this.currentstep.hide();
-	        this._background.show();
 	        this._current = clamp(step, 0, this.length - 1);
-	        this._background.hide();
 	        this.currentstep.show();
 	        this._options.onStep(this.currentstep, type);
 	      }
