@@ -22,14 +22,14 @@ export function getBoundingClientRect(el) {
   return {
     width: rect.width,
     height: rect.height,
-    top: rect.top,
-    bottom: rect.bottom,
-    left: rect.left,
-    right: rect.right,
-    viewtop: rect.top - view.scrollY,
-    viewbottom: rect.bottom - view.scrollY,
-    viewleft: rect.left - view.scrollX,
-    viewright: rect.right - view.scrollX
+    top: rect.top + view.scrollY,
+    bottom: rect.bottom + view.scrollY,
+    left: rect.left + view.scrollX,
+    right: rect.right + view.scrollX,
+    viewtop: rect.top,
+    viewbottom: rect.bottom,
+    viewleft: rect.left,
+    viewright: rect.right,
   };
 }
 
@@ -37,8 +37,8 @@ export function getViewportRect() {
   return {
     width: window.innerWidth,
     height: window.innerHeight,
-    scrollX: window.scrollX,
-    scrollY: window.scrollY,
+    scrollX: window.pageXOffset,
+    scrollY: window.pageYOffset,
     bodyWidth: document.body.clientWidth,
     bodyHeight: document.body.clientHeight
   };
