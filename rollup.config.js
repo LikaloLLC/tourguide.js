@@ -7,6 +7,7 @@ import sass from "rollup-plugin-sass";
 import { uglify } from "rollup-plugin-uglify";
 import pkg from "./package.json";
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default [{
   input: pkg.src,
   output: {

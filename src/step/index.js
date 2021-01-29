@@ -1,6 +1,7 @@
 import u from "umbrellajs";
 import scrollIntoView from "scroll-into-view";
 import { clamp, getDataContents, getBoundingClientRect, getViewportRect, setPosAndSize } from "../utils";
+import marked from "marked";
 // data-step="title: Step1; content: .../<>"
 export default class Step {
   get el() {
@@ -81,6 +82,9 @@ export default class Step {
     this.index = parseInt(data.step);
     this.title = data.title;
     this.content = data.content;
+    if (data.marked) {
+      this.content = marked(this.content);
+    }
     this.actiontarget = data.actiontarget;
     this.image = data.image;
     if (data.image &&
@@ -90,6 +94,7 @@ export default class Step {
       // preload.onload = (e) => {
       // };
       preload.onerror = () => {
+        console.error(new Error(`image is not valid: ${data.image}`));
         this.image = null;
       };
       preload.src = this.image;

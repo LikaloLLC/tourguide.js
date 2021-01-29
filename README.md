@@ -93,6 +93,8 @@ Simplest approach is to read the descriptions right off the elements on page. Th
 
 * `title<string>`: tour step title
 
+* `marked<boolean>`: if content is markdown, you may set this attr to true; default false.
+
 * `content<string>`: tour step description
 
 * `image?<url>`: tour step illustration
