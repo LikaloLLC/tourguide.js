@@ -55,6 +55,26 @@ export default [{
     }),
     babel({
       exclude: pkg.commonjs
-    })
+    }),
+    filesize(),
+  ]
+}, {
+  input: pkg.src,
+  output: {
+    format: "umd",
+    "name": "Tourguide",
+    file: pkg.module.replace(".esm.js", ".umd.js")
+  },
+  plugins: [
+    sass({ insert: false }),
+    resolve({ mainFields: ["module", "jsnext:main", "node"], browser: true, preferBuiltins: true }),
+    commonjs({
+      exclude: "node_modules/process-es6/**",
+      include: pkg.commonjs
+    }),
+    babel({
+      exclude: pkg.commonjs
+    }),
+    filesize(),
   ]
 }];
