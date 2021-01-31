@@ -3193,7 +3193,7 @@ var Step = function () {
     this._timerHandler = null;
     this._scrollCancel = null;
     var data = void 0;
-    if ((typeof step === "undefined" ? "undefined" : _typeof(step)) === "object") {
+    if (!(step instanceof HTMLElement)) {
       if (!(step.hasOwnProperty("title") && step.hasOwnProperty("content") && step.hasOwnProperty("step"))) {
         throw new Error("invalid step parameter:\n" + JSON.stringify(step, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
       }
