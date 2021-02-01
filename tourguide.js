@@ -14,7 +14,7 @@ var Tourguide = (function () {
 	});
 	var umbrella_min_1 = umbrella_min.u;
 
-	var Icons = "<svg id=\"GuidedTourIconSet\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n<symbol id=\"tour-icon-close\" viewBox=\"0 0 20 20\"><path d=\"M16,16 L4,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path><path d=\"M16,4 L4,16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path></symbol>\n<symbol id=\"tour-icon-next\" viewBox=\"0 0 20 20\"><polyline points=\"7 4 13 10 7 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n<symbol id=\"tour-icon-complete\" viewBox=\"0 0 20 20\"><polyline points=\"4,10 8,15 17,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n</svg>";
+	var Icons = "<svg id=\"GuidedTourIconSet\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"display: none;\">\n<symbol id=\"tour-icon-close\" viewBox=\"0 0 20 20\"><path d=\"M16,16 L4,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path><path d=\"M16,4 L4,16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path></symbol>\n<symbol id=\"tour-icon-next\" viewBox=\"0 0 20 20\"><polyline points=\"7 4 13 10 7 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n<symbol id=\"tour-icon-complete\" viewBox=\"0 0 20 20\"><polyline points=\"4,10 8,15 17,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n</svg>";
 
 	var COMPLETE = 'complete',
 	    CANCELED = 'canceled';
@@ -382,9 +382,10 @@ var Tourguide = (function () {
 	  return result;
 	}
 
-	function getBoundingClientRect(el) {
+	function getBoundingClientRect(el, root) {
 	  var rect = umbrella_min(el).size();
-	  var view = getViewportRect();
+	  var view = getViewportRect(root);
+
 	  return {
 	    width: rect.width,
 	    height: rect.height,
@@ -392,44 +393,104 @@ var Tourguide = (function () {
 	    bottom: rect.bottom + view.scrollY,
 	    left: rect.left + view.scrollX,
 	    right: rect.right + view.scrollX,
-	    viewtop: rect.top,
-	    viewbottom: rect.bottom,
-	    viewleft: rect.left,
-	    viewright: rect.right
+	    viewTop: rect.top,
+	    viewBottom: rect.bottom,
+	    viewLeft: rect.left,
+	    viewRight: rect.right
 	  };
 	}
 
-	function getViewportRect() {
+	function getViewportRect(root) {
+	  var rect = umbrella_min(root).size();
+	  var rootEl = umbrella_min(root).first();
 	  return {
 	    width: window.innerWidth,
 	    height: window.innerHeight,
-	    scrollX: window.pageXOffset,
-	    scrollY: window.pageYOffset,
-	    bodyWidth: document.body.clientWidth,
-	    bodyHeight: document.body.clientHeight
+	    scrollX: rootEl.scrollLeft,
+	    scrollY: rootEl.scrollTop,
+	    rootWidth: rect.width,
+	    rootHeight: rect.height,
+	    rootTop: rect.top,
+	    rootBottom: rect.bottom,
+	    rootLeft: rect.left,
+	    rootRight: rect.right
 	  };
 	}
 
-	// { top, left, right, bottom, width, height }
-	function setPosAndSize(uEl, object) {
-	  if (!Object.prototype.toString.call(object) === "[object Object]") return;
-	  if (Object.entries(object).length === 0) return;
+	// alternative for jQuery .css() get method
+	function getStyle(el, css3Prop) {
+	  var originalEl = umbrella_min(el).first();
 
-	  var originalEl = uEl.first();
-	  var styleStr = Object.entries(object).reduce(function (str, _ref) {
+	  // FF, Chrome etc.
+	  if (window.getComputedStyle) {
+	    try {
+	      return getComputedStyle(originalEl).getPropertyValue(css3Prop);
+	    } catch (e) {
+	      return "";
+	    }
+	  } else {
+	    // IE
+	    if (originalEl.currentStyle) {
+	      try {
+	        return originalEl.currentStyle[css3Prop];
+	      } catch (e) {
+	        return "";
+	      }
+	    }
+	  }
+	  return "";
+	}
+
+	var allowedProperties = ["top", "left", "right", "bottom", "width", "height", "maxWidth", "minWidth", "transform"];
+	function setStyle(element, object) {
+	  if (!Object.prototype.toString.call(object) === "[object Object]") return;
+
+	  var style = umbrella_min(element).first().style;
+
+	  Object.entries(object).filter(function (_ref) {
 	    var _ref2 = slicedToArray(_ref, 2),
 	        key = _ref2[0],
-	        value = _ref2[1];
+	        val = _ref2[1];
 
-	    var s = str;
-	    s += key;
-	    s += ": ";
-	    if (typeof value === "number") s += value + "px";else s += value;
-	    s += ";";
+	    return allowedProperties.includes(key) && (typeof val === "number" || typeof val === "string");
+	  }).forEach(function (_ref3) {
+	    var _ref4 = slicedToArray(_ref3, 2),
+	        key = _ref4[0],
+	        val = _ref4[1];
 
-	    return s;
-	  }, "");
-	  originalEl.setAttribute("style", styleStr);
+	    var value = typeof val === "number" ? val + "px" : val;
+	    switch (key) {
+	      case "top":
+	        style.top = value;
+	        break;
+	      case "left":
+	        style.left = value;
+	        break;
+	      case "right":
+	        style.right = value;
+	        break;
+	      case "bottom":
+	        style.bottom = value;
+	        break;
+	      case "width":
+	        style.width = value;
+	        break;
+	      case "height":
+	        style.height = value;
+	        break;
+	      case "maxWidth":
+	        style.maxWidth = value;
+	        break;
+	      case "minWidth":
+	        style.minWidth = value;
+	        break;
+	      case "transform":
+	        style.transform = value;
+	        break;
+	      default:
+	        break;
+	    }
+	  });
 	}
 
 	var marked = createCommonjsModule(function (module, exports) {
@@ -3290,9 +3351,7 @@ var Tourguide = (function () {
 
 	  createClass(Step, [{
 	    key: "attach",
-	    value: function attach() {
-	      var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "body";
-
+	    value: function attach(root) {
 	      umbrella_min(root).append(this.el);
 	    }
 	  }, {
@@ -3304,8 +3363,7 @@ var Tourguide = (function () {
 	  }, {
 	    key: "position",
 	    value: function position() {
-	      var view = getViewportRect();
-	      // {"left":0,"right":400,"top":0,"height":300,"bottom":300,"width":400}
+	      var view = getViewportRect(this.context._options.root);
 	      if (this.target && this.target.offsetParent !== null) {
 	        var highlight = this.highlight;
 	        var tooltip = this.tooltip;
@@ -3315,33 +3373,38 @@ var Tourguide = (function () {
 	        var tootipPAS = {};
 	        var arrowPAS = {};
 
-	        var rect = getBoundingClientRect(this.target);
+	        var targetRect = getBoundingClientRect(this.target, this.context._options.root);
+	        var tootipRect = getBoundingClientRect(tooltip, this.context._options.root);
 
-	        highlightPAS.top = rect.top - this.context.options.padding;
-	        highlightPAS.left = rect.left - this.context.options.padding;
-	        highlightPAS.width = rect.width + this.context.options.padding * 2;
-	        highlightPAS.height = rect.height + this.context.options.padding * 2;
+	        highlightPAS.top = targetRect.top - this.context.options.padding;
+	        highlightPAS.left = targetRect.left - this.context.options.padding;
+	        highlightPAS.width = targetRect.width + this.context.options.padding * 2;
+	        highlightPAS.height = targetRect.height + this.context.options.padding * 2;
+
+	        var marginVerticalSize = parseFloat(getStyle(tooltip, "margin-top")) + parseFloat(getStyle(tooltip, "margin-bottom"));
+	        var marginHorizontalSize = parseFloat(getStyle(tooltip, "margin-left")) + parseFloat(getStyle(tooltip, "margin-right"));
 
 	        // Compute vertical position
-	        if (view.height / 2 > (rect.viewtop + rect.viewbottom) / 2) {
+	        if (view.height - targetRect.viewBottom > tootipRect.height + marginVerticalSize || targetRect.viewTop < tootipRect.height + marginVerticalSize) {
 	          tooltip.addClass("guided-tour-arrow-top");
-	          tootipPAS.top = rect.top + rect.height;
+	          tootipPAS.top = targetRect.top + targetRect.height;
 	        } else {
 	          tooltip.addClass("guided-tour-arrow-bottom");
-	          tootipPAS.bottom = view.bodyHeight - rect.top;
-	        }
-	        // Compute horizontal position
-	        if (view.width / 2 > (rect.viewleft + rect.viewright) / 2) {
-	          tootipPAS.left = rect.left;
-	          arrowPAS.left = rect.width > 400 ? 18 : clamp(rect.width / 2, 14, 386);
-	        } else {
-	          tootipPAS.right = Math.max(view.width - rect.viewright, 40) + view.scrollX;
-	          arrowPAS.right = view.width - rect.viewright < 40 || rect.width > 400 ? 8 : clamp(rect.width / 2 - 8, 14, 386);
+	          tootipPAS.bottom = view.rootHeight - targetRect.top;
 	        }
 
-	        setPosAndSize(highlight, highlightPAS);
-	        setPosAndSize(tooltip, tootipPAS);
-	        setPosAndSize(arrow, arrowPAS);
+	        // Compute horizontal position
+	        if (view.width - targetRect.left > tootipRect.width + marginHorizontalSize || targetRect.right < tootipRect.width + marginHorizontalSize) {
+	          tootipPAS.left = targetRect.left;
+	          if (targetRect.width / 2 > tootipRect.width) arrowPAS.right = 8;else arrowPAS.left = clamp(targetRect.width / 2, 14, tootipRect.width - 14);
+	        } else {
+	          tootipPAS.right = view.rootWidth - targetRect.right;
+	          if (targetRect.width / 2 > tootipRect.width) arrowPAS.left = 18;else arrowPAS.right = clamp(targetRect.width / 2 - 8, 14, tootipRect.width - 14);
+	        }
+
+	        setStyle(highlight, highlightPAS);
+	        setStyle(tooltip, tootipPAS);
+	        setStyle(arrow, arrowPAS);
 	        tooltip.first().style.opacity = 0.1;
 	      } else {
 	        var _highlight = this.highlight;
@@ -3355,14 +3418,14 @@ var Tourguide = (function () {
 	        _highlightPAS.width = 0;
 	        _highlightPAS.height = 0;
 
-	        _tootipPAS.top = view.height / 2 + view.scrollY;
-	        _tootipPAS.left = view.width / 2 + view.scrollX;
+	        _tootipPAS.top = view.height / 2 + view.scrollY - view.rootTop;
+	        _tootipPAS.left = view.width / 2 + view.scrollX - view.rootLeft;
 
 	        _tooltip.addClass("guided-tour-arrow-none");
 	        _tooltip.addClass("guided-tour-center");
 
-	        setPosAndSize(_highlight, _highlightPAS);
-	        setPosAndSize(_tooltip, _tootipPAS);
+	        setStyle(_highlight, _highlightPAS);
+	        setStyle(_tooltip, _tootipPAS);
 	        _highlight.first().style.boxShadow = "none";
 	        _tooltip.first().style.opacity = 0.1;
 	        this.context._background.show();
@@ -3371,29 +3434,29 @@ var Tourguide = (function () {
 	  }, {
 	    key: "adjust",
 	    value: function adjust() {
-	      var view = getViewportRect();
+	      var view = getViewportRect(this.context._options.root);
 
 	      var tooltip = this.tooltip;
-	      var rect = getBoundingClientRect(tooltip);
+	      var rect = getBoundingClientRect(tooltip, this.context._options.root);
 
 	      var tootipPAS = {};
 
-	      if (rect.viewtop < 0) {
+	      if (rect.viewTop < 0) {
 	        tootipPAS.top = 8 + view.scrollY;
-	        tootipPAS.bottom = "none";
-	      } else if (rect.viewbottom > view.height) {
-	        tootipPAS.top = "none";
-	        tootipPAS.bottom = view.bodyHeight - rect.height - view.scrollY + 8;
+	        tootipPAS.bottom = "unset";
+	      } else if (rect.viewBottom > view.height) {
+	        tootipPAS.top = "unset";
+	        tootipPAS.bottom = view.rootHeight - rect.height - view.scrollY + 8;
 	      }
-	      if (rect.viewleft < 0) {
+	      if (rect.viewLeft < 0) {
 	        tootipPAS.left = 8 + view.scrollX;
-	        tootipPAS.right = "none";
-	      } else if (rect.viewright > view.width) {
-	        tootipPAS.left = "none";
-	        tootipPAS.right = view.bodyWidth - view.width - view.scrollX + 8;
+	        tootipPAS.right = "unset";
+	      } else if (view.width >= 760 && rect.viewRight + 38 > view.width || view.width < 760 && rect.viewRight + 18 > view.width) {
+	        tootipPAS.left = "unset";
+	        tootipPAS.right = view.rootWidth - view.width - view.scrollX + (view.width >= 760 ? 38 : 18);
 	      }
 
-	      setPosAndSize(tooltip, tootipPAS);
+	      setStyle(tooltip, tootipPAS);
 	      tooltip.first().style.opacity = 1;
 	    }
 	  }, {
@@ -3411,8 +3474,8 @@ var Tourguide = (function () {
 	      if (!this.visible) {
 	        var show = function show() {
 	          _this3.context._background.hide();
+	          _this3.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
 	          _this3.position();
-	          _this3.el.addClass("active");
 	          _this3.adjust();
 	          _this3.visible = true;
 	        };
@@ -3473,9 +3536,7 @@ var Tourguide = (function () {
 
 	  createClass(Step, [{
 	    key: "attach",
-	    value: function attach() {
-	      var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "body";
-
+	    value: function attach(root) {
 	      umbrella_min(root).append(this.el);
 	    }
 	  }, {
@@ -3643,6 +3704,7 @@ var Tourguide = (function () {
 	      var _this2 = this;
 
 	      this.reset();
+	      umbrella_min(this._options.root).addClass("guided-tour");
 	      this._background = new Step$1(this);
 	      if (this._stepsSrc === StepsSource.DOM) {
 	        var steps = umbrella_min(this._options.selector).nodes;
@@ -3674,7 +3736,7 @@ var Tourguide = (function () {
 
 	      if (this._ready) {
 	        if (this._options.restoreinitialposition) {
-	          var _getViewportRect = getViewportRect(),
+	          var _getViewportRect = getViewportRect(this._options.root),
 	              scrollX = _getViewportRect.scrollX,
 	              scrollY = _getViewportRect.scrollY;
 
@@ -3714,7 +3776,6 @@ var Tourguide = (function () {
 	            try {
 	              actiontarget.first().click();
 	            } catch (e) {
-	              // eslint-disable-next-line no-console
 	              console.warn("Could not find actiontarget: " + currentstep.actiontarget + " on step #" + currentstep.index);
 	            }
 	          }
