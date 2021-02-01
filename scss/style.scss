@@ -10,7 +10,7 @@ $fontSize: 12pt;
 
 .guided-tour {
     // overflow: hidden;
-    position: relative;
+    position: relative !important;
 }
 
 .guided-tour-background {
@@ -58,6 +58,7 @@ $fontSize: 12pt;
             margin: 16px 0;
             z-index: 2;
             background-color: $background;
+            min-width: 280px;
             max-width: 400px;
             border-radius: 5px;
             box-sizing: border-box;
@@ -66,9 +67,10 @@ $fontSize: 12pt;
 
             @media screen and (max-width: 760px) {
                 max-width: unset;
-                width: calc(100% - 30px);
-                left: 15px !important;
-                right: 15px !important;
+                min-width: unset;
+                width: calc(100% - 36px);
+                left: 18px !important;
+                right: 18px !important;
             }
 
             &.guided-tour-center {
