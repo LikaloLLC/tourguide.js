@@ -1,6 +1,6 @@
 import u from "umbrellajs";
 import scrollIntoView from "scroll-into-view";
-import { clamp, getDataContents, getBoundingClientRect, getViewportRect, setPosAndSize } from "../utils";
+import { clamp, getDataContents, getBoundingClientRect, getViewportRect, setStyle, getStyle } from "../utils";
 import marked from "marked";
 // data-step="title: Step1; content: .../<>"
 export default class Step {
@@ -100,7 +100,7 @@ export default class Step {
       preload.src = this.image;
     }
   }
-  attach(root = "body") {
+  attach(root) {
     u(root).append(this.el);
   }
   remove() {
@@ -108,8 +108,7 @@ export default class Step {
     this.el.remove();
   }
   position() {
-    const view = getViewportRect();
-    // {"left":0,"right":400,"top":0,"height":300,"bottom":300,"width":400}
+    const view = getViewportRect(this.context._options.root);
     if (this.target && this.target.offsetParent !== null) {
       const highlight = this.highlight;
       const tooltip = this.tooltip;
@@ -119,33 +118,46 @@ export default class Step {
       const tootipPAS = {};
       const arrowPAS = {};
 
-      const rect = getBoundingClientRect(this.target);
+      const targetRect = getBoundingClientRect(this.target, this.context._options.root);
+      const tootipRect = getBoundingClientRect(tooltip, this.context._options.root);
 
-      highlightPAS.top = rect.top - this.context.options.padding;
-      highlightPAS.left = rect.left - this.context.options.padding;
-      highlightPAS.width = rect.width + this.context.options.padding * 2;
-      highlightPAS.height = rect.height + this.context.options.padding * 2;
+      highlightPAS.top = targetRect.top - this.context.options.padding;
+      highlightPAS.left = targetRect.left - this.context.options.padding;
+      highlightPAS.width = targetRect.width + this.context.options.padding * 2;
+      highlightPAS.height = targetRect.height + this.context.options.padding * 2;
+
+      const marginVerticalSize = parseFloat(getStyle(tooltip, "margin-top")) + parseFloat(getStyle(tooltip, "margin-bottom"));
+      const marginHorizontalSize = parseFloat(getStyle(tooltip, "margin-left")) + parseFloat(getStyle(tooltip, "margin-right"));
 
       // Compute vertical position
-      if (view.height / 2 > (rect.viewtop + rect.viewbottom) / 2) {
+      if (
+        view.height - targetRect.viewBottom > tootipRect.height + marginVerticalSize ||
+        targetRect.viewTop < tootipRect.height + marginVerticalSize
+      ) {
         tooltip.addClass("guided-tour-arrow-top");
-        tootipPAS.top = rect.top + rect.height;
+        tootipPAS.top = targetRect.top + targetRect.height;
       } else {
         tooltip.addClass("guided-tour-arrow-bottom");
-        tootipPAS.bottom = view.bodyHeight - rect.top;
-      }
-      // Compute horizontal position
-      if (view.width / 2 > (rect.viewleft + rect.viewright) / 2) {
-        tootipPAS.left = rect.left;
-        arrowPAS.left = (rect.width > 400) ? 18 : clamp(rect.width / 2, 14, 386);
-      } else {
-        tootipPAS.right = Math.max(view.width - rect.viewright, 40) + view.scrollX;
-        arrowPAS.right = ((view.width - rect.viewright) < 40 || (rect.width > 400)) ? 8 : clamp(rect.width / 2 - 8, 14, 386);
+        tootipPAS.bottom = view.rootHeight - targetRect.top;
       }
 
-      setPosAndSize(highlight, highlightPAS);
-      setPosAndSize(tooltip, tootipPAS);
-      setPosAndSize(arrow, arrowPAS);
+      // Compute horizontal position
+      if (
+        view.width - targetRect.left > tootipRect.width + marginHorizontalSize ||
+        targetRect.right < tootipRect.width + marginHorizontalSize
+      ) {
+        tootipPAS.left = targetRect.left;
+        if(targetRect.width / 2 > tootipRect.width) arrowPAS.right = 8;
+        else arrowPAS.left = clamp(targetRect.width / 2, 14, tootipRect.width - 14);
+      } else {
+        tootipPAS.right = view.rootWidth - targetRect.right;
+        if(targetRect.width / 2 > tootipRect.width) arrowPAS.left = 18;
+        else arrowPAS.right = clamp(targetRect.width / 2 - 8, 14, tootipRect.width - 14);
+      }
+
+      setStyle(highlight, highlightPAS);
+      setStyle(tooltip, tootipPAS);
+      setStyle(arrow, arrowPAS);
       tooltip.first().style.opacity = 0.1;
     } else {
       const highlight = this.highlight;
@@ -159,43 +171,46 @@ export default class Step {
       highlightPAS.width = 0;
       highlightPAS.height = 0;
 
-      tootipPAS.top = view.height / 2 + view.scrollY;
-      tootipPAS.left = view.width / 2 + view.scrollX;
+      tootipPAS.top = view.height / 2 + view.scrollY - view.rootTop;
+      tootipPAS.left = view.width / 2 + view.scrollX - view.rootLeft;
 
       tooltip.addClass("guided-tour-arrow-none");
       tooltip.addClass("guided-tour-center");
 
-      setPosAndSize(highlight, highlightPAS);
-      setPosAndSize(tooltip, tootipPAS);
+      setStyle(highlight, highlightPAS);
+      setStyle(tooltip, tootipPAS);
       highlight.first().style.boxShadow = "none";
       tooltip.first().style.opacity = 0.1;
       this.context._background.show();
     }
   }
   adjust() {
-    const view = getViewportRect();
+    const view = getViewportRect(this.context._options.root);
 
     const tooltip = this.tooltip;
-    const rect = getBoundingClientRect(tooltip);
+    const rect = getBoundingClientRect(tooltip, this.context._options.root);
 
     const tootipPAS = {};
 
-    if (rect.viewtop < 0) {
+    if (rect.viewTop < 0) {
       tootipPAS.top = 8 + view.scrollY;
-      tootipPAS.bottom = "none";
-    } else if (rect.viewbottom > view.height) {
-      tootipPAS.top = "none";
-      tootipPAS.bottom = view.bodyHeight - rect.height - view.scrollY + 8;
+      tootipPAS.bottom = "unset";
+    } else if (rect.viewBottom > view.height) {
+      tootipPAS.top = "unset";
+      tootipPAS.bottom = view.rootHeight - rect.height - view.scrollY + 8;
     }
-    if (rect.viewleft < 0) {
+    if (rect.viewLeft < 0) {
       tootipPAS.left = 8 + view.scrollX;
-      tootipPAS.right = "none";
-    } else if (rect.viewright > view.width) {
-      tootipPAS.left = "none";
-      tootipPAS.right = view.bodyWidth - view.width - view.scrollX + 8;
+      tootipPAS.right = "unset";
+    } else if (
+      (view.width >= 760 && rect.viewRight + 38 > view.width) ||
+      (view.width < 760 && rect.viewRight + 18 > view.width)
+    ) {
+      tootipPAS.left = "unset";
+      tootipPAS.right = view.rootWidth - view.width - view.scrollX + (view.width >= 760 ? 38 : 18);
     }
 
-    setPosAndSize(tooltip, tootipPAS);
+    setStyle(tooltip, tootipPAS);
     tooltip.first().style.opacity = 1;
   }
   cancel() {
@@ -207,8 +222,8 @@ export default class Step {
     if (!this.visible) {
       const show = () => {
         this.context._background.hide();
+        this.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
         this.position();
-        this.el.addClass("active");
         this.adjust();
         this.visible = true;
       };
