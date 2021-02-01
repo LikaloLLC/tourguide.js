@@ -65,7 +65,7 @@ export default class Step {
     this._timerHandler = null;
     this._scrollCancel = null;
     let data;
-    if (typeof step === "object") {
+    if (!(step instanceof HTMLElement)) {
       if(!(step.hasOwnProperty("title") && step.hasOwnProperty("content") && step.hasOwnProperty("step"))) {
         throw new Error(
           "invalid step parameter:\n" +

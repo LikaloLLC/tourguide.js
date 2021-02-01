@@ -68,7 +68,8 @@
     "node_modules/**"
   ],
   "scripts": {
-    "build": "rollup -c rollup.config.js"
+    "build": "rollup -c rollup.config.js",
+    "test": "npm run test --prefix ./test"
   },
   "standard": {
     "ignore": [
