@@ -4,7 +4,7 @@
     "description": "Start the tutorial [here](http://ccoenraets.github.io/es6-tutorial).",
     "main": "index.js",
     "scripts": {
-        "start": "http-server ../",
+        "start": "http-server ./",
         "test": "mocha -r jsdom-global/register --full-trace"
     },
     "repository": {
