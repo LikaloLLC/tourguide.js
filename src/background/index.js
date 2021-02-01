@@ -12,7 +12,7 @@ export default class Step {
     this.active = false;
     this.context = context;
   }
-  attach(root = "body") {
+  attach(root) {
     u(root).append(this.el);
   }
   remove() {
