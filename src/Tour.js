@@ -105,6 +105,7 @@ export default class Tour {
   }
   init() {
     this.reset();
+    u(this._options.root).addClass("guided-tour");
     this._background = new Background(this);
     if (this._stepsSrc === StepsSource.DOM) {
       const steps = u(this._options.selector).nodes;
@@ -127,7 +128,7 @@ export default class Tour {
   start(step = 0) {
     if (this._ready) {
       if (this._options.restoreinitialposition) {
-        const { scrollX, scrollY } = getViewportRect();
+        const { scrollX, scrollY } = getViewportRect(this._options.root);
         this._initialposition = {
           left: scrollX,
           top: scrollY,
@@ -159,7 +160,6 @@ export default class Tour {
           try {
             actiontarget.first().click();
           } catch (e) {
-            // eslint-disable-next-line no-console
             console.warn(`Could not find actiontarget: ${currentstep.actiontarget} on step #${currentstep.index}`);
           }
         }
