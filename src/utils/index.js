@@ -9,16 +9,17 @@ export function clamp(number, min, max) {
 export function getDataContents(data = "", defaults = {}) {
   const parts = data.split(";");
   let result = { ...defaults };
-  parts.forEach(part => {
+  parts.forEach((part) => {
     const entries = (part || "").split(":");
     result[(entries[0] || "").trim()] = (entries[1] || "").trim();
   });
   return result;
 }
 
-export function getBoundingClientRect(el) {
+export function getBoundingClientRect(el, root) {
   const rect = u(el).size();
-  const view = getViewportRect();
+  const view = getViewportRect(root);
+
   return {
     width: rect.width,
     height: rect.height,
@@ -26,43 +27,95 @@ export function getBoundingClientRect(el) {
     bottom: rect.bottom + view.scrollY,
     left: rect.left + view.scrollX,
     right: rect.right + view.scrollX,
-    viewtop: rect.top,
-    viewbottom: rect.bottom,
-    viewleft: rect.left,
-    viewright: rect.right,
+    viewTop: rect.top,
+    viewBottom: rect.bottom,
+    viewLeft: rect.left,
+    viewRight: rect.right,
   };
 }
 
-export function getViewportRect() {
+export function getViewportRect(root) {
+  const rect = u(root).size();
+  const rootEl = u(root).first();
   return {
     width: window.innerWidth,
     height: window.innerHeight,
-    scrollX: window.pageXOffset,
-    scrollY: window.pageYOffset,
-    bodyWidth: document.body.clientWidth,
-    bodyHeight: document.body.clientHeight
+    scrollX: rootEl.scrollLeft,
+    scrollY: rootEl.scrollTop,
+    rootWidth: rect.width,
+    rootHeight: rect.height,
+    rootTop: rect.top,
+    rootBottom: rect.bottom,
+    rootLeft: rect.left,
+    rootRight: rect.right,
   };
 }
 
-// { top, left, right, bottom, width, height }
-export function setPosAndSize(uEl, object) {
-  if(!Object.prototype.toString.call(object) === "[object Object]") return;
-  if(Object.entries(object).length === 0) return;
+// alternative for jQuery .css() get method
+export function getStyle(el, css3Prop) {
+  const originalEl = u(el).first();
 
-  const originalEl = uEl.first();
-  const styleStr = Object.entries(object).reduce((str, [key, value]) => {
-    let s = str;
-    s += key;
-    s += ": ";
-    if(typeof value === "number")
-      s += `${value}px`;
-    else
-      s += value;
-    s += ";";
-
-    return s;
-  }, "");
-  originalEl.setAttribute("style", styleStr);
+  // FF, Chrome etc.
+  if (window.getComputedStyle) {
+    try {
+      return getComputedStyle(originalEl).getPropertyValue(css3Prop);
+    } catch (e) {
+      return "";
+    }
+  } else {
+    // IE
+    if (originalEl.currentStyle) {
+      try {
+        return originalEl.currentStyle[css3Prop];
+      } catch (e) {
+        return "";
+      }
+    }
+  }
+  return "";
 }
 
-export const isMobile = false;
+
+const allowedProperties = ["top", "left", "right", "bottom", "width", "height", "maxWidth", "minWidth", "transform"];
+export function setStyle(element, object) {
+  if (!Object.prototype.toString.call(object) === "[object Object]") return;
+
+  const style = u(element).first().style;
+
+  Object.entries(object)
+    .filter(([key, val]) => allowedProperties.includes(key) && (typeof val === "number" || typeof val === "string"))
+    .forEach(([key, val]) => {
+      const value = typeof val === "number" ? `${val}px` : val;
+      switch (key) {
+      case "top":
+        style.top = value;
+        break;
+      case "left":
+        style.left = value;
+        break;
+      case "right":
+        style.right = value;
+        break;
+      case "bottom":
+        style.bottom = value;
+        break;
+      case "width":
+        style.width = value;
+        break;
+      case "height":
+        style.height = value;
+        break;
+      case "maxWidth":
+        style.maxWidth = value;
+        break;
+      case "minWidth":
+        style.minWidth = value;
+        break;
+      case "transform":
+        style.transform = value;
+        break;
+      default:
+        break;
+      }
+    });
+}
