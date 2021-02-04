@@ -66,6 +66,21 @@ var tourguide = new Tourguide({options});
 
 * `preloadimages`: if you want to preload images, you may set this attribute to true; default is false
 
+* `colors`: if you want to customize the color schema of this plugin, use this attribute.
+
+  Here is the defult
+  ```js
+  {
+    overlay: "rgba(0, 0, 0, 0.5)",
+    background: "#fff",
+    bullet: "#ff4141",
+    bulletVisited: "#aaa",
+    bulletCurrent: "#b50000",
+    stepButtonNext: "#ff4141",
+    stepButtonComplete: "#b50000",
+  }
+  ```
+
 * `request`: if you want to load the tour from a remote URL you may provide request headers here
 
 * `onStart`: callback function triggered when the tour starts

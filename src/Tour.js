@@ -2,7 +2,7 @@ import u from "umbrellajs";
 import Icons from "./icons";
 import Step from "./step";
 import Background from "./background";
-import { clamp, getViewportRect } from "./utils";
+import { clamp, getViewportRect, colorObjToStyleVarString } from "./utils";
 
 import "../scss/style.scss";
 
@@ -45,6 +45,15 @@ export default class Tour {
         src: null,
         restoreinitialposition: true,
         preloadimages: false,
+        colors: {
+          overlay: "rgba(0, 0, 0, 0.5)",
+          background: "#fff",
+          bullet: "#ff4141",
+          bulletVisited: "#aaa",
+          bulletCurrent: "#b50000",
+          stepButtonNext: "#ff4141",
+          stepButtonComplete: "#b50000",
+        },
         request: {
           "options": {
             "mode": "cors",
@@ -103,6 +112,22 @@ export default class Tour {
       u("body").append(u(Icons));
     }
   }
+  _injectStyles() {
+    // inject colors
+    this._removeStyles();
+    const colors = u(
+      "<style id=\"tourguide-color-schema\">" +
+      colorObjToStyleVarString(this._options.colors, "--tourguide") +
+      "</style>"
+    );
+    u(":root > head").append(colors);
+  }
+  _removeStyles() {
+    const colorStyleTags = u("style#tourguide-color-schema");
+    if (colorStyleTags.length > 0) {
+      colorStyleTags.remove();
+    }
+  }
   init() {
     this.reset();
     u(this._options.root).addClass("guided-tour");
@@ -127,6 +152,7 @@ export default class Tour {
   }
   start(step = 0) {
     if (this._ready) {
+      this._injectStyles();
       if (this._options.restoreinitialposition) {
         const { scrollX, scrollY } = getViewportRect(this._options.root);
         this._initialposition = {
@@ -186,6 +212,7 @@ export default class Tour {
     }
   }
   stop() {
+    this._removeStyles();
     if (this._active) {
       this.currentstep.hide();
       this._active = false;

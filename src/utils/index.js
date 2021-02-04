@@ -119,3 +119,29 @@ export function setStyle(element, object) {
       }
     });
 }
+
+/**
+ * TODO: This func is convert the color object to the sets of css variables
+ * @param {*} obj colorObject 
+ * @param {*} prefix prefix of css variable name
+ * @param {*} selector target css selector
+ * Example:
+ *  input: { overlay: "gray", background: "white", bulletCurrent: "red" }
+ *  output: ":root { --tourguide-overlay: "gray"; --tourguide-background: "white"; --tourguide-bullet-current: "red"; }"
+ */
+export function colorObjToStyleVarString(obj, prefix = "--tourguide", selector = ":root") {
+  const styleArray = [];
+  Object.entries(obj).forEach(([key, value]) => {
+    const splitedNameArray = [prefix];
+    let prevIndex = 0;
+    for (let i = 0; i < key.length; i += 1) {
+      if("A" <= key[i] && key[i] <= "Z") {
+        splitedNameArray.push(key.substring(prevIndex, i).toLowerCase());
+        prevIndex = i;
+      }
+    }
+    splitedNameArray.push(key.substring(prevIndex, key.length).toLowerCase());
+    styleArray.push(`${splitedNameArray.join("-")}: ${value}`);
+  });
+  return `${selector} {\n${styleArray.join(";\n")};\n}`;
+}

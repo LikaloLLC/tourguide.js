@@ -1,10 +1,11 @@
-$overlay: rgba(0, 0, 0, 0.5);
-$background: #fff;
+$overlay: var(--tourguide-overlay);
+$background: var(--tourguide-background);
+$bullet: var(--tourguide-bullet);
+$bullet-visited: var(--tourguide-bullet-visited);
+$bullet-current: var(--tourguide-bullet-current);
+$button-next: var(--tourguide-step-button-next);
+$button-complete: var(--tourguide-step-button-complete);
 $font: #333;
-$visited: #aaa;
-$current: #b50000;
-$next: #ff4141;
-$complete: #b50000;
 $fontFamily: "Open Sans", Arimo, "Droid Sans", Helvetica, Arial, sans-serif;
 $fontSize: 12pt;
 
@@ -14,17 +15,17 @@ $fontSize: 12pt;
 }
 
 .guided-tour-background {
-    display: block;
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: 1024;
-    background-color: transparent;
+    background-color: $overlay;
 
     &.active {
-        background-color: $overlay;
+        display: block;
     }
 }
 
@@ -153,11 +154,11 @@ $fontSize: 12pt;
                 }
 
                 .guided-tour-step-button-next {
-                    color: $next;
+                    color: $button-next;
                 }
 
                 .guided-tour-step-button-complete {
-                    color: $complete;
+                    color: $button-complete;
                 }
 
                 .guided-tour-step-button-close {
@@ -183,17 +184,17 @@ $fontSize: 12pt;
                             border-radius: 50%;
                             padding: 0;
                             display: inline-block;
-                            background-color: $next;
+                            background-color: $bullet;
                             border: 8px solid $background;
                             box-sizing: content-box;
                             cursor: pointer;
 
                             &.complete {
-                                background-color: $visited;
+                                background-color: $bullet-visited;
                             }
 
                             &.current {
-                                background-color: $current;
+                                background-color: $bullet-current;
                             }
 
                             &:last-of-type {
