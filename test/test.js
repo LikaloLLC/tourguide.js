@@ -1,7 +1,8 @@
 const assert = require('assert');
 // Load the full build.
 const _ = require('lodash');
-const fetch = require("node-fetch")
+// const fetch = require("node-fetch")
+const markdownSteps = require("./markdown/steps.json");
 
 debugger;
 let Tourguide = require("../tourguide.umd.js");
@@ -339,4 +340,46 @@ describe('Tourguide', function () {
       })
     })
   })
+
+  describe("Markdown", function () {
+    const tourguide_md = new Tourguide({
+      steps: markdownSteps,
+    });
+
+    describe("tourGuide.start()", function () {
+      describe("should verify changes after running tourGuide.start()", function () {
+        tourguide_md.start();
+        tourguide_md._steps.forEach((step) => {
+          it("tourGuide step " + step.index + "'s certain fields should be of type object",
+            () => {
+              // step.index and steps[i].step to verify steps order
+              assert.strictEqual(typeof step.container, "object");
+              // console.log("typeof step.container", typeof step.container, JSON.stringify(step.container))
+              assert.strictEqual(typeof step.highlight, "object");
+              // console.log("typeof step.highlight", typeof step.highlight, JSON.stringify(step.highlight))
+              assert.strictEqual(typeof step.tooltip, "object");
+              // console.log("typeof step.tooltip", typeof step.tooltip, JSON.stringify(step.tooltip))
+              assert.strictEqual(typeof step.arrow, "object");
+              // console.log("typeof step.arrow", typeof step.arrow, JSON.stringify(step.arrow))
+            }
+          );
+        });
+      });
+    });
+
+    describe("Check contents are correct", function () {
+      it("Heading level 1 should be 'h1' tag", function () {
+        const head = document.querySelector(".guided-tour-step .guided-tour-step-content #heading-level-1");
+        assert.strictEqual(!!head, true);
+        assert.strictEqual(head.nodeName, "H1");
+      });
+
+      it("Heading level 2 should be 'h2' tag", function () {
+        const head = document.querySelector(".guided-tour-step .guided-tour-step-content #heading-level-2");
+        assert.strictEqual(!!head, true);
+        assert.strictEqual(head.nodeName, "H2");
+      });
+    });
+  });
+
 });
