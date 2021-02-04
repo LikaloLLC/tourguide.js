@@ -23,11 +23,9 @@
     },
     "dependencies": {
         "chai": "^4.2.0",
-        "isomorphic-fetch": "^2.2.1",
         "jsdom": "^15.1.1",
         "jsdom-global": "^3.0.2",
         "lodash": "^4.17.11",
-        "mocha-jsdom": "^2.0.0",
-        "node-fetch": "^2.6.0"
+        "mocha-jsdom": "^2.0.0"
     }
 }

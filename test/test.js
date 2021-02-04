@@ -1,7 +1,6 @@
 const assert = require('assert');
 // Load the full build.
 const _ = require('lodash');
-// const fetch = require("node-fetch")
 const markdownSteps = require("./markdown/steps.json");
 
 debugger;
