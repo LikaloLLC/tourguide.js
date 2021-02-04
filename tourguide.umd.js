@@ -496,6 +496,39 @@
 	  });
 	}
 
+	/**
+	 * TODO: This func is convert the color object to the sets of css variables
+	 * @param {*} obj colorObject 
+	 * @param {*} prefix prefix of css variable name
+	 * @param {*} selector target css selector
+	 * Example:
+	 *  input: { overlay: "gray", background: "white", bulletCurrent: "red" }
+	 *  output: ":root { --tourguide-overlay: "gray"; --tourguide-background: "white"; --tourguide-bullet-current: "red"; }"
+	 */
+	function colorObjToStyleVarString(obj) {
+	  var prefix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "--tourguide";
+	  var selector = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ":root";
+
+	  var styleArray = [];
+	  Object.entries(obj).forEach(function (_ref5) {
+	    var _ref6 = slicedToArray(_ref5, 2),
+	        key = _ref6[0],
+	        value = _ref6[1];
+
+	    var splitedNameArray = [prefix];
+	    var prevIndex = 0;
+	    for (var i = 0; i < key.length; i += 1) {
+	      if ("A" <= key[i] && key[i] <= "Z") {
+	        splitedNameArray.push(key.substring(prevIndex, i).toLowerCase());
+	        prevIndex = i;
+	      }
+	    }
+	    splitedNameArray.push(key.substring(prevIndex, key.length).toLowerCase());
+	    styleArray.push(splitedNameArray.join("-") + ": " + value);
+	  });
+	  return selector + " {\n" + styleArray.join(";\n") + ";\n}";
+	}
+
 	var marked = createCommonjsModule(function (module, exports) {
 	/**
 	 * marked - a markdown parser
@@ -3641,6 +3674,15 @@
 	      src: null,
 	      restoreinitialposition: true,
 	      preloadimages: false,
+	      colors: {
+	        overlay: "rgba(0, 0, 0, 0.5)",
+	        background: "#fff",
+	        bullet: "#ff4141",
+	        bulletVisited: "#aaa",
+	        bulletCurrent: "#b50000",
+	        stepButtonNext: "#ff4141",
+	        stepButtonComplete: "#b50000"
+	      },
 	      request: {
 	        "options": {
 	          "mode": "cors",
@@ -3702,6 +3744,22 @@
 	      }
 	    }
 	  }, {
+	    key: "_injectStyles",
+	    value: function _injectStyles() {
+	      // inject colors
+	      this._removeStyles();
+	      var colors = umbrella_min("<style id=\"tourguide-color-schema\">" + colorObjToStyleVarString(this._options.colors, "--tourguide") + "</style>");
+	      umbrella_min(":root > head").append(colors);
+	    }
+	  }, {
+	    key: "_removeStyles",
+	    value: function _removeStyles() {
+	      var colorStyleTags = umbrella_min("style#tourguide-color-schema");
+	      if (colorStyleTags.length > 0) {
+	        colorStyleTags.remove();
+	      }
+	    }
+	  }, {
 	    key: "init",
 	    value: function init() {
 	      var _this2 = this;
@@ -3738,6 +3796,7 @@
 	      var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
 	      if (this._ready) {
+	        this._injectStyles();
 	        if (this._options.restoreinitialposition) {
 	          var _getViewportRect = getViewportRect(this._options.root),
 	              scrollX = _getViewportRect.scrollX,
@@ -3813,6 +3872,7 @@
 	  }, {
 	    key: "stop",
 	    value: function stop() {
+	      this._removeStyles();
 	      if (this._active) {
 	        this.currentstep.hide();
 	        this._active = false;
