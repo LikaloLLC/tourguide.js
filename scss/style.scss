@@ -47,7 +47,6 @@ $fontSize: 12pt;
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 1024;
         pointer-events: all;
 
         .guided-tour-step-highlight {
@@ -55,7 +54,7 @@ $fontSize: 12pt;
             box-sizing: border-box;
             border-radius: 4px;
             box-shadow: 0 0 0 999em $overlay;
-            z-index: 1;
+            z-index: 1024;
         }
 
         .guided-tour-step-tooltip {
@@ -92,12 +91,7 @@ $fontSize: 12pt;
 
                 .guided-tour-arrow {
                     position: absolute;
-                    border-top: 8px solid transparent;
-                    border-left: 8px solid transparent;
-                    border-right: 8px solid transparent;
-                    border-bottom: 8px solid transparent;
-                    margin-left: -8px;
-                    margin-top: -8px;
+                    background: transparent;
                 }
 
                 .guided-tour-step-image {
@@ -220,9 +214,28 @@ $fontSize: 12pt;
             &.guided-tour-arrow-top {
                 .guided-tour-step-tooltip-inner {
                     .guided-tour-arrow {
-                        border-bottom-color: $background;
-                        margin-top: -16px;
                         top: 0;
+                        margin-top: -18px;
+
+                        .guided-tour-arrow-inner {
+                            width: 18px;
+                            height: 18px;
+                            position: relative;
+                            overflow: hidden;
+                            background: transparent;
+    
+                            &::after {
+                                content: "";
+                                position: absolute;
+                                width: 12px;
+                                height: 12px;
+                                background: $background;
+                                transform: rotate(225deg);
+                                top: 12px;
+                                left: 4px;
+                                box-shadow: 1px 1px 6px -3px #000;
+                            }
+                        }
                     }
                 }
             }
@@ -230,9 +243,28 @@ $fontSize: 12pt;
             &.guided-tour-arrow-bottom {
                 .guided-tour-step-tooltip-inner {
                     .guided-tour-arrow {
-                        border-top-color: $background;
-                        margin-bottom: -16px;
+                        margin-bottom: -18px;
                         bottom: 0;
+
+                        .guided-tour-arrow-inner {
+                            width: 18px;
+                            height: 18px;
+                            position: relative;
+                            overflow: hidden;
+                            background: transparent;
+    
+                            &::after {
+                                content: "";
+                                position: absolute;
+                                width: 12px;
+                                height: 12px;
+                                background: $background;
+                                transform: rotate(45deg);
+                                top: -6px;
+                                left: 4px;
+                                box-shadow: 1px 1px 6px -3px #000;
+                            }
+                        }
                     }
                 }
             }

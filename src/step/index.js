@@ -30,7 +30,7 @@ export default class Step {
       highlight.on("click", this.context.action);
       const tooltip = this.tooltip = u("<div role=\"tooltip\" class=\"guided-tour-step-tooltip\"></div>");
       const tooltipinner = u("<div class=\"guided-tour-step-tooltip-inner\"></div>");
-      const arrow = this.arrow = u("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"></div>");
+      const arrow = this.arrow = u("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"><div aria-hidden=\"true\" class=\"guided-tour-arrow-inner\"></div></div>");
       tooltipinner.append(arrow).append(image).append(title).append(content).append(footer);
       tooltip.append(tooltipinner);
       this.container = u(`<div role="dialog" class="guided-tour-step${this.first ? " guided-tour-step-first" : ""}${this.last ? " guided-tour-step-last" : ""}"></div>`);
@@ -120,6 +120,7 @@ export default class Step {
 
       const targetRect = getBoundingClientRect(this.target, this.context._options.root);
       const tootipRect = getBoundingClientRect(tooltip, this.context._options.root);
+      const arrowRect = getBoundingClientRect(arrow, this.context._options.root);
 
       highlightStyle.top = targetRect.top - this.context.options.padding;
       highlightStyle.left = targetRect.left - this.context.options.padding;
@@ -148,11 +149,11 @@ export default class Step {
       ) {
         tootipStyle.left = targetRect.left;
         if(targetRect.width / 2 > tootipRect.width) arrowStyle.right = 8;
-        else arrowStyle.left = clamp(targetRect.width / 2, 14, tootipRect.width - 14);
+        else arrowStyle.left = clamp(targetRect.width / 2, 0, tootipRect.width - arrowRect.width);
       } else {
         tootipStyle.right = view.rootWidth - targetRect.right;
         if(targetRect.width / 2 > tootipRect.width) arrowStyle.left = 18;
-        else arrowStyle.right = clamp(targetRect.width / 2 - 8, 14, tootipRect.width - 14);
+        else arrowStyle.right = clamp(targetRect.width / 2, 0, tootipRect.width - arrowRect.width);
       }
 
       setStyle(highlight, highlightStyle);
