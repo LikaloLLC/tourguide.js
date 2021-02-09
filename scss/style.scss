@@ -29,6 +29,10 @@ $fontSize: 12pt;
     }
 }
 
+.guided-tour-target {
+    z-index: 1025;
+}
+
 .guided-tour-step {
     display: none;
     text-rendering: optimizespeed;
@@ -57,7 +61,7 @@ $fontSize: 12pt;
         .guided-tour-step-tooltip {
             position: absolute;
             margin: 16px 0;
-            z-index: 2;
+            z-index: 1025;
             background-color: $background;
             min-width: 280px;
             max-width: 400px;

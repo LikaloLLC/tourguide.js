@@ -225,6 +225,10 @@ export default class Step {
         this.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
         this.position();
         this.adjust();
+        if(getStyle(this.target, "position") === "static") {
+          this.target.style.position = "relative";
+        }
+        u(this.target).addClass("guided-tour-target");
         this.visible = true;
       };
       if (this.target) {
@@ -240,6 +244,7 @@ export default class Step {
   hide() {
     this.cancel();
     if (this.visible) {
+      u(this.target).removeClass("guided-tour-target");
       this.el.removeClass("active");
       this.tooltip.removeClass("guided-tour-arrow-top");
       this.tooltip.removeClass("guided-tour-arrow-bottom");
