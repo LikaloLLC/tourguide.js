@@ -114,17 +114,17 @@ export default class Step {
       const tooltip = this.tooltip;
       const arrow = this.arrow;
 
-      const highlightPAS = {};
-      const tootipPAS = {};
-      const arrowPAS = {};
+      const highlightStyle = {};
+      const tootipStyle = {};
+      const arrowStyle = {};
 
       const targetRect = getBoundingClientRect(this.target, this.context._options.root);
       const tootipRect = getBoundingClientRect(tooltip, this.context._options.root);
 
-      highlightPAS.top = targetRect.top - this.context.options.padding;
-      highlightPAS.left = targetRect.left - this.context.options.padding;
-      highlightPAS.width = targetRect.width + this.context.options.padding * 2;
-      highlightPAS.height = targetRect.height + this.context.options.padding * 2;
+      highlightStyle.top = targetRect.top - this.context.options.padding;
+      highlightStyle.left = targetRect.left - this.context.options.padding;
+      highlightStyle.width = targetRect.width + this.context.options.padding * 2;
+      highlightStyle.height = targetRect.height + this.context.options.padding * 2;
 
       const marginVerticalSize = parseFloat(getStyle(tooltip, "margin-top")) + parseFloat(getStyle(tooltip, "margin-bottom"));
       const marginHorizontalSize = parseFloat(getStyle(tooltip, "margin-left")) + parseFloat(getStyle(tooltip, "margin-right"));
@@ -135,10 +135,10 @@ export default class Step {
         targetRect.viewTop < tootipRect.height + marginVerticalSize
       ) {
         tooltip.addClass("guided-tour-arrow-top");
-        tootipPAS.top = targetRect.top + targetRect.height;
+        tootipStyle.top = targetRect.top + targetRect.height;
       } else {
         tooltip.addClass("guided-tour-arrow-bottom");
-        tootipPAS.bottom = view.rootHeight - targetRect.top;
+        tootipStyle.bottom = view.rootHeight - targetRect.top;
       }
 
       // Compute horizontal position
@@ -146,41 +146,41 @@ export default class Step {
         view.width - targetRect.left > tootipRect.width + marginHorizontalSize ||
         targetRect.right < tootipRect.width + marginHorizontalSize
       ) {
-        tootipPAS.left = targetRect.left;
-        if(targetRect.width / 2 > tootipRect.width) arrowPAS.right = 8;
-        else arrowPAS.left = clamp(targetRect.width / 2, 14, tootipRect.width - 14);
+        tootipStyle.left = targetRect.left;
+        if(targetRect.width / 2 > tootipRect.width) arrowStyle.right = 8;
+        else arrowStyle.left = clamp(targetRect.width / 2, 14, tootipRect.width - 14);
       } else {
-        tootipPAS.right = view.rootWidth - targetRect.right;
-        if(targetRect.width / 2 > tootipRect.width) arrowPAS.left = 18;
-        else arrowPAS.right = clamp(targetRect.width / 2 - 8, 14, tootipRect.width - 14);
+        tootipStyle.right = view.rootWidth - targetRect.right;
+        if(targetRect.width / 2 > tootipRect.width) arrowStyle.left = 18;
+        else arrowStyle.right = clamp(targetRect.width / 2 - 8, 14, tootipRect.width - 14);
       }
 
-      setStyle(highlight, highlightPAS);
-      setStyle(tooltip, tootipPAS);
-      setStyle(arrow, arrowPAS);
+      setStyle(highlight, highlightStyle);
+      setStyle(tooltip, tootipStyle);
+      setStyle(arrow, arrowStyle);
       tooltip.first().style.opacity = 0.1;
     } else {
       const highlight = this.highlight;
       const tooltip = this.tooltip;
 
-      const highlightPAS = {};
-      const tootipPAS = {};
+      const highlightStyle = {};
+      const tootipStyle = {};
 
-      highlightPAS.top = 0;
-      highlightPAS.left = 0;
-      highlightPAS.width = 0;
-      highlightPAS.height = 0;
+      highlightStyle.top = 0;
+      highlightStyle.left = 0;
+      highlightStyle.width = 0;
+      highlightStyle.height = 0;
 
-      tootipPAS.top = view.height / 2 + view.scrollY - view.rootTop;
-      tootipPAS.left = view.width / 2 + view.scrollX - view.rootLeft;
+      tootipStyle.top = view.height / 2 + view.scrollY - view.rootTop;
+      tootipStyle.left = view.width / 2 + view.scrollX - view.rootLeft;
 
       tooltip.addClass("guided-tour-arrow-none");
       tooltip.addClass("guided-tour-center");
 
-      setStyle(highlight, highlightPAS);
-      setStyle(tooltip, tootipPAS);
+      setStyle(highlight, highlightStyle);
+      setStyle(tooltip, tootipStyle);
       highlight.first().style.boxShadow = "none";
-      tooltip.first().style.opacity = 0.1;
+      tooltip.first().style.opacity = 1;
       this.context._overlay.show();
     }
   }
@@ -188,29 +188,30 @@ export default class Step {
     const view = getViewportRect(this.context._options.root);
 
     const tooltip = this.tooltip;
-    const rect = getBoundingClientRect(tooltip, this.context._options.root);
 
-    const tootipPAS = {};
+    const tooltipRect = getBoundingClientRect(tooltip, this.context._options.root);
 
-    if (rect.viewTop < 0) {
-      tootipPAS.top = 8 + view.scrollY;
-      tootipPAS.bottom = "unset";
-    } else if (rect.viewBottom > view.height) {
-      tootipPAS.top = "unset";
-      tootipPAS.bottom = view.rootHeight - rect.height - view.scrollY + 8;
+    const tootipStyle = {};
+
+    if (tooltipRect.viewTop < 8) {
+      tootipStyle.top = (8 - tooltipRect.viewTop) + tooltipRect.top;
+      tootipStyle.bottom = "unset";
+    } else if (tooltipRect.viewBottom + 8 > view.height) {
+      tootipStyle.top = "unset";
+      tootipStyle.bottom = view.rootHeight - (tooltipRect.bottom - (tooltipRect.viewBottom + 8 - view.height));
     }
-    if (rect.viewLeft < 0) {
-      tootipPAS.left = 8 + view.scrollX;
-      tootipPAS.right = "unset";
+    if (tooltipRect.viewLeft < 8) {
+      tootipStyle.left = (8 - tooltipRect.viewLeft) + tooltipRect.left;
+      tootipStyle.right = "unset";
     } else if (
-      (view.width >= 760 && rect.viewRight + 38 > view.width) ||
-      (view.width < 760 && rect.viewRight + 18 > view.width)
+      (view.width >= 760 && tooltipRect.viewRight + 38 > view.width) ||
+      (view.width < 760 && tooltipRect.viewRight + 18 > view.width)
     ) {
-      tootipPAS.left = "unset";
-      tootipPAS.right = view.rootWidth - view.width - view.scrollX + (view.width >= 760 ? 38 : 18);
+      tootipStyle.left = "unset";
+      tootipStyle.right = view.rootWidth - (tooltipRect.right - (tooltipRect.viewRight + (view.width >= 760 ? 38 : 18) - view.width));
     }
 
-    setStyle(tooltip, tootipPAS);
+    setStyle(tooltip, tootipStyle);
     tooltip.first().style.opacity = 1;
   }
   cancel() {

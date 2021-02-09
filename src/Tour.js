@@ -220,7 +220,7 @@ export default class Tour {
       this._steps.forEach(step => step.remove());
       u(this._options.root).removeClass("guided-tour");
       if (this._options.restoreinitialposition) {
-        window.scrollTo(this._initialposition);
+        u(this._options.root).first().scrollTo(this._initialposition);
       }
       this._options.onStop(this._options);
     }
