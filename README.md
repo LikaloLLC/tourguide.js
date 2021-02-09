@@ -66,6 +66,8 @@ var tourguide = new Tourguide({options});
 
 * `preloadimages`: if you want to preload images, you may set this attribute to true; default is false
 
+* `restoreinitialposition`: if you want to restore the scroll position after the tour ended, you may set this attribute to true; default is true
+
 * `colors`: if you want to customize the color schema of this plugin, use this attribute.
 
   Here is the defult
@@ -91,7 +93,7 @@ var tourguide = new Tourguide({options});
 
 * `onStep`: callback triggered when a tour step is shown
 
-* `onAction`: callback triggered when user clicks on the highlighted element
+* `onAction`: callback triggered when the user-defined action processed. see [onAction](#onAction) for more detail.
 
 Once instantiated you can use tourguide instance a several different ways:
 
@@ -104,17 +106,6 @@ Simplest approach is to read the descriptions right off the elements on page. Th
   Collaborate
 </button>
 ```
-* `step<number>`: tour step sequence number
-
-* `title<string>`: tour step title
-
-* `marked<boolean>`: if content is markdown, you may set this attr to true; default false.
-
-* `content<string>`: tour step description
-
-* `image?<url>`: tour step illustration
-
-> **?*** indicates the property is optional*
 
 In this mode you can simply use **Tourguide.js** as-is:
 
@@ -122,6 +113,9 @@ In this mode you can simply use **Tourguide.js** as-is:
 var tourguide = new Tourguide();
 tourguide.start();
 ```
+
+About step details, See [Step](#Step) section.
+
 ### JSON based approach
 
 You may also write your own steps definition using [JSON](https://www.json.org/) notation:
@@ -143,17 +137,6 @@ You may also write your own steps definition using [JSON](https://www.json.org/)
 `  }`
 `]`
 ```
-* `selector?<string>`: [CSS selector](https://www.w3schools.com/cssref/css_selectors.asp) used to find the target element *(optional)*
-
-* `step<number>`: tour step sequence number
-
-* `title<string>`: tour step title
-
-* `content<string>`: tour step description
-
-* `image?<url>`: tour step illustration *(optional)*
-
-> **?*** indicates the property is optional*
 
 Once you have the complete JSON description for each of your tour steps you will have to initialize **Tourguide.js** passing your JSON as `steps:` property:
 
@@ -162,6 +145,9 @@ var steps = [...];
 var tourguide = new Tourguide({steps: steps});
 tourguide.start();
 ```
+
+About step details, See [Step](#Step) section.
+
 ### Remote URL approach
 
 You may also want to load the steps remotely. To do so simply provide the target `src` as one of the **Tourguide.js** init params:
@@ -170,6 +156,61 @@ You may also want to load the steps remotely. To do so simply provide the target
 var tourguide = new Tourguide({src: "https://somedomain.com/tours/guide.json"});
 tourguide.start();
 ```
+
+About step details, See [Step](#Step) section.
+
+### Step
+
+* `selector?<string>`: [CSS selector](https://www.w3schools.com/cssref/css_selectors.asp) used to find the target element *(used on JSON based approach and Remote URL approach)*
+
+* `step<number>`: tour step sequence number
+
+* `title<string>`: tour step title
+
+* `marked?<boolean>`: if content is markdown, you may set this attr to true; default false.
+
+* `content<string>`: tour step description. if `marked` is `true`, you can write the content with [markdown](https://en.wikipedia.org/wiki/Markdown) language.
+
+* `image?<url>`: tour step illustration
+
+* `actions?<array>`: tour actions array.
+
+  * `target?<string>`: [CSS selector](https://www.w3schools.com/cssref/css_selectors.asp) used to find the target element. default is current step's target.
+
+  * `act?<string | number | function>`: action after event triggered.
+    * string: "next" | "previous" | "stop" | "complete"
+    * number: same as `step.go(number)`.
+    * function: callback function. `function (event, currentstep, curaction)`
+
+  * `event<object | string>`: event details. if you want just use only the event type, set it as a string value, otherwise set it as an object.
+  
+    All event attribute is accepted including `keyCode`, `altKey`, `metaKey`, `ctrlKey` and etc.
+    
+  Example:
+  ```js
+  {
+    ...
+    "actions": [
+      {
+        "target": "body",
+        "act": (event, currentstep, curaction) => { /* your logic here */ }
+        "event": {
+          "type": "keyup"
+          "keyCode": 39, // arrow right
+          "ctrlKey": true // with ctrl key
+        }
+      },
+      {
+        "act": "next",
+        "event": "click"
+      }
+    ]
+    ...
+  }
+  ```
+
+> **?*** indicates the property is optional*
+
 ## Controlling the tour
 
 Once your tour has started you have several ways to manually control the tour flow:
