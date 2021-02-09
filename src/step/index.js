@@ -8,6 +8,7 @@ import {
   getViewportRect,
   setStyle,
   getStyle,
+  parseNumber,
 } from "../utils";
 import marked from "marked";
 // data-step="title: Step1; content: .../<>"
@@ -137,27 +138,35 @@ export default class Step {
 
       const targetRect = getBoundingClientRect(this.target, this.context._options.root);
       const tootipRect = getBoundingClientRect(tooltip, this.context._options.root);
-      const arrowRect = getBoundingClientRect(arrow, this.context._options.root);
 
       highlightStyle.top = targetRect.top - this.context.options.padding;
       highlightStyle.left = targetRect.left - this.context.options.padding;
       highlightStyle.width = targetRect.width + this.context.options.padding * 2;
       highlightStyle.height = targetRect.height + this.context.options.padding * 2;
 
-      const marginVerticalSize = parseFloat(getStyle(tooltip, "margin-top")) + parseFloat(getStyle(tooltip, "margin-bottom"));
-      const marginHorizontalSize = parseFloat(getStyle(tooltip, "margin-left")) + parseFloat(getStyle(tooltip, "margin-right"));
+      const marginVerticalSize = parseNumber(getStyle(tooltip, "margin-top")) + parseNumber(getStyle(tooltip, "margin-bottom"));
+      const marginHorizontalSize = parseNumber(getStyle(tooltip, "margin-left")) + parseNumber(getStyle(tooltip, "margin-right"));
+
+      let tooltipBRL = 0;
+      let tooltipBRR = 0;
 
       // Compute vertical position
       if (
         view.height - targetRect.viewBottom > tootipRect.height + marginVerticalSize ||
         targetRect.viewTop < tootipRect.height + marginVerticalSize
       ) {
-        tooltip.addClass("guided-tour-arrow-top");
         tootipStyle.top = targetRect.top + targetRect.height;
+        tooltip.addClass("guided-tour-arrow-top");
+        tooltipBRL = parseNumber(getStyle(tooltip, "border-top-left-radius"));
+        tooltipBRR = parseNumber(getStyle(tooltip, "border-top-right-radius"));
       } else {
-        tooltip.addClass("guided-tour-arrow-bottom");
         tootipStyle.bottom = view.rootHeight - targetRect.top;
+        tooltip.addClass("guided-tour-arrow-bottom");
+        tooltipBRL = parseNumber(getStyle(tooltip, "border-bottom-left-radius"));
+        tooltipBRR = parseNumber(getStyle(tooltip, "border-bottom-right-radius"));
       }
+
+      const arrowRect = getBoundingClientRect(arrow, this.context._options.root);
 
       // Compute horizontal position
       if (
@@ -166,11 +175,11 @@ export default class Step {
       ) {
         tootipStyle.left = targetRect.left;
         if(targetRect.width / 2 > tootipRect.width) arrowStyle.right = 8;
-        else arrowStyle.left = clamp(targetRect.width / 2, 0, tootipRect.width - arrowRect.width);
+        else arrowStyle.left = clamp(targetRect.width / 2, tooltipBRL + 2, tootipRect.width - arrowRect.width - tooltipBRR - 2);
       } else {
         tootipStyle.right = view.rootWidth - targetRect.right;
         if(targetRect.width / 2 > tootipRect.width) arrowStyle.left = 18;
-        else arrowStyle.right = clamp(targetRect.width / 2, 0, tootipRect.width - arrowRect.width);
+        else arrowStyle.right = clamp(targetRect.width / 2, tooltipBRR + 2, tootipRect.width - arrowRect.width - tooltipBRL - 2);
       }
 
       setStyle(highlight, highlightStyle);

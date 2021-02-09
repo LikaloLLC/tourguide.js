@@ -6,6 +6,24 @@ export function clamp(number, min, max) {
   return Math.max(min, Math.min(number, max));
 }
 
+export function parseNumber(number, parseTo = "float") {
+  if (typeof number === "number") return number;
+  let ret = 0;
+  try {
+    if (parseTo === "int") {
+      ret = Number.parseInt(number);
+    } else {
+      ret = Number.parseFloat(number);
+    }
+  } catch (error) {
+    ret = 0;
+  }
+  if (Number.isNaN(ret)) {
+    return 0;
+  }
+  return ret;
+}
+
 export function getDataContents(data = "", defaults = {}) {
   const parts = data.split(";");
   let result = { ...defaults };
