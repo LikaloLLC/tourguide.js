@@ -107,7 +107,7 @@ export default class Tour {
     this.go = this.go.bind(this);
     this.stop = this.stop.bind(this);
     this.complete = this.complete.bind(this);
-    this.onAction = this.onAction.bind(this);
+    this.action = this.action.bind(this);
   }
   _injectIcons() {
     if (u("#GuidedTourIconSet").length === 0) {
@@ -179,21 +179,21 @@ export default class Tour {
       throw new Error("Tour is not configured properly. Check documentation.");
     }
   }
-  onAction(event, action) {
+  action(event, action) {
     if (this._active) {
       const { currentstep } = this;
-      if (action) {
-        if(typeof action.act === "number") {
-          this.context.go(action.act, "action");
-        } else if(action.act === "next") {
-          this.context.next();
-        } else if(action.act === "previous") {
-          this.context.previous();
-        } else if(action.act === "stop") {
-          this.context.stop();
-        } else if(action.act === "complete") {
-          this.context.complete();
-        }
+      if(typeof action.act === "function") {
+        action.act(event, currentstep.toJSON(), action);
+      } else if(typeof action.act === "number") {
+        this.go(action.act, "action");
+      } else if(action.act === "next") {
+        this.next();
+      } else if(action.act === "previous") {
+        this.previous();
+      } else if(action.act === "stop") {
+        this.stop();
+      } else if(action.act === "complete") {
+        this.complete();
       }
 
       if(this._options.onAction && typeof this._options.onAction === "function") {

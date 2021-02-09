@@ -13,6 +13,26 @@ import {
 import marked from "marked";
 // data-step="title: Step1; content: .../<>"
 
+function getEventType(event) {
+  let eventType = "";
+  if (typeof event === "string") {
+    eventType = event;
+  } else if (typeof event === "object") {
+    eventType = event.type;
+  }
+
+  return eventType;
+}
+
+function getEventAttrs(event) {
+  if (typeof event === "object") {
+    return Object.entries(event)
+      .map(([key, value]) => ({ key, value }));
+  }
+
+  return [];
+}
+
 export default class Step {
   get el() {
     if (!this.container) {
@@ -115,8 +135,6 @@ export default class Step {
         this.actions = data.actions;
       }
     }
-
-    this.onAction = this.onAction.bind(this);
   }
   attach(root) {
     u(root).append(this.el);
@@ -262,7 +280,22 @@ export default class Step {
 
         this.actions.forEach((a) => {
           try {
-            u(a.target).on(a.event, this.onAction);
+            const eventType = getEventType(a.event);
+            if(eventType) {
+              const eventHandler = (e) => {
+                if(a) {
+                  const eventAttrs = getEventAttrs(a.event);
+                  const isMatched = !(eventAttrs.filter((attr) => e[attr.key] !== attr.value).length);
+
+                  if(isMatched) this.context.action(e, a);
+                }
+              };
+              a.handler = eventHandler;
+              a.target = a.target || this.target;
+              u(a.target).on(eventType, a.handler);
+            } else {
+              console.warn(`Wrong event on action.event: ${a.event} on step #${this.index}`);
+            }
           } catch (error) {
             console.warn(`Could not find action.target: ${a.target} on step #${this.index}`);
             console.warn(error);
@@ -294,7 +327,10 @@ export default class Step {
 
       this.actions.forEach((a) => {
         try {
-          u(a.target).off(a.event, this.onAction);
+          const eventType = getEventType(a.event);
+          if(eventType) {
+            u(a.target).off(eventType, a.handler);
+          }
         } catch (error) {
           console.warn(error);
         }
@@ -304,10 +340,6 @@ export default class Step {
       return true;
     }
     return false;
-  }
-  onAction(event) {
-    const action = this.actions.find((a) => u(a.target).is(event.target));
-    this.context.onAction(event, action);
   }
   toJSON() {
     const { index, title, content, image, active } = this;
