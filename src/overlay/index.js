@@ -1,9 +1,9 @@
 import u from "umbrellajs";
 
-export default class Step {
+export default class Overlay {
   get el() {
     if (!this.container) {
-      this.container = u("<div role=\"dialog\" class=\"guided-tour-background\"></div>");
+      this.container = u("<div role=\"dialog\" class=\"guided-tour-overlay\"></div>");
     }
     return this.container;
   }

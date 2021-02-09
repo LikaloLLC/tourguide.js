@@ -181,7 +181,7 @@ export default class Step {
       setStyle(tooltip, tootipPAS);
       highlight.first().style.boxShadow = "none";
       tooltip.first().style.opacity = 0.1;
-      this.context._background.show();
+      this.context._overlay.show();
     }
   }
   adjust() {
@@ -221,7 +221,7 @@ export default class Step {
     this.cancel();
     if (!this.visible) {
       const show = () => {
-        this.context._background.hide();
+        this.context._overlay.hide();
         this.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
         this.position();
         this.adjust();
@@ -244,7 +244,7 @@ export default class Step {
       this.tooltip.removeClass("guided-tour-arrow-top");
       this.tooltip.removeClass("guided-tour-arrow-bottom");
       this.visible = false;
-      this.context._background.show();
+      this.context._overlay.show();
       return true;
     }
     return false;

@@ -1,7 +1,7 @@
 import u from "umbrellajs";
 import Icons from "./icons";
 import Step from "./step";
-import Background from "./background";
+import Overlay from "./overlay";
 import { clamp, getViewportRect, colorObjToStyleVarString } from "./utils";
 
 import "../scss/style.scss";
@@ -69,7 +69,7 @@ export default class Tour {
         onStep: () => { },
         onAction: () => { }
       }, options);
-    this._background = null;
+    this._overlay = null;
     this._steps = [];
     this._current = 0;
     this._active = false;
@@ -131,7 +131,7 @@ export default class Tour {
   init() {
     this.reset();
     u(this._options.root).addClass("guided-tour");
-    this._background = new Background(this);
+    this._overlay = new Overlay(this);
     if (this._stepsSrc === StepsSource.DOM) {
       const steps = u(this._options.selector).nodes;
       this._steps = steps.map(el => new Step(
@@ -164,7 +164,7 @@ export default class Tour {
       if (!this._active) {
         u(this._options.root).addClass("guided-tour");
         this.init();
-        this._background.attach(this._options.root);
+        this._overlay.attach(this._options.root);
         this._steps.forEach(step => step.attach(this._options.root));
         this._current = step;
         this.currentstep.show();
@@ -216,7 +216,7 @@ export default class Tour {
     if (this._active) {
       this.currentstep.hide();
       this._active = false;
-      this._background.remove();
+      this._overlay.remove();
       this._steps.forEach(step => step.remove());
       u(this._options.root).removeClass("guided-tour");
       if (this._options.restoreinitialposition) {
