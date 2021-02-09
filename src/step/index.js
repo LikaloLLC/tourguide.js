@@ -1,8 +1,17 @@
 import u from "umbrellajs";
 import scrollIntoView from "scroll-into-view";
-import { clamp, getDataContents, getBoundingClientRect, getViewportRect, setStyle, getStyle } from "../utils";
+import {
+  clamp,
+  getDataContents,
+  getBoundingClientRect,
+  isTargetValid,
+  getViewportRect,
+  setStyle,
+  getStyle,
+} from "../utils";
 import marked from "marked";
 // data-step="title: Step1; content: .../<>"
+
 export default class Step {
   get el() {
     if (!this.container) {
@@ -27,7 +36,6 @@ export default class Step {
       footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
       footer.find(".guided-tour-step-bullets li").on("click", (e) => this.context.go(parseInt(u(e.target).data("index"))));
       const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
-      highlight.on("click", this.context.action);
       const tooltip = this.tooltip = u("<div role=\"tooltip\" class=\"guided-tour-step-tooltip\"></div>");
       const tooltipinner = u("<div class=\"guided-tour-step-tooltip-inner\"></div>");
       const arrow = this.arrow = u("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"><div aria-hidden=\"true\" class=\"guided-tour-arrow-inner\"></div></div>");
@@ -39,31 +47,30 @@ export default class Step {
     return this.container;
   }
   get target() {
-    return this._target || u(this.selector).first();
+    return this._target || u(this._selector).first();
   }
   set target(target) {
     this._target = target;
   }
   constructor(step, context) {
     this.index = 0;
-    this.first = false;
-    this.last = false;
-    this.target = null;
-    this.container = null;
-    this.highlight = null;
-    this.tooltip = null;
-    this.arrow = null;
-    this.rect = {};
     this.image = null;
     this.title = "";
     this.content = "";
     this.active = false;
-    this.context = null;
-    this.visible = false;
-    this._target = null;
+    this.first = false;
+    this.last = false;
+
+    this.container = null;
+    this.highlight = null;
+    this.tooltip = null;
+    this.arrow = null;
+
     this.context = context;
+    this._target = null;
     this._timerHandler = null;
     this._scrollCancel = null;
+
     let data;
     if (!(step instanceof HTMLElement)) {
       if(!(step.hasOwnProperty("title") && step.hasOwnProperty("content") && step.hasOwnProperty("step"))) {
@@ -74,7 +81,7 @@ export default class Step {
         );
       }
       data = step;
-      this.selector = step.selector;
+      this._selector = step.selector;
     } else {
       this.target = step;
       data = getDataContents(u(step).data("tour"));
@@ -85,7 +92,6 @@ export default class Step {
     if (data.marked) {
       this.content = marked(this.content);
     }
-    this.actiontarget = data.actiontarget;
     this.image = data.image;
     if (data.image &&
       context.options.preloadimages &&
@@ -99,6 +105,17 @@ export default class Step {
       };
       preload.src = this.image;
     }
+
+    this.actions = [];
+    if(data.actions) {
+      if(!Array.isArray(data.actions)) {
+        console.error(new Error(`actions must be array but got ${typeof data.actions}`));
+      } else {
+        this.actions = data.actions;
+      }
+    }
+
+    this.onAction = this.onAction.bind(this);
   }
   attach(root) {
     u(root).append(this.el);
@@ -109,7 +126,7 @@ export default class Step {
   }
   position() {
     const view = getViewportRect(this.context._options.root);
-    if (this.target && this.target.offsetParent !== null) {
+    if (isTargetValid(this.target)) {
       const highlight = this.highlight;
       const tooltip = this.tooltip;
       const arrow = this.arrow;
@@ -221,19 +238,31 @@ export default class Step {
   }
   show() {
     this.cancel();
-    if (!this.visible) {
+    if (!this.active) {
       const show = () => {
         this.context._overlay.hide();
         this.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
         this.position();
         this.adjust();
-        if(getStyle(this.target, "position") === "static") {
-          this.target.style.position = "relative";
+        if(isTargetValid(this.target)) {
+          if(getStyle(this.target, "position") === "static") {
+            this.target.style.position = "relative";
+          }
+          u(this.target).addClass("guided-tour-target");
         }
-        u(this.target).addClass("guided-tour-target");
-        this.visible = true;
+
+        this.actions.forEach((a) => {
+          try {
+            u(a.target).on(a.event, this.onAction);
+          } catch (error) {
+            console.warn(`Could not find action.target: ${a.target} on step #${this.index}`);
+            console.warn(error);
+          }
+        });
+
+        this.active = true;
       };
-      if (this.target) {
+      if (isTargetValid(this.target)) {
         this._scrollCancel = scrollIntoView(this.target, {
           time: this.context.options.animationspeed,
           cancellable: false,
@@ -245,19 +274,34 @@ export default class Step {
   }
   hide() {
     this.cancel();
-    if (this.visible) {
-      u(this.target).removeClass("guided-tour-target");
+    if (this.active) {
+      if(isTargetValid(this.target)) {
+        u(this.target).removeClass("guided-tour-target");
+      }
       this.el.removeClass("active");
       this.tooltip.removeClass("guided-tour-arrow-top");
       this.tooltip.removeClass("guided-tour-arrow-bottom");
-      this.visible = false;
       this.context._overlay.show();
+
+      this.actions.forEach((a) => {
+        try {
+          u(a.target).off(a.event, this.onAction);
+        } catch (error) {
+          console.warn(error);
+        }
+      });
+
+      this.active = false;
       return true;
     }
     return false;
   }
+  onAction(event) {
+    const action = this.actions.find((a) => u(a.target).is(event.target));
+    this.context.onAction(event, action);
+  }
   toJSON() {
-    // eslint-disable-next-line no-undef
-    return { index, title, contnet, image, active } = this;
+    const { index, title, content, image, active } = this;
+    return { index, title, content, image, active };
   }
 }

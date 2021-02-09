@@ -76,13 +76,6 @@ export default class Tour {
     this._stepsSrc = StepsSource.DOM;
     this._ready = false;
     this._initialposition = null;
-    this.start = this.start.bind(this);
-    this.action = this.action.bind(this);
-    this.next = this.next.bind(this);
-    this.previous = this.previous.bind(this);
-    this.go = this.go.bind(this);
-    this.stop = this.stop.bind(this);
-    this.complete = this.complete.bind(this);
     this._injectIcons();
     if (typeof this._options.steps === "object" && Array.isArray(this._options.steps)) {
       this._stepsSrc = StepsSource.JSON;
@@ -102,10 +95,19 @@ export default class Tour {
           this._ready = true;
         }));
     } else if (u(this._options.selector).length > 0) {
+      this._stepsSrc = StepsSource.DOM;
       this._ready = true;
     } else {
       throw new Error("Tour is not configured properly. Check documentation.");
     }
+
+    this.start = this.start.bind(this);
+    this.next = this.next.bind(this);
+    this.previous = this.previous.bind(this);
+    this.go = this.go.bind(this);
+    this.stop = this.stop.bind(this);
+    this.complete = this.complete.bind(this);
+    this.onAction = this.onAction.bind(this);
   }
   _injectIcons() {
     if (u("#GuidedTourIconSet").length === 0) {
@@ -171,26 +173,32 @@ export default class Tour {
         this._active = true;
         this._options.onStart(this._options);
       } else {
-        this.go(step);
+        this.go(step, "start");
       }
     } else {
       throw new Error("Tour is not configured properly. Check documentation.");
     }
   }
-  action(e) {
+  onAction(event, action) {
     if (this._active) {
       const { currentstep } = this;
-      if (currentstep.actiontarget) {
-        let actiontarget = u(currentstep.target).find(currentstep.actiontarget);
-        if (actiontarget) {
-          try {
-            actiontarget.first().click();
-          } catch (e) {
-            console.warn(`Could not find actiontarget: ${currentstep.actiontarget} on step #${currentstep.index}`);
-          }
+      if (action) {
+        if(typeof action.act === "number") {
+          this.context.go(action.act, "action");
+        } else if(action.act === "next") {
+          this.context.next();
+        } else if(action.act === "previous") {
+          this.context.previous();
+        } else if(action.act === "stop") {
+          this.context.stop();
+        } else if(action.act === "complete") {
+          this.context.complete();
         }
       }
-      this._options.onAction(currentstep, e);
+
+      if(this._options.onAction && typeof this._options.onAction === "function") {
+        this._options.onAction(event, currentstep.toJSON(), action);
+      }
     }
   }
   next() {

@@ -8,9 +8,9 @@ export default class Overlay {
     return this.container;
   }
   constructor(context) {
+    this.context = context;
     this.container = null;
     this.active = false;
-    this.context = context;
   }
   attach(root) {
     u(root).append(this.el);
@@ -20,23 +20,23 @@ export default class Overlay {
     this.el.remove();
   }
   show() {
-    if (!this.visible) {
+    if (!this.active) {
       this.el.addClass("active");
-      this.visible = true;
+      this.active = true;
       return true;
     }
     return false;
   }
   hide() {
-    if (this.visible) {
+    if (this.active) {
       this.el.removeClass("active");
-      this.visible = false;
+      this.active = false;
       return true;
     }
     return false;
   }
   toJSON() {
-    // eslint-disable-next-line no-undef
-    return { active } = this;
+    const { active } = this;
+    return { active };
   }
 }

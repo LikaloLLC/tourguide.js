@@ -16,6 +16,10 @@ export function getDataContents(data = "", defaults = {}) {
   return result;
 }
 
+export function isTargetValid(target) {
+  return target && target.offsetParent !== null;
+}
+
 export function getBoundingClientRect(el, root) {
   const rect = u(el).size();
   const view = getViewportRect(root);
@@ -35,20 +39,25 @@ export function getBoundingClientRect(el, root) {
 }
 
 export function getViewportRect(root) {
-  const rect = u(root).size();
-  const rootEl = u(root).first();
-  return {
-    width: window.innerWidth,
-    height: window.innerHeight,
-    scrollX: rootEl.scrollLeft,
-    scrollY: rootEl.scrollTop,
-    rootWidth: rect.width,
-    rootHeight: rect.height,
-    rootTop: rect.top,
-    rootBottom: rect.bottom,
-    rootLeft: rect.left,
-    rootRight: rect.right,
-  };
+  try {
+    const rootEl = u(root).first();
+    const rect = u(root).size();
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight,
+      scrollX: rootEl.scrollLeft,
+      scrollY: rootEl.scrollTop,
+      rootWidth: rect.width,
+      rootHeight: rect.height,
+      rootTop: rect.top,
+      rootBottom: rect.bottom,
+      rootLeft: rect.left,
+      rootRight: rect.right,
+    };
+  } catch (error) {
+    console.error(error);
+    throw Error(`root is not valid: ${root}`);
+  }
 }
 
 // alternative for jQuery .css() get method
@@ -74,7 +83,6 @@ export function getStyle(el, css3Prop) {
   }
   return "";
 }
-
 
 const allowedProperties = ["top", "left", "right", "bottom", "width", "height", "maxWidth", "minWidth", "transform"];
 export function setStyle(element, object) {
