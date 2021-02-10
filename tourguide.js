@@ -413,10 +413,10 @@ var Tourguide = (function () {
 	  return {
 	    width: rect.width,
 	    height: rect.height,
-	    top: rect.top + view.scrollY,
-	    bottom: rect.bottom + view.scrollY,
-	    left: rect.left + view.scrollX,
-	    right: rect.right + view.scrollX,
+	    top: rect.top + view.scrollY - view.rootTop,
+	    bottom: rect.bottom + view.scrollY - view.rootTop,
+	    left: rect.left + view.scrollX - view.rootLeft,
+	    right: rect.right + view.scrollX - view.rootLeft,
 	    viewTop: rect.top,
 	    viewBottom: rect.bottom,
 	    viewLeft: rect.left,
@@ -435,10 +435,8 @@ var Tourguide = (function () {
 	      scrollY: rootEl.scrollTop,
 	      rootWidth: rect.width,
 	      rootHeight: rect.height,
-	      rootTop: rect.top,
-	      rootBottom: rect.bottom,
-	      rootLeft: rect.left,
-	      rootRight: rect.right
+	      rootTop: rootEl.scrollTop === window.scrollY ? 0 : rect.top,
+	      rootLeft: rootEl.scrollLeft === window.scrollX ? 0 : rect.left
 	    };
 	  } catch (error) {
 	    console.error(error);
@@ -3457,6 +3455,7 @@ var Tourguide = (function () {
 	    key: "position",
 	    value: function position() {
 	      var view = getViewportRect(this.context._options.root);
+
 	      if (isTargetValid(this.target)) {
 	        var highlight = this.highlight;
 	        var tooltip = this.tooltip;
@@ -3467,7 +3466,7 @@ var Tourguide = (function () {
 	        var arrowStyle = {};
 
 	        var targetRect = getBoundingClientRect(this.target, this.context._options.root);
-	        var tootipRect = getBoundingClientRect(tooltip, this.context._options.root);
+	        var tooltipRect = getBoundingClientRect(tooltip, this.context._options.root);
 
 	        highlightStyle.top = targetRect.top - this.context.options.padding;
 	        highlightStyle.left = targetRect.left - this.context.options.padding;
@@ -3481,13 +3480,15 @@ var Tourguide = (function () {
 	        var tooltipBRR = 0;
 
 	        // Compute vertical position
-	        if (view.height - targetRect.viewBottom > tootipRect.height + marginVerticalSize || targetRect.viewTop < tootipRect.height + marginVerticalSize) {
+	        if (view.height - targetRect.viewBottom > tooltipRect.height + marginVerticalSize || targetRect.viewTop < tooltipRect.height + marginVerticalSize) {
 	          tootipStyle.top = targetRect.top + targetRect.height;
+	          tootipStyle.bottom = "unset";
 	          tooltip.addClass("guided-tour-arrow-top");
 	          tooltipBRL = parseNumber(getStyle(tooltip, "border-top-left-radius"));
 	          tooltipBRR = parseNumber(getStyle(tooltip, "border-top-right-radius"));
 	        } else {
 	          tootipStyle.bottom = view.rootHeight - targetRect.top;
+	          tootipStyle.top = "unset";
 	          tooltip.addClass("guided-tour-arrow-bottom");
 	          tooltipBRL = parseNumber(getStyle(tooltip, "border-bottom-left-radius"));
 	          tooltipBRR = parseNumber(getStyle(tooltip, "border-bottom-right-radius"));
@@ -3496,12 +3497,14 @@ var Tourguide = (function () {
 	        var arrowRect = getBoundingClientRect(arrow, this.context._options.root);
 
 	        // Compute horizontal position
-	        if (view.width - targetRect.left > tootipRect.width + marginHorizontalSize || targetRect.right < tootipRect.width + marginHorizontalSize) {
+	        if (view.width - targetRect.left > tooltipRect.width + marginHorizontalSize || targetRect.right < tooltipRect.width + marginHorizontalSize) {
 	          tootipStyle.left = targetRect.left;
-	          if (targetRect.width / 2 > tootipRect.width) arrowStyle.right = 8;else arrowStyle.left = clamp(targetRect.width / 2, tooltipBRL + 2, tootipRect.width - arrowRect.width - tooltipBRR - 2);
+	          tootipStyle.right = "unset";
+	          if (targetRect.width / 2 > tooltipRect.width) arrowStyle.right = 8;else arrowStyle.left = clamp(targetRect.width / 2, tooltipBRL + 2, tooltipRect.width - arrowRect.width - tooltipBRR - 2);
 	        } else {
 	          tootipStyle.right = view.rootWidth - targetRect.right;
-	          if (targetRect.width / 2 > tootipRect.width) arrowStyle.left = 18;else arrowStyle.right = clamp(targetRect.width / 2, tooltipBRR + 2, tootipRect.width - arrowRect.width - tooltipBRL - 2);
+	          tootipStyle.left = "unset";
+	          if (targetRect.width / 2 > tooltipRect.width) arrowStyle.left = 18;else arrowStyle.right = clamp(targetRect.width / 2, tooltipBRR + 2, tooltipRect.width - arrowRect.width - tooltipBRL - 2);
 	        }
 
 	        setStyle(highlight, highlightStyle);
@@ -3512,6 +3515,8 @@ var Tourguide = (function () {
 	        var _highlight = this.highlight;
 	        var _tooltip = this.tooltip;
 
+	        var _tooltipRect = getBoundingClientRect(_tooltip, this.context._options.root);
+
 	        var _highlightStyle = {};
 	        var _tootipStyle = {};
 
@@ -3520,16 +3525,15 @@ var Tourguide = (function () {
 	        _highlightStyle.width = 0;
 	        _highlightStyle.height = 0;
 
-	        _tootipStyle.top = view.height / 2 + view.scrollY - view.rootTop;
-	        _tootipStyle.left = view.width / 2 + view.scrollX - view.rootLeft;
+	        _tootipStyle.top = view.height / 2 + view.scrollY - view.rootTop - _tooltipRect.height / 2;
+	        _tootipStyle.left = view.width / 2 + view.scrollX - view.rootLeft - _tooltipRect.width / 2;
 
 	        _tooltip.addClass("guided-tour-arrow-none");
-	        _tooltip.addClass("guided-tour-center");
 
 	        setStyle(_highlight, _highlightStyle);
 	        setStyle(_tooltip, _tootipStyle);
 	        _highlight.first().style.boxShadow = "none";
-	        _tooltip.first().style.opacity = 1;
+	        _tooltip.first().style.opacity = 0.1;
 	        this.context._overlay.show();
 	      }
 	    }
