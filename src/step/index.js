@@ -145,6 +145,7 @@ export default class Step {
   }
   position() {
     const view = getViewportRect(this.context._options.root);
+
     if (isTargetValid(this.target)) {
       const highlight = this.highlight;
       const tooltip = this.tooltip;
@@ -155,7 +156,7 @@ export default class Step {
       const arrowStyle = {};
 
       const targetRect = getBoundingClientRect(this.target, this.context._options.root);
-      const tootipRect = getBoundingClientRect(tooltip, this.context._options.root);
+      const tooltipRect = getBoundingClientRect(tooltip, this.context._options.root);
 
       highlightStyle.top = targetRect.top - this.context.options.padding;
       highlightStyle.left = targetRect.left - this.context.options.padding;
@@ -170,15 +171,17 @@ export default class Step {
 
       // Compute vertical position
       if (
-        view.height - targetRect.viewBottom > tootipRect.height + marginVerticalSize ||
-        targetRect.viewTop < tootipRect.height + marginVerticalSize
+        view.height - targetRect.viewBottom > tooltipRect.height + marginVerticalSize ||
+        targetRect.viewTop < tooltipRect.height + marginVerticalSize
       ) {
         tootipStyle.top = targetRect.top + targetRect.height;
+        tootipStyle.bottom = "unset";
         tooltip.addClass("guided-tour-arrow-top");
         tooltipBRL = parseNumber(getStyle(tooltip, "border-top-left-radius"));
         tooltipBRR = parseNumber(getStyle(tooltip, "border-top-right-radius"));
       } else {
         tootipStyle.bottom = view.rootHeight - targetRect.top;
+        tootipStyle.top = "unset";
         tooltip.addClass("guided-tour-arrow-bottom");
         tooltipBRL = parseNumber(getStyle(tooltip, "border-bottom-left-radius"));
         tooltipBRR = parseNumber(getStyle(tooltip, "border-bottom-right-radius"));
@@ -188,16 +191,18 @@ export default class Step {
 
       // Compute horizontal position
       if (
-        view.width - targetRect.left > tootipRect.width + marginHorizontalSize ||
-        targetRect.right < tootipRect.width + marginHorizontalSize
+        view.width - targetRect.left > tooltipRect.width + marginHorizontalSize ||
+        targetRect.right < tooltipRect.width + marginHorizontalSize
       ) {
         tootipStyle.left = targetRect.left;
-        if(targetRect.width / 2 > tootipRect.width) arrowStyle.right = 8;
-        else arrowStyle.left = clamp(targetRect.width / 2, tooltipBRL + 2, tootipRect.width - arrowRect.width - tooltipBRR - 2);
+        tootipStyle.right = "unset";
+        if(targetRect.width / 2 > tooltipRect.width) arrowStyle.right = 8;
+        else arrowStyle.left = clamp(targetRect.width / 2, tooltipBRL + 2, tooltipRect.width - arrowRect.width - tooltipBRR - 2);
       } else {
         tootipStyle.right = view.rootWidth - targetRect.right;
-        if(targetRect.width / 2 > tootipRect.width) arrowStyle.left = 18;
-        else arrowStyle.right = clamp(targetRect.width / 2, tooltipBRR + 2, tootipRect.width - arrowRect.width - tooltipBRL - 2);
+        tootipStyle.left = "unset";
+        if(targetRect.width / 2 > tooltipRect.width) arrowStyle.left = 18;
+        else arrowStyle.right = clamp(targetRect.width / 2, tooltipBRR + 2, tooltipRect.width - arrowRect.width - tooltipBRL - 2);
       }
 
       setStyle(highlight, highlightStyle);
@@ -208,6 +213,8 @@ export default class Step {
       const highlight = this.highlight;
       const tooltip = this.tooltip;
 
+      const tooltipRect = getBoundingClientRect(tooltip, this.context._options.root);
+
       const highlightStyle = {};
       const tootipStyle = {};
 
@@ -216,16 +223,15 @@ export default class Step {
       highlightStyle.width = 0;
       highlightStyle.height = 0;
 
-      tootipStyle.top = view.height / 2 + view.scrollY - view.rootTop;
-      tootipStyle.left = view.width / 2 + view.scrollX - view.rootLeft;
+      tootipStyle.top = view.height / 2 + view.scrollY - view.rootTop - (tooltipRect.height / 2);
+      tootipStyle.left = view.width / 2 + view.scrollX - view.rootLeft - (tooltipRect.width / 2);
 
       tooltip.addClass("guided-tour-arrow-none");
-      tooltip.addClass("guided-tour-center");
 
       setStyle(highlight, highlightStyle);
       setStyle(tooltip, tootipStyle);
       highlight.first().style.boxShadow = "none";
-      tooltip.first().style.opacity = 1;
+      tooltip.first().style.opacity = 0.1;
       this.context._overlay.show();
     }
   }

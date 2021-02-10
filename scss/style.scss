@@ -14,6 +14,14 @@ $fontSize: 12pt;
     position: relative !important;
 }
 
+blockquote {
+    background: #f9f9f9;
+    border-left: 10px solid #ccc;
+    margin: 1.5em 10px;
+    padding: 1em 10px 0.1em 10px;
+    quotes: "\201C""\201D""\2018""\2019";
+}
+  
 .guided-tour-overlay {
     display: none;
     position: fixed;
@@ -75,13 +83,6 @@ $fontSize: 12pt;
                 width: calc(100% - 36px);
                 left: 18px !important;
                 right: 18px !important;
-            }
-
-            &.guided-tour-center {
-                transform: translate(-50%, -50%);
-                @media screen and (max-width: 760px) {
-                    transform: translate(0, -50%);
-                }
             }
 
             .guided-tour-step-tooltip-inner {

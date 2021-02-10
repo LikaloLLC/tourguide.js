@@ -45,10 +45,10 @@ export function getBoundingClientRect(el, root) {
   return {
     width: rect.width,
     height: rect.height,
-    top: rect.top + view.scrollY,
-    bottom: rect.bottom + view.scrollY,
-    left: rect.left + view.scrollX,
-    right: rect.right + view.scrollX,
+    top: rect.top + view.scrollY - view.rootTop,
+    bottom: rect.bottom + view.scrollY - view.rootTop,
+    left: rect.left + view.scrollX - view.rootLeft,
+    right: rect.right + view.scrollX - view.rootLeft,
     viewTop: rect.top,
     viewBottom: rect.bottom,
     viewLeft: rect.left,
@@ -67,10 +67,8 @@ export function getViewportRect(root) {
       scrollY: rootEl.scrollTop,
       rootWidth: rect.width,
       rootHeight: rect.height,
-      rootTop: rect.top,
-      rootBottom: rect.bottom,
-      rootLeft: rect.left,
-      rootRight: rect.right,
+      rootTop: rootEl.scrollTop === window.scrollY ? 0 : rect.top,
+      rootLeft: rootEl.scrollLeft === window.scrollX ? 0 : rect.left,
     };
   } catch (error) {
     console.error(error);
