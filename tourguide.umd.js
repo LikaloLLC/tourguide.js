@@ -3605,6 +3605,7 @@
 	                  }
 	                };
 	                a.handler = eventHandler;
+	                a.target = a.target || _this3.target;
 	                umbrella_min(a.target).on(eventType, a.handler);
 	              } else {
 	                console.warn("Wrong event on action.event: " + a.event + " on step #" + _this3.index);
@@ -3793,15 +3794,6 @@
 	      src: null,
 	      restoreinitialposition: true,
 	      preloadimages: false,
-	      colors: {
-	        overlay: "rgba(0, 0, 0, 0.5)",
-	        background: "#fff",
-	        bullet: "#ff4141",
-	        bulletVisited: "#aaa",
-	        bulletCurrent: "#b50000",
-	        stepButtonNext: "#ff4141",
-	        stepButtonComplete: "#b50000"
-	      },
 	      request: {
 	        "options": {
 	          "mode": "cors",
@@ -3816,7 +3808,17 @@
 	      onComplete: function onComplete() {},
 	      onStep: function onStep() {},
 	      onAction: function onAction() {}
-	    }, options);
+	    }, options, {
+	      colors: Object.assign({
+	        overlay: "rgba(0, 0, 0, 0.5)",
+	        background: "#fff",
+	        bullet: "#ff4141",
+	        bulletVisited: "#aaa",
+	        bulletCurrent: "#b50000",
+	        stepButtonNext: "#ff4141",
+	        stepButtonComplete: "#b50000"
+	      }, options.colors || {})
+	    });
 	    this._overlay = null;
 	    this._steps = [];
 	    this._current = 0;
