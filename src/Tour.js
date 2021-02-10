@@ -35,8 +35,8 @@ export default class Tour {
     return this._options;
   }
   constructor(options = {}) {
-    this._options =
-      Object.assign({
+    this._options = Object.assign(
+      {
         root: "body",
         selector: "[data-tour]",
         animationspeed: 300,
@@ -45,30 +45,37 @@ export default class Tour {
         src: null,
         restoreinitialposition: true,
         preloadimages: false,
-        colors: {
-          overlay: "rgba(0, 0, 0, 0.5)",
-          background: "#fff",
-          bullet: "#ff4141",
-          bulletVisited: "#aaa",
-          bulletCurrent: "#b50000",
-          stepButtonNext: "#ff4141",
-          stepButtonComplete: "#b50000",
-        },
         request: {
           "options": {
             "mode": "cors",
-            "cache": "no-cache"
+            "cache": "no-cache",
           },
           "headers": {
-            "Content-Type": "application/json"
-          }
+            "Content-Type": "application/json",
+          },
         },
-        onStart: () => { },
-        onStop: () => { },
-        onComplete: () => { },
-        onStep: () => { },
-        onAction: () => { }
-      }, options);
+        onStart: () => {},
+        onStop: () => {},
+        onComplete: () => {},
+        onStep: () => {},
+        onAction: () => {},
+      },
+      options,
+      {
+        colors: Object.assign(
+          {
+            overlay: "rgba(0, 0, 0, 0.5)",
+            background: "#fff",
+            bullet: "#ff4141",
+            bulletVisited: "#aaa",
+            bulletCurrent: "#b50000",
+            stepButtonNext: "#ff4141",
+            stepButtonComplete: "#b50000",
+          },
+          options.colors || {}
+        ),
+      }
+    );
     this._overlay = null;
     this._steps = [];
     this._current = 0;
