@@ -1,7 +1,7 @@
 const assert = require('assert');
 // Load the full build.
 const _ = require('lodash');
-const fetch = require("node-fetch")
+const markdownSteps = require("./markdown/steps.json");
 
 debugger;
 let Tourguide = require("../tourguide.umd.js");
@@ -144,7 +144,7 @@ describe('Tourguide', function () {
 
       it("should verify that tour is initialized and ready to start", function () {
 
-        const jsdomAlert = window.scrollTo;  // remember the jsdom alert
+        const jsdomScrollTo = window.scrollTo;  // remember the jsdom alert
 
         window.scrollTo = () => { };
 
@@ -152,7 +152,7 @@ describe('Tourguide', function () {
 
         // console.log("after tourguide.init", tourguide);
 
-        window.scrollTo = jsdomAlert;
+        window.scrollTo = jsdomScrollTo;
 
         // init() func sets _active to false, verify them
         assert.strictEqual(tourguide._active, false);
@@ -261,13 +261,13 @@ describe('Tourguide', function () {
 
         // [[this is a workaround for window.scrollTo not implemented error, since this is unit tests, reassign scrollTo
         // to window as show below, to implement a sample scrollTo function, that lets the test case work]]
-        const jsdomAlert = window.scrollTo;  // remember the jsdom alert
+        const jsdomScrollTo = window.scrollTo;  // remember the jsdom alert
 
         window.scrollTo = () => { };
 
         tourguide.stop();
 
-        window.scrollTo = jsdomAlert;
+        window.scrollTo = jsdomScrollTo;
 
         // console.log("tourguide constructor value after closing", tourguide);
 
@@ -303,7 +303,7 @@ describe('Tourguide', function () {
 
       it("should verify that tour is complete", function () {
 
-        const jsdomAlert = window.scrollTo;  // remember the jsdom alert
+        const jsdomScrollTo = window.scrollTo;  // remember the jsdom alert
 
         window.scrollTo = () => { };
 
@@ -311,7 +311,7 @@ describe('Tourguide', function () {
 
         tourguide.complete();
 
-        window.scrollTo = jsdomAlert;
+        window.scrollTo = jsdomScrollTo;
 
         // complete() func sets _active to false
         assert.strictEqual(tourguide._active, false);
@@ -323,7 +323,7 @@ describe('Tourguide', function () {
 
       it("should verify that tour is reset, after starting at a step", function () {
 
-        const jsdomAlert = window.scrollTo;  // remember the jsdom alert
+        const jsdomScrollTo = window.scrollTo;  // remember the jsdom alert
 
         window.scrollTo = () => { };
 
@@ -331,7 +331,7 @@ describe('Tourguide', function () {
 
         tourguide.reset();
 
-        window.scrollTo = jsdomAlert;
+        window.scrollTo = jsdomScrollTo;
 
         // reset() func sets _active to false and sets _current to 0, verify them
         assert.strictEqual(tourguide._active, false);
@@ -339,4 +339,36 @@ describe('Tourguide', function () {
       })
     })
   })
+
+  describe("Markdown", function () {
+    before(() => {
+      tourguide = new Tourguide({
+        steps: markdownSteps,
+      });
+      optionStepsLength = markdownSteps.length
+      tourguide.start();
+    })
+
+    describe("Check contents are correct", function () {
+      it("Heading level 1 should be 'h1' tag", function () {
+        const head = document.querySelector(".guided-tour-step .guided-tour-step-content #heading-level-1");
+        assert.strictEqual(!!head, true);
+        assert.strictEqual(head.nodeName, "H1");
+      });
+
+      it("Heading level 2 should be 'h2' tag", function () {
+        const head = document.querySelector(".guided-tour-step .guided-tour-step-content #heading-level-2");
+        assert.strictEqual(!!head, true);
+        assert.strictEqual(head.nodeName, "H2");
+      });
+    });
+
+    after(() => {
+      const jsdomScrollTo = window.scrollTo;  // remember the jsdom alert
+      window.scrollTo = () => { };
+      tourguide.reset();
+      window.scrollTo = jsdomScrollTo;
+    })
+  });
+
 });

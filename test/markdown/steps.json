@@ -1,0 +1,30 @@
+[
+  {
+    "selector": null,
+    "step": 1,
+    "title": "Headings",
+    "marked": true,
+    "content": "# Heading level 1\n## Heading level 2\n### Heading level 3\n\nHeading level 1\n===============\nHeading level 2\n---------------\n"
+  },
+  {
+    "selector": null,
+    "step": 2,
+    "title": "Paragraphs & Emphasis",
+    "marked": true,
+    "content": "<p>I really like using Markdown.<br>\nAnd the next line.<br>\n<strong>This</strong> is bold text.<br>\n<em>This</em> is italic text.<br>\n<strong><em>This</em></strong> is important text.</p>"
+  },
+  {
+    "selector": null,
+    "step": 3,
+    "title": "Blockquotes & Lists",
+    "marked": true,
+    "content": "> Dorothy followed her through many of the beautiful rooms in her castle.\n> \n> The Witch bade her clean the pots and kettles and sweep the floor and keep the fire fed with wood.\n1. First item\n2. Second item\n3. Third item\n4. Fourth item"
+  },
+  {
+    "selector": null,
+    "step": 4,
+    "title": "Remember!!!",
+    "marked": true,
+    "content": "#### When using markdown content\n1. don't forget to set `marked` to `true` at each step.\n2. Use correct [syntax](https://www.markdownguide.org/basic-syntax/)."
+  }
+]

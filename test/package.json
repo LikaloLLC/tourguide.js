@@ -4,7 +4,8 @@
     "description": "Start the tutorial [here](http://ccoenraets.github.io/es6-tutorial).",
     "main": "index.js",
     "scripts": {
-        "start": "http-server ../",
+        "start": "http-server ../ -d false -o /test",
+        "start:md": "http-server ../ -d false -o /test/markdown",
         "test": "mocha -r jsdom-global/register --full-trace"
     },
     "repository": {
@@ -17,16 +18,14 @@
     },
     "homepage": "https://github.com/ccoenraets/es6-tutorial#readme",
     "devDependencies": {
-        "http-server": "^0.11.1",
+        "http-server": "^0.12.0",
         "mocha": "^6.1.4"
     },
     "dependencies": {
         "chai": "^4.2.0",
-        "isomorphic-fetch": "^2.2.1",
         "jsdom": "^15.1.1",
         "jsdom-global": "^3.0.2",
         "lodash": "^4.17.11",
-        "mocha-jsdom": "^2.0.0",
-        "node-fetch": "^2.6.0"
+        "mocha-jsdom": "^2.0.0"
     }
 }
