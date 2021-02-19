@@ -17,7 +17,7 @@
 	});
 	var umbrella_min_1 = umbrella_min.u;
 
-	var Icons = "<svg id=\"GuidedTourIconSet\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n<symbol id=\"tour-icon-close\" viewBox=\"0 0 20 20\"><path d=\"M16,16 L4,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path><path d=\"M16,4 L4,16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path></symbol>\n<symbol id=\"tour-icon-next\" viewBox=\"0 0 20 20\"><polyline points=\"7 4 13 10 7 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n<symbol id=\"tour-icon-complete\" viewBox=\"0 0 20 20\"><polyline points=\"4,10 8,15 17,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n</svg>";
+	var Icons = "<svg id=\"GuidedTourIconSet\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"display: none;\">\n<symbol id=\"tour-icon-close\" viewBox=\"0 0 20 20\"><path d=\"M16,16 L4,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path><path d=\"M16,4 L4,16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path></symbol>\n<symbol id=\"tour-icon-next\" viewBox=\"0 0 20 20\"><polyline points=\"7 4 13 10 7 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n<symbol id=\"tour-icon-complete\" viewBox=\"0 0 20 20\"><polyline points=\"4,10 8,15 17,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n</svg>";
 
 	var COMPLETE = 'complete',
 	    CANCELED = 'canceled';
@@ -328,6 +328,44 @@
 	  return target;
 	};
 
+	var slicedToArray = function () {
+	  function sliceIterator(arr, i) {
+	    var _arr = [];
+	    var _n = true;
+	    var _d = false;
+	    var _e = undefined;
+
+	    try {
+	      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+	        _arr.push(_s.value);
+
+	        if (i && _arr.length === i) break;
+	      }
+	    } catch (err) {
+	      _d = true;
+	      _e = err;
+	    } finally {
+	      try {
+	        if (!_n && _i["return"]) _i["return"]();
+	      } finally {
+	        if (_d) throw _e;
+	      }
+	    }
+
+	    return _arr;
+	  }
+
+	  return function (arr, i) {
+	    if (Array.isArray(arr)) {
+	      return arr;
+	    } else if (Symbol.iterator in Object(arr)) {
+	      return sliceIterator(arr, i);
+	    } else {
+	      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+	    }
+	  };
+	}();
+
 	function clamp(number, min, max) {
 	  min = isNaN(min) ? number : min;
 	  max = isNaN(max) ? number : max;
@@ -347,32 +385,148 @@
 	  return result;
 	}
 
-	function getBoundingClientRect(el) {
+	function getBoundingClientRect(el, root) {
 	  var rect = umbrella_min(el).size();
-	  var view = getViewportRect();
+	  var view = getViewportRect(root);
+
 	  return {
 	    width: rect.width,
 	    height: rect.height,
-	    top: rect.top,
-	    bottom: rect.bottom,
-	    left: rect.left,
-	    right: rect.right,
-	    viewtop: rect.top - view.scrollY,
-	    viewbottom: rect.bottom - view.scrollY,
-	    viewleft: rect.left - view.scrollX,
-	    viewright: rect.right - view.scrollX
+	    top: rect.top + view.scrollY,
+	    bottom: rect.bottom + view.scrollY,
+	    left: rect.left + view.scrollX,
+	    right: rect.right + view.scrollX,
+	    viewTop: rect.top,
+	    viewBottom: rect.bottom,
+	    viewLeft: rect.left,
+	    viewRight: rect.right
 	  };
 	}
 
-	function getViewportRect() {
+	function getViewportRect(root) {
+	  var rect = umbrella_min(root).size();
+	  var rootEl = umbrella_min(root).first();
 	  return {
 	    width: window.innerWidth,
 	    height: window.innerHeight,
-	    scrollX: window.scrollX,
-	    scrollY: window.scrollY,
-	    bodyWidth: document.body.clientWidth,
-	    bodyHeight: document.body.clientHeight
+	    scrollX: rootEl.scrollLeft,
+	    scrollY: rootEl.scrollTop,
+	    rootWidth: rect.width,
+	    rootHeight: rect.height,
+	    rootTop: rect.top,
+	    rootBottom: rect.bottom,
+	    rootLeft: rect.left,
+	    rootRight: rect.right
 	  };
+	}
+
+	// alternative for jQuery .css() get method
+	function getStyle(el, css3Prop) {
+	  var originalEl = umbrella_min(el).first();
+
+	  // FF, Chrome etc.
+	  if (window.getComputedStyle) {
+	    try {
+	      return getComputedStyle(originalEl).getPropertyValue(css3Prop);
+	    } catch (e) {
+	      return "";
+	    }
+	  } else {
+	    // IE
+	    if (originalEl.currentStyle) {
+	      try {
+	        return originalEl.currentStyle[css3Prop];
+	      } catch (e) {
+	        return "";
+	      }
+	    }
+	  }
+	  return "";
+	}
+
+	var allowedProperties = ["top", "left", "right", "bottom", "width", "height", "maxWidth", "minWidth", "transform"];
+	function setStyle(element, object) {
+	  if (!Object.prototype.toString.call(object) === "[object Object]") return;
+
+	  var style = umbrella_min(element).first().style;
+
+	  Object.entries(object).filter(function (_ref) {
+	    var _ref2 = slicedToArray(_ref, 2),
+	        key = _ref2[0],
+	        val = _ref2[1];
+
+	    return allowedProperties.includes(key) && (typeof val === "number" || typeof val === "string");
+	  }).forEach(function (_ref3) {
+	    var _ref4 = slicedToArray(_ref3, 2),
+	        key = _ref4[0],
+	        val = _ref4[1];
+
+	    var value = typeof val === "number" ? val + "px" : val;
+	    switch (key) {
+	      case "top":
+	        style.top = value;
+	        break;
+	      case "left":
+	        style.left = value;
+	        break;
+	      case "right":
+	        style.right = value;
+	        break;
+	      case "bottom":
+	        style.bottom = value;
+	        break;
+	      case "width":
+	        style.width = value;
+	        break;
+	      case "height":
+	        style.height = value;
+	        break;
+	      case "maxWidth":
+	        style.maxWidth = value;
+	        break;
+	      case "minWidth":
+	        style.minWidth = value;
+	        break;
+	      case "transform":
+	        style.transform = value;
+	        break;
+	      default:
+	        break;
+	    }
+	  });
+	}
+
+	/**
+	 * TODO: This func is convert the color object to the sets of css variables
+	 * @param {*} obj colorObject 
+	 * @param {*} prefix prefix of css variable name
+	 * @param {*} selector target css selector
+	 * Example:
+	 *  input: { overlay: "gray", background: "white", bulletCurrent: "red" }
+	 *  output: ":root { --tourguide-overlay: "gray"; --tourguide-background: "white"; --tourguide-bullet-current: "red"; }"
+	 */
+	function colorObjToStyleVarString(obj) {
+	  var prefix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "--tourguide";
+	  var selector = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ":root";
+
+	  var styleArray = [];
+	  Object.entries(obj).forEach(function (_ref5) {
+	    var _ref6 = slicedToArray(_ref5, 2),
+	        key = _ref6[0],
+	        value = _ref6[1];
+
+	    var splitedNameArray = [prefix];
+	    var prevIndex = 0;
+	    for (var i = 0; i < key.length; i += 1) {
+	      if ("A" <= key[i] && key[i] <= "Z") {
+	        splitedNameArray.push(key.substring(prevIndex, i).toLowerCase());
+	        prevIndex = i;
+	      }
+	    }
+	    splitedNameArray.push(key.substring(prevIndex, key.length).toLowerCase());
+	    styleArray.push(splitedNameArray.join("-") + ": " + value);
+	  });
+	  return selector + " {\n" + styleArray.join(";\n") + ";\n}";
 	}
 
 	var marked = createCommonjsModule(function (module, exports) {
@@ -3145,20 +3299,22 @@
 	        var _image = umbrella_min("<div role=\"figure\" class=\"guided-tour-step-image\">" + (this.image ? "<img src=\"" + this.image + "\" />" : "") + "</div>");
 	        var _title = umbrella_min("<div role=\"heading\" class=\"guided-tour-step-title\">" + this.title + "</div>");
 	        var content = umbrella_min("<div class=\"guided-tour-step-content\">" + this.content + "</div>");
-	        var footer = umbrella_min("<div class=\"guided-tour-step-footer\">\n                <span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                    <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                </span>\n                " + (this.last ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use></svg>\n                    </span>" : "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use></svg>\n                    </span>") + "\n                " + (this.context._steps.length > 1 ? "<div class=\"guided-tour-step-footer-bullets\">\n                    <ul>" + this.context._steps.map(function (step, i) {
+	        var footer = umbrella_min("<div class=\"guided-tour-step-footer\">\n                <span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                    <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                </span>\n                " + (this.last ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use></svg>\n                    </span>" : "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use></svg>\n                    </span>") + "\n                " + (this.context._steps.length > 1 ? "<div class=\"guided-tour-step-bullets\">\n                    <ul>" + this.context._steps.map(function (step, i) {
 	          return "<li  title=\"Go to step " + (i + 1) + "\" data-index=\"" + i + "\" class=\"" + (step.index < _this.index ? "complete" : step.index == _this.index ? "current" : "") + "\"></li>";
 	        }).join("") + "</ul>\n                </div>" : "") + "\n            </div>");
 	        footer.find(".guided-tour-step-button-next").on("click", this.context.next);
 	        footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
 	        footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
-	        footer.find(".guided-tour-step-footer-bullets li").on("click", function (e) {
+	        footer.find(".guided-tour-step-bullets li").on("click", function (e) {
 	          return _this.context.go(parseInt(umbrella_min(e.target).data("index")));
 	        });
 	        var highlight = this.highlight = umbrella_min("<div class=\"guided-tour-step-highlight\"></div>");
 	        highlight.on("click", this.context.action);
 	        var tooltip = this.tooltip = umbrella_min("<div role=\"tooltip\" class=\"guided-tour-step-tooltip\"></div>");
+	        var tooltipinner = umbrella_min("<div class=\"guided-tour-step-tooltip-inner\"></div>");
 	        var arrow = this.arrow = umbrella_min("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"></div>");
-	        tooltip.append(arrow).append(_image).append(_title).append(content).append(footer);
+	        tooltipinner.append(arrow).append(_image).append(_title).append(content).append(footer);
+	        tooltip.append(tooltipinner);
 	        this.container = umbrella_min("<div role=\"dialog\" class=\"guided-tour-step" + (this.first ? " guided-tour-step-first" : "") + (this.last ? " guided-tour-step-last" : "") + "\"></div>");
 	        this.container.append(highlight).append(tooltip);
 	      }
@@ -3231,9 +3387,7 @@
 
 	  createClass(Step, [{
 	    key: "attach",
-	    value: function attach() {
-	      var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "body";
-
+	    value: function attach(root) {
 	      umbrella_min(root).append(this.el);
 	    }
 	  }, {
@@ -3245,73 +3399,101 @@
 	  }, {
 	    key: "position",
 	    value: function position() {
-	      // {"left":0,"right":400,"top":0,"height":300,"bottom":300,"width":400}
+	      var view = getViewportRect(this.context._options.root);
 	      if (this.target && this.target.offsetParent !== null) {
-	        var rect = getBoundingClientRect(this.target);
-	        var view = getViewportRect();
-	        var style = this.highlight.first().style;
-	        style.top = rect.top - this.context.options.padding + "px";
-	        style.left = rect.left - this.context.options.padding + "px";
-	        style.width = rect.width + this.context.options.padding * 2 + "px";
-	        style.height = rect.height + this.context.options.padding * 2 + "px";
+	        var highlight = this.highlight;
 	        var tooltip = this.tooltip;
 	        var arrow = this.arrow;
-	        style = tooltip.first().style;
-	        style.opacity = 0.1;
+
+	        var highlightPAS = {};
+	        var tootipPAS = {};
+	        var arrowPAS = {};
+
+	        var targetRect = getBoundingClientRect(this.target, this.context._options.root);
+	        var tootipRect = getBoundingClientRect(tooltip, this.context._options.root);
+
+	        highlightPAS.top = targetRect.top - this.context.options.padding;
+	        highlightPAS.left = targetRect.left - this.context.options.padding;
+	        highlightPAS.width = targetRect.width + this.context.options.padding * 2;
+	        highlightPAS.height = targetRect.height + this.context.options.padding * 2;
+
+	        var marginVerticalSize = parseFloat(getStyle(tooltip, "margin-top")) + parseFloat(getStyle(tooltip, "margin-bottom"));
+	        var marginHorizontalSize = parseFloat(getStyle(tooltip, "margin-left")) + parseFloat(getStyle(tooltip, "margin-right"));
+
 	        // Compute vertical position
-	        if (view.height / 2 > rect.top) {
+	        if (view.height - targetRect.viewBottom > tootipRect.height + marginVerticalSize || targetRect.viewTop < tootipRect.height + marginVerticalSize) {
 	          tooltip.addClass("guided-tour-arrow-top");
-	          style.top = rect.top + rect.height + "px";
+	          tootipPAS.top = targetRect.top + targetRect.height;
 	        } else {
 	          tooltip.addClass("guided-tour-arrow-bottom");
-	          style.bottom = view.height - rect.top + "px";
+	          tootipPAS.bottom = view.rootHeight - targetRect.top;
 	        }
+
 	        // Compute horizontal position
-	        if (view.width / 2 > rect.left) {
-	          style.left = rect.left + "px";
-	          arrow.first().style.left = rect.width > 400 ? "18px" : clamp(rect.width / 2, 14, 386) + "px";
+	        if (view.width - targetRect.left > tootipRect.width + marginHorizontalSize || targetRect.right < tootipRect.width + marginHorizontalSize) {
+	          tootipPAS.left = targetRect.left;
+	          if (targetRect.width / 2 > tootipRect.width) arrowPAS.right = 8;else arrowPAS.left = clamp(targetRect.width / 2, 14, tootipRect.width - 14);
 	        } else {
-	          style.right = Math.max(view.width - rect.right, 40) + "px";
-	          arrow.first().style.right = view.width - rect.right < 40 || rect.width > 400 ? "8px" : clamp(rect.width / 2 - 8, 14, 386) + "px";
+	          tootipPAS.right = view.rootWidth - targetRect.right;
+	          if (targetRect.width / 2 > tootipRect.width) arrowPAS.left = 18;else arrowPAS.right = clamp(targetRect.width / 2 - 8, 14, tootipRect.width - 14);
 	        }
+
+	        setStyle(highlight, highlightPAS);
+	        setStyle(tooltip, tootipPAS);
+	        setStyle(arrow, arrowPAS);
+	        tooltip.first().style.opacity = 0.1;
 	      } else {
-	        var _view = getViewportRect();
-	        var _style = this.highlight.first().style;
-	        _style.top = 0 + "px";
-	        _style.left = 0 + "px";
-	        _style.width = 0 + "px";
-	        _style.height = 0 + "px";
-	        _style.boxShadow = "none";
+	        var _highlight = this.highlight;
 	        var _tooltip = this.tooltip;
-	        _style = _tooltip.first().style;
-	        _style.opacity = 0.1;
-	        _style.top = _view.height / 2 + "px";
-	        _style.left = _view.width / 2 + "px";
+
+	        var _highlightPAS = {};
+	        var _tootipPAS = {};
+
+	        _highlightPAS.top = 0;
+	        _highlightPAS.left = 0;
+	        _highlightPAS.width = 0;
+	        _highlightPAS.height = 0;
+
+	        _tootipPAS.top = view.height / 2 + view.scrollY - view.rootTop;
+	        _tootipPAS.left = view.width / 2 + view.scrollX - view.rootLeft;
+
 	        _tooltip.addClass("guided-tour-arrow-none");
 	        _tooltip.addClass("guided-tour-center");
 
-	        if (this.context._background) this.context._background.show();
+	        setStyle(_highlight, _highlightPAS);
+	        setStyle(_tooltip, _tootipPAS);
+	        _highlight.first().style.boxShadow = "none";
+	        _tooltip.first().style.opacity = 0.1;
+	        this.context._background.show();
 	      }
 	    }
 	  }, {
 	    key: "adjust",
 	    value: function adjust() {
-	      var rect = getBoundingClientRect(this.tooltip);
-	      var view = getViewportRect();
-	      var style = this.tooltip.first().style;
-	      if (rect.top < 0) {
-	        style.top = "8px";
+	      var view = getViewportRect(this.context._options.root);
+
+	      var tooltip = this.tooltip;
+	      var rect = getBoundingClientRect(tooltip, this.context._options.root);
+
+	      var tootipPAS = {};
+
+	      if (rect.viewTop < 0) {
+	        tootipPAS.top = 8 + view.scrollY;
+	        tootipPAS.bottom = "unset";
+	      } else if (rect.viewBottom > view.height) {
+	        tootipPAS.top = "unset";
+	        tootipPAS.bottom = view.rootHeight - rect.height - view.scrollY + 8;
 	      }
-	      if (rect.top > view.height - rect.height) {
-	        style.top = view.height - rect.height - 40 + "px";
+	      if (rect.viewLeft < 0) {
+	        tootipPAS.left = 8 + view.scrollX;
+	        tootipPAS.right = "unset";
+	      } else if (view.width >= 760 && rect.viewRight + 38 > view.width || view.width < 760 && rect.viewRight + 18 > view.width) {
+	        tootipPAS.left = "unset";
+	        tootipPAS.right = view.rootWidth - view.width - view.scrollX + (view.width >= 760 ? 38 : 18);
 	      }
-	      if (rect.left < 0) {
-	        style.left = "8px";
-	      }
-	      if (rect.right < 40) {
-	        style.right = "40px";
-	      }
-	      style.opacity = 1;
+
+	      setStyle(tooltip, tootipPAS);
+	      tooltip.first().style.opacity = 1;
 	    }
 	  }, {
 	    key: "cancel",
@@ -3327,15 +3509,16 @@
 	      this.cancel();
 	      if (!this.visible) {
 	        var show = function show() {
+	          _this3.context._background.hide();
+	          _this3.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
 	          _this3.position();
-	          _this3.el.addClass("active");
 	          _this3.adjust();
 	          _this3.visible = true;
 	        };
 	        if (this.target) {
 	          this._scrollCancel = scrollIntoView(this.target, {
 	            time: this.context.options.animationspeed,
-	            cancellable: true
+	            cancellable: false
 	          }, show);
 	        } else this._timerHandler = setTimeout(show, this.context.options.animationspeed);
 	        return true;
@@ -3349,7 +3532,9 @@
 	      if (this.visible) {
 	        this.el.removeClass("active");
 	        this.tooltip.removeClass("guided-tour-arrow-top");
+	        this.tooltip.removeClass("guided-tour-arrow-bottom");
 	        this.visible = false;
+	        this.context._background.show();
 	        return true;
 	      }
 	      return false;
@@ -3387,9 +3572,7 @@
 
 	  createClass(Step, [{
 	    key: "attach",
-	    value: function attach() {
-	      var root = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "body";
-
+	    value: function attach(root) {
 	      umbrella_min(root).append(this.el);
 	    }
 	  }, {
@@ -3411,14 +3594,9 @@
 	  }, {
 	    key: "hide",
 	    value: function hide() {
-	      var _this = this;
-
 	      if (this.visible) {
-	        var hide = function hide() {
-	          _this.el.removeClass("active");
-	          _this.visible = false;
-	        };
-	        setTimeout(hide, this.context.options.animationspeed);
+	        this.el.removeClass("active");
+	        this.visible = false;
 	        return true;
 	      }
 	      return false;
@@ -3496,6 +3674,15 @@
 	      src: null,
 	      restoreinitialposition: true,
 	      preloadimages: false,
+	      colors: {
+	        overlay: "rgba(0, 0, 0, 0.5)",
+	        background: "#fff",
+	        bullet: "#ff4141",
+	        bulletVisited: "#aaa",
+	        bulletCurrent: "#b50000",
+	        stepButtonNext: "#ff4141",
+	        stepButtonComplete: "#b50000"
+	      },
 	      request: {
 	        "options": {
 	          "mode": "cors",
@@ -3557,11 +3744,28 @@
 	      }
 	    }
 	  }, {
+	    key: "_injectStyles",
+	    value: function _injectStyles() {
+	      // inject colors
+	      this._removeStyles();
+	      var colors = umbrella_min("<style id=\"tourguide-color-schema\">" + colorObjToStyleVarString(this._options.colors, "--tourguide") + "</style>");
+	      umbrella_min(":root > head").append(colors);
+	    }
+	  }, {
+	    key: "_removeStyles",
+	    value: function _removeStyles() {
+	      var colorStyleTags = umbrella_min("style#tourguide-color-schema");
+	      if (colorStyleTags.length > 0) {
+	        colorStyleTags.remove();
+	      }
+	    }
+	  }, {
 	    key: "init",
 	    value: function init() {
 	      var _this2 = this;
 
 	      this.reset();
+	      umbrella_min(this._options.root).addClass("guided-tour");
 	      this._background = new Step$1(this);
 	      if (this._stepsSrc === StepsSource.DOM) {
 	        var steps = umbrella_min(this._options.selector).nodes;
@@ -3592,10 +3796,15 @@
 	      var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
 	      if (this._ready) {
+	        this._injectStyles();
 	        if (this._options.restoreinitialposition) {
+	          var _getViewportRect = getViewportRect(this._options.root),
+	              scrollX = _getViewportRect.scrollX,
+	              scrollY = _getViewportRect.scrollY;
+
 	          this._initialposition = {
-	            top: window.scrollX,
-	            left: window.screenY,
+	            left: scrollX,
+	            top: scrollY,
 	            behavior: "smooth"
 	          };
 	        }
@@ -3629,7 +3838,6 @@
 	            try {
 	              actiontarget.first().click();
 	            } catch (e) {
-	              // eslint-disable-next-line no-console
 	              console.warn("Could not find actiontarget: " + currentstep.actiontarget + " on step #" + currentstep.index);
 	            }
 	          }
@@ -3656,9 +3864,7 @@
 	    value: function go(step, type) {
 	      if (this._active && this._current !== step) {
 	        this.currentstep.hide();
-	        this._background.show();
 	        this._current = clamp(step, 0, this.length - 1);
-	        this._background.hide();
 	        this.currentstep.show();
 	        this._options.onStep(this.currentstep, type);
 	      }
@@ -3666,6 +3872,7 @@
 	  }, {
 	    key: "stop",
 	    value: function stop() {
+	      this._removeStyles();
 	      if (this._active) {
 	        this.currentstep.hide();
 	        this._active = false;

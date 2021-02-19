@@ -110,7 +110,7 @@ describe('Tourguide', function () {
 
       // these are the default keys that should present in tourguide._options
       const tourConstructorOptions = ['root', 'selector', 'animationspeed', 'padding', 'steps', 'src', 'restoreinitialposition',
-        'preloadimages', 'request', 'onStart', 'onComplete', 'onStep', 'onAction', 'onStop'];
+        'preloadimages', 'request', 'onStart', 'onComplete', 'onStep', 'onAction', 'onStop', 'colors'];
 
       // Check that all options returned from constructor are as expected
       const difference = _.difference(_options, tourConstructorOptions);
@@ -370,5 +370,4 @@ describe('Tourguide', function () {
       window.scrollTo = jsdomScrollTo;
     })
   });
-
 });

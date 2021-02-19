@@ -1,6 +1,6 @@
 import u from "umbrellajs";
 import scrollIntoView from "scroll-into-view";
-import { clamp, getDataContents, getBoundingClientRect, getViewportRect } from "../utils";
+import { clamp, getDataContents, getBoundingClientRect, getViewportRect, setStyle, getStyle } from "../utils";
 import marked from "marked";
 // data-step="title: Step1; content: .../<>"
 export default class Step {
@@ -18,19 +18,21 @@ export default class Step {
                     </span>`: `<span role="button" class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
                         <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-next"></use></svg>
                     </span>`}
-                ${this.context._steps.length > 1 ? `<div class="guided-tour-step-footer-bullets">
+                ${this.context._steps.length > 1 ? `<div class="guided-tour-step-bullets">
                     <ul>${this.context._steps.map((step, i) => `<li  title="Go to step ${i + 1}" data-index="${i}" class="${step.index < this.index ? "complete" : step.index == this.index ? "current" : ""}"></li>`).join("")}</ul>
                 </div>` : ""}
             </div>`);
       footer.find(".guided-tour-step-button-next").on("click", this.context.next);
       footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
       footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
-      footer.find(".guided-tour-step-footer-bullets li").on("click", (e) => this.context.go(parseInt(u(e.target).data("index"))));
+      footer.find(".guided-tour-step-bullets li").on("click", (e) => this.context.go(parseInt(u(e.target).data("index"))));
       const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
       highlight.on("click", this.context.action);
       const tooltip = this.tooltip = u("<div role=\"tooltip\" class=\"guided-tour-step-tooltip\"></div>");
+      const tooltipinner = u("<div class=\"guided-tour-step-tooltip-inner\"></div>");
       const arrow = this.arrow = u("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"></div>");
-      tooltip.append(arrow).append(image).append(title).append(content).append(footer);
+      tooltipinner.append(arrow).append(image).append(title).append(content).append(footer);
+      tooltip.append(tooltipinner);
       this.container = u(`<div role="dialog" class="guided-tour-step${this.first ? " guided-tour-step-first" : ""}${this.last ? " guided-tour-step-last" : ""}"></div>`);
       this.container.append(highlight).append(tooltip);
     }
@@ -98,7 +100,7 @@ export default class Step {
       preload.src = this.image;
     }
   }
-  attach(root = "body") {
+  attach(root) {
     u(root).append(this.el);
   }
   remove() {
@@ -106,73 +108,110 @@ export default class Step {
     this.el.remove();
   }
   position() {
-    // {"left":0,"right":400,"top":0,"height":300,"bottom":300,"width":400}
+    const view = getViewportRect(this.context._options.root);
     if (this.target && this.target.offsetParent !== null) {
-      const rect = getBoundingClientRect(this.target);
-      const view = getViewportRect();
-      let style = this.highlight.first().style;
-      style.top = `${rect.top - this.context.options.padding}px`;
-      style.left = `${rect.left - this.context.options.padding}px`;
-      style.width = `${rect.width + this.context.options.padding * 2}px`;
-      style.height = `${rect.height + this.context.options.padding * 2}px`;
+      const highlight = this.highlight;
       const tooltip = this.tooltip;
       const arrow = this.arrow;
-      style = tooltip.first().style;
-      style.opacity = 0.1;
+
+      const highlightPAS = {};
+      const tootipPAS = {};
+      const arrowPAS = {};
+
+      const targetRect = getBoundingClientRect(this.target, this.context._options.root);
+      const tootipRect = getBoundingClientRect(tooltip, this.context._options.root);
+
+      highlightPAS.top = targetRect.top - this.context.options.padding;
+      highlightPAS.left = targetRect.left - this.context.options.padding;
+      highlightPAS.width = targetRect.width + this.context.options.padding * 2;
+      highlightPAS.height = targetRect.height + this.context.options.padding * 2;
+
+      const marginVerticalSize = parseFloat(getStyle(tooltip, "margin-top")) + parseFloat(getStyle(tooltip, "margin-bottom"));
+      const marginHorizontalSize = parseFloat(getStyle(tooltip, "margin-left")) + parseFloat(getStyle(tooltip, "margin-right"));
+
       // Compute vertical position
-      if (view.height / 2 > rect.top) {
+      if (
+        view.height - targetRect.viewBottom > tootipRect.height + marginVerticalSize ||
+        targetRect.viewTop < tootipRect.height + marginVerticalSize
+      ) {
         tooltip.addClass("guided-tour-arrow-top");
-        style.top = `${rect.top + rect.height}px`;
+        tootipPAS.top = targetRect.top + targetRect.height;
       } else {
         tooltip.addClass("guided-tour-arrow-bottom");
-        style.bottom = `${view.height - rect.top}px`;
+        tootipPAS.bottom = view.rootHeight - targetRect.top;
       }
+
       // Compute horizontal position
-      if (view.width / 2 > rect.left) {
-        style.left = `${rect.left}px`;
-        arrow.first().style.left = (rect.width > 400) ? "18px" : `${clamp(rect.width / 2, 14, 386)}px`;
+      if (
+        view.width - targetRect.left > tootipRect.width + marginHorizontalSize ||
+        targetRect.right < tootipRect.width + marginHorizontalSize
+      ) {
+        tootipPAS.left = targetRect.left;
+        if(targetRect.width / 2 > tootipRect.width) arrowPAS.right = 8;
+        else arrowPAS.left = clamp(targetRect.width / 2, 14, tootipRect.width - 14);
       } else {
-        style.right = `${Math.max(view.width - rect.right, 40)}px`;
-        arrow.first().style.right = (view.width - rect.right) < 40 ||
-          (rect.width > 400) ? "8px" : `${clamp(rect.width / 2 - 8, 14, 386)}px`;
+        tootipPAS.right = view.rootWidth - targetRect.right;
+        if(targetRect.width / 2 > tootipRect.width) arrowPAS.left = 18;
+        else arrowPAS.right = clamp(targetRect.width / 2 - 8, 14, tootipRect.width - 14);
       }
+
+      setStyle(highlight, highlightPAS);
+      setStyle(tooltip, tootipPAS);
+      setStyle(arrow, arrowPAS);
+      tooltip.first().style.opacity = 0.1;
     } else {
-      const view = getViewportRect();
-      let style = this.highlight.first().style;
-      style.top = `${0}px`;
-      style.left = `${0}px`;
-      style.width = `${0}px`;
-      style.height = `${0}px`;
-      style.boxShadow = "none";
+      const highlight = this.highlight;
       const tooltip = this.tooltip;
-      style = tooltip.first().style;
-      style.opacity = 0.1;
-      style.top = `${view.height / 2}px`;
-      style.left = `${view.width / 2}px`;
+
+      const highlightPAS = {};
+      const tootipPAS = {};
+
+      highlightPAS.top = 0;
+      highlightPAS.left = 0;
+      highlightPAS.width = 0;
+      highlightPAS.height = 0;
+
+      tootipPAS.top = view.height / 2 + view.scrollY - view.rootTop;
+      tootipPAS.left = view.width / 2 + view.scrollX - view.rootLeft;
+
       tooltip.addClass("guided-tour-arrow-none");
       tooltip.addClass("guided-tour-center");
 
-      if (this.context._background)
-        this.context._background.show();
+      setStyle(highlight, highlightPAS);
+      setStyle(tooltip, tootipPAS);
+      highlight.first().style.boxShadow = "none";
+      tooltip.first().style.opacity = 0.1;
+      this.context._background.show();
     }
   }
   adjust() {
-    const rect = getBoundingClientRect(this.tooltip);
-    const view = getViewportRect();
-    let style = this.tooltip.first().style;
-    if (rect.top < 0) {
-      style.top = "8px";
+    const view = getViewportRect(this.context._options.root);
+
+    const tooltip = this.tooltip;
+    const rect = getBoundingClientRect(tooltip, this.context._options.root);
+
+    const tootipPAS = {};
+
+    if (rect.viewTop < 0) {
+      tootipPAS.top = 8 + view.scrollY;
+      tootipPAS.bottom = "unset";
+    } else if (rect.viewBottom > view.height) {
+      tootipPAS.top = "unset";
+      tootipPAS.bottom = view.rootHeight - rect.height - view.scrollY + 8;
     }
-    if (rect.top > view.height - rect.height) {
-      style.top = `${view.height - rect.height - 40}px`;
+    if (rect.viewLeft < 0) {
+      tootipPAS.left = 8 + view.scrollX;
+      tootipPAS.right = "unset";
+    } else if (
+      (view.width >= 760 && rect.viewRight + 38 > view.width) ||
+      (view.width < 760 && rect.viewRight + 18 > view.width)
+    ) {
+      tootipPAS.left = "unset";
+      tootipPAS.right = view.rootWidth - view.width - view.scrollX + (view.width >= 760 ? 38 : 18);
     }
-    if (rect.left < 0) {
-      style.left = "8px";
-    }
-    if (rect.right < 40) {
-      style.right = "40px";
-    }
-    style.opacity = 1;
+
+    setStyle(tooltip, tootipPAS);
+    tooltip.first().style.opacity = 1;
   }
   cancel() {
     if(this._timerHandler) clearTimeout(this._timerHandler);
@@ -182,15 +221,16 @@ export default class Step {
     this.cancel();
     if (!this.visible) {
       const show = () => {
+        this.context._background.hide();
+        this.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
         this.position();
-        this.el.addClass("active");
         this.adjust();
         this.visible = true;
       };
       if (this.target) {
         this._scrollCancel = scrollIntoView(this.target, {
           time: this.context.options.animationspeed,
-          cancellable: true,
+          cancellable: false,
         }, show);
       } else this._timerHandler = setTimeout(show, this.context.options.animationspeed);
       return true;
@@ -202,7 +242,9 @@ export default class Step {
     if (this.visible) {
       this.el.removeClass("active");
       this.tooltip.removeClass("guided-tour-arrow-top");
+      this.tooltip.removeClass("guided-tour-arrow-bottom");
       this.visible = false;
+      this.context._background.show();
       return true;
     }
     return false;
