@@ -1,7 +1,7 @@
 import u from "umbrellajs";
 import Icons from "./icons";
 import Step from "./step";
-import Background from "./background";
+import Overlay from "./overlay";
 import { clamp, getViewportRect, colorObjToStyleVarString } from "./utils";
 
 import "../scss/style.scss";
@@ -35,8 +35,8 @@ export default class Tour {
     return this._options;
   }
   constructor(options = {}) {
-    this._options =
-      Object.assign({
+    this._options = Object.assign(
+      {
         root: "body",
         selector: "[data-tour]",
         animationspeed: 300,
@@ -45,44 +45,44 @@ export default class Tour {
         src: null,
         restoreinitialposition: true,
         preloadimages: false,
-        colors: {
-          overlay: "rgba(0, 0, 0, 0.5)",
-          background: "#fff",
-          bullet: "#ff4141",
-          bulletVisited: "#aaa",
-          bulletCurrent: "#b50000",
-          stepButtonNext: "#ff4141",
-          stepButtonComplete: "#b50000",
-        },
         request: {
           "options": {
             "mode": "cors",
-            "cache": "no-cache"
+            "cache": "no-cache",
           },
           "headers": {
-            "Content-Type": "application/json"
-          }
+            "Content-Type": "application/json",
+          },
         },
-        onStart: () => { },
-        onStop: () => { },
-        onComplete: () => { },
-        onStep: () => { },
-        onAction: () => { }
-      }, options);
-    this._background = null;
+        onStart: () => {},
+        onStop: () => {},
+        onComplete: () => {},
+        onStep: () => {},
+        onAction: () => {},
+      },
+      options,
+      {
+        colors: Object.assign(
+          {
+            overlay: "rgba(0, 0, 0, 0.5)",
+            background: "#fff",
+            bullet: "#ff4141",
+            bulletVisited: "#aaa",
+            bulletCurrent: "#b50000",
+            stepButtonNext: "#ff4141",
+            stepButtonComplete: "#b50000",
+          },
+          options.colors || {}
+        ),
+      }
+    );
+    this._overlay = null;
     this._steps = [];
     this._current = 0;
     this._active = false;
     this._stepsSrc = StepsSource.DOM;
     this._ready = false;
     this._initialposition = null;
-    this.start = this.start.bind(this);
-    this.action = this.action.bind(this);
-    this.next = this.next.bind(this);
-    this.previous = this.previous.bind(this);
-    this.go = this.go.bind(this);
-    this.stop = this.stop.bind(this);
-    this.complete = this.complete.bind(this);
     this._injectIcons();
     if (typeof this._options.steps === "object" && Array.isArray(this._options.steps)) {
       this._stepsSrc = StepsSource.JSON;
@@ -102,10 +102,19 @@ export default class Tour {
           this._ready = true;
         }));
     } else if (u(this._options.selector).length > 0) {
+      this._stepsSrc = StepsSource.DOM;
       this._ready = true;
     } else {
       throw new Error("Tour is not configured properly. Check documentation.");
     }
+
+    this.start = this.start.bind(this);
+    this.next = this.next.bind(this);
+    this.previous = this.previous.bind(this);
+    this.go = this.go.bind(this);
+    this.stop = this.stop.bind(this);
+    this.complete = this.complete.bind(this);
+    this.action = this.action.bind(this);
   }
   _injectIcons() {
     if (u("#GuidedTourIconSet").length === 0) {
@@ -131,7 +140,7 @@ export default class Tour {
   init() {
     this.reset();
     u(this._options.root).addClass("guided-tour");
-    this._background = new Background(this);
+    this._overlay = new Overlay(this);
     if (this._stepsSrc === StepsSource.DOM) {
       const steps = u(this._options.selector).nodes;
       this._steps = steps.map(el => new Step(
@@ -164,33 +173,39 @@ export default class Tour {
       if (!this._active) {
         u(this._options.root).addClass("guided-tour");
         this.init();
-        this._background.attach(this._options.root);
+        this._overlay.attach(this._options.root);
         this._steps.forEach(step => step.attach(this._options.root));
         this._current = step;
         this.currentstep.show();
         this._active = true;
         this._options.onStart(this._options);
       } else {
-        this.go(step);
+        this.go(step, "start");
       }
     } else {
       throw new Error("Tour is not configured properly. Check documentation.");
     }
   }
-  action(e) {
+  action(event, action) {
     if (this._active) {
       const { currentstep } = this;
-      if (currentstep.actiontarget) {
-        let actiontarget = u(currentstep.target).find(currentstep.actiontarget);
-        if (actiontarget) {
-          try {
-            actiontarget.first().click();
-          } catch (e) {
-            console.warn(`Could not find actiontarget: ${currentstep.actiontarget} on step #${currentstep.index}`);
-          }
-        }
+      if(typeof action.act === "function") {
+        action.act(event, currentstep.toJSON(), action);
+      } else if(typeof action.act === "number") {
+        this.go(action.act, "action");
+      } else if(action.act === "next") {
+        this.next();
+      } else if(action.act === "previous") {
+        this.previous();
+      } else if(action.act === "stop") {
+        this.stop();
+      } else if(action.act === "complete") {
+        this.complete();
       }
-      this._options.onAction(currentstep, e);
+
+      if(this._options.onAction && typeof this._options.onAction === "function") {
+        this._options.onAction(event, currentstep.toJSON(), action);
+      }
     }
   }
   next() {
@@ -216,11 +231,11 @@ export default class Tour {
     if (this._active) {
       this.currentstep.hide();
       this._active = false;
-      this._background.remove();
+      this._overlay.remove();
       this._steps.forEach(step => step.remove());
       u(this._options.root).removeClass("guided-tour");
       if (this._options.restoreinitialposition) {
-        window.scrollTo(this._initialposition);
+        u(this._options.root).first().scrollTo(this._initialposition);
       }
       this._options.onStop(this._options);
     }

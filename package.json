@@ -69,6 +69,7 @@
   ],
   "scripts": {
     "build": "rollup -c rollup.config.js",
+    "devw": "rollup -w -c rollup.config.js",
     "test": "npm run test --prefix ./test"
   },
   "standard": {

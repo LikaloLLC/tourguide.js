@@ -6,6 +6,24 @@ export function clamp(number, min, max) {
   return Math.max(min, Math.min(number, max));
 }
 
+export function parseNumber(number, parseTo = "float") {
+  if (typeof number === "number") return number;
+  let ret = 0;
+  try {
+    if (parseTo === "int") {
+      ret = Number.parseInt(number);
+    } else {
+      ret = Number.parseFloat(number);
+    }
+  } catch (error) {
+    ret = 0;
+  }
+  if (Number.isNaN(ret)) {
+    return 0;
+  }
+  return ret;
+}
+
 export function getDataContents(data = "", defaults = {}) {
   const parts = data.split(";");
   let result = { ...defaults };
@@ -16,6 +34,10 @@ export function getDataContents(data = "", defaults = {}) {
   return result;
 }
 
+export function isTargetValid(target) {
+  return target && target.offsetParent !== null;
+}
+
 export function getBoundingClientRect(el, root) {
   const rect = u(el).size();
   const view = getViewportRect(root);
@@ -23,10 +45,10 @@ export function getBoundingClientRect(el, root) {
   return {
     width: rect.width,
     height: rect.height,
-    top: rect.top + view.scrollY,
-    bottom: rect.bottom + view.scrollY,
-    left: rect.left + view.scrollX,
-    right: rect.right + view.scrollX,
+    top: rect.top + view.scrollY - view.rootTop,
+    bottom: rect.bottom + view.scrollY - view.rootTop,
+    left: rect.left + view.scrollX - view.rootLeft,
+    right: rect.right + view.scrollX - view.rootLeft,
     viewTop: rect.top,
     viewBottom: rect.bottom,
     viewLeft: rect.left,
@@ -35,20 +57,23 @@ export function getBoundingClientRect(el, root) {
 }
 
 export function getViewportRect(root) {
-  const rect = u(root).size();
-  const rootEl = u(root).first();
-  return {
-    width: window.innerWidth,
-    height: window.innerHeight,
-    scrollX: rootEl.scrollLeft,
-    scrollY: rootEl.scrollTop,
-    rootWidth: rect.width,
-    rootHeight: rect.height,
-    rootTop: rect.top,
-    rootBottom: rect.bottom,
-    rootLeft: rect.left,
-    rootRight: rect.right,
-  };
+  try {
+    const rootEl = u(root).first();
+    const rect = u(root).size();
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight,
+      scrollX: rootEl.scrollLeft,
+      scrollY: rootEl.scrollTop,
+      rootWidth: rect.width,
+      rootHeight: rect.height,
+      rootTop: rootEl.scrollTop === window.scrollY ? 0 : rect.top,
+      rootLeft: rootEl.scrollLeft === window.scrollX ? 0 : rect.left,
+    };
+  } catch (error) {
+    console.error(error);
+    throw Error(`root is not valid: ${root}`);
+  }
 }
 
 // alternative for jQuery .css() get method
@@ -74,7 +99,6 @@ export function getStyle(el, css3Prop) {
   }
   return "";
 }
-
 
 const allowedProperties = ["top", "left", "right", "bottom", "width", "height", "maxWidth", "minWidth", "transform"];
 export function setStyle(element, object) {

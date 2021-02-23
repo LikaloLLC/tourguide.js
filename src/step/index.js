@@ -1,8 +1,38 @@
 import u from "umbrellajs";
 import scrollIntoView from "scroll-into-view";
-import { clamp, getDataContents, getBoundingClientRect, getViewportRect, setStyle, getStyle } from "../utils";
+import {
+  clamp,
+  getDataContents,
+  getBoundingClientRect,
+  isTargetValid,
+  getViewportRect,
+  setStyle,
+  getStyle,
+  parseNumber,
+} from "../utils";
 import marked from "marked";
 // data-step="title: Step1; content: .../<>"
+
+function getEventType(event) {
+  let eventType = "";
+  if (typeof event === "string") {
+    eventType = event;
+  } else if (typeof event === "object") {
+    eventType = event.type;
+  }
+
+  return eventType;
+}
+
+function getEventAttrs(event) {
+  if (typeof event === "object") {
+    return Object.entries(event)
+      .map(([key, value]) => ({ key, value }));
+  }
+
+  return [];
+}
+
 export default class Step {
   get el() {
     if (!this.container) {
@@ -27,10 +57,9 @@ export default class Step {
       footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
       footer.find(".guided-tour-step-bullets li").on("click", (e) => this.context.go(parseInt(u(e.target).data("index"))));
       const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
-      highlight.on("click", this.context.action);
       const tooltip = this.tooltip = u("<div role=\"tooltip\" class=\"guided-tour-step-tooltip\"></div>");
       const tooltipinner = u("<div class=\"guided-tour-step-tooltip-inner\"></div>");
-      const arrow = this.arrow = u("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"></div>");
+      const arrow = this.arrow = u("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"><div aria-hidden=\"true\" class=\"guided-tour-arrow-inner\"></div></div>");
       tooltipinner.append(arrow).append(image).append(title).append(content).append(footer);
       tooltip.append(tooltipinner);
       this.container = u(`<div role="dialog" class="guided-tour-step${this.first ? " guided-tour-step-first" : ""}${this.last ? " guided-tour-step-last" : ""}"></div>`);
@@ -39,31 +68,30 @@ export default class Step {
     return this.container;
   }
   get target() {
-    return this._target || u(this.selector).first();
+    return this._target || u(this._selector).first();
   }
   set target(target) {
     this._target = target;
   }
   constructor(step, context) {
     this.index = 0;
-    this.first = false;
-    this.last = false;
-    this.target = null;
-    this.container = null;
-    this.highlight = null;
-    this.tooltip = null;
-    this.arrow = null;
-    this.rect = {};
     this.image = null;
     this.title = "";
     this.content = "";
     this.active = false;
-    this.context = null;
-    this.visible = false;
-    this._target = null;
+    this.first = false;
+    this.last = false;
+
+    this.container = null;
+    this.highlight = null;
+    this.tooltip = null;
+    this.arrow = null;
+
     this.context = context;
+    this._target = null;
     this._timerHandler = null;
     this._scrollCancel = null;
+
     let data;
     if (!(step instanceof HTMLElement)) {
       if(!(step.hasOwnProperty("title") && step.hasOwnProperty("content") && step.hasOwnProperty("step"))) {
@@ -74,7 +102,7 @@ export default class Step {
         );
       }
       data = step;
-      this.selector = step.selector;
+      this._selector = step.selector;
     } else {
       this.target = step;
       data = getDataContents(u(step).data("tour"));
@@ -85,7 +113,6 @@ export default class Step {
     if (data.marked) {
       this.content = marked(this.content);
     }
-    this.actiontarget = data.actiontarget;
     this.image = data.image;
     if (data.image &&
       context.options.preloadimages &&
@@ -99,6 +126,15 @@ export default class Step {
       };
       preload.src = this.image;
     }
+
+    this.actions = [];
+    if(data.actions) {
+      if(!Array.isArray(data.actions)) {
+        console.error(new Error(`actions must be array but got ${typeof data.actions}`));
+      } else {
+        this.actions = data.actions;
+      }
+    }
   }
   attach(root) {
     u(root).append(this.el);
@@ -109,108 +145,124 @@ export default class Step {
   }
   position() {
     const view = getViewportRect(this.context._options.root);
-    if (this.target && this.target.offsetParent !== null) {
+
+    if (isTargetValid(this.target)) {
       const highlight = this.highlight;
       const tooltip = this.tooltip;
       const arrow = this.arrow;
 
-      const highlightPAS = {};
-      const tootipPAS = {};
-      const arrowPAS = {};
+      const highlightStyle = {};
+      const tootipStyle = {};
+      const arrowStyle = {};
 
       const targetRect = getBoundingClientRect(this.target, this.context._options.root);
-      const tootipRect = getBoundingClientRect(tooltip, this.context._options.root);
+      const tooltipRect = getBoundingClientRect(tooltip, this.context._options.root);
 
-      highlightPAS.top = targetRect.top - this.context.options.padding;
-      highlightPAS.left = targetRect.left - this.context.options.padding;
-      highlightPAS.width = targetRect.width + this.context.options.padding * 2;
-      highlightPAS.height = targetRect.height + this.context.options.padding * 2;
+      highlightStyle.top = targetRect.top - this.context.options.padding;
+      highlightStyle.left = targetRect.left - this.context.options.padding;
+      highlightStyle.width = targetRect.width + this.context.options.padding * 2;
+      highlightStyle.height = targetRect.height + this.context.options.padding * 2;
 
-      const marginVerticalSize = parseFloat(getStyle(tooltip, "margin-top")) + parseFloat(getStyle(tooltip, "margin-bottom"));
-      const marginHorizontalSize = parseFloat(getStyle(tooltip, "margin-left")) + parseFloat(getStyle(tooltip, "margin-right"));
+      const marginVerticalSize = parseNumber(getStyle(tooltip, "margin-top")) + parseNumber(getStyle(tooltip, "margin-bottom"));
+      const marginHorizontalSize = parseNumber(getStyle(tooltip, "margin-left")) + parseNumber(getStyle(tooltip, "margin-right"));
+
+      let tooltipBRL = 0;
+      let tooltipBRR = 0;
 
       // Compute vertical position
       if (
-        view.height - targetRect.viewBottom > tootipRect.height + marginVerticalSize ||
-        targetRect.viewTop < tootipRect.height + marginVerticalSize
+        view.height - targetRect.viewBottom > tooltipRect.height + marginVerticalSize ||
+        targetRect.viewTop < tooltipRect.height + marginVerticalSize
       ) {
+        tootipStyle.top = targetRect.top + targetRect.height;
+        tootipStyle.bottom = "unset";
         tooltip.addClass("guided-tour-arrow-top");
-        tootipPAS.top = targetRect.top + targetRect.height;
+        tooltipBRL = parseNumber(getStyle(tooltip, "border-top-left-radius"));
+        tooltipBRR = parseNumber(getStyle(tooltip, "border-top-right-radius"));
       } else {
+        tootipStyle.bottom = view.rootHeight - targetRect.top;
+        tootipStyle.top = "unset";
         tooltip.addClass("guided-tour-arrow-bottom");
-        tootipPAS.bottom = view.rootHeight - targetRect.top;
+        tooltipBRL = parseNumber(getStyle(tooltip, "border-bottom-left-radius"));
+        tooltipBRR = parseNumber(getStyle(tooltip, "border-bottom-right-radius"));
       }
+
+      const arrowRect = getBoundingClientRect(arrow, this.context._options.root);
 
       // Compute horizontal position
       if (
-        view.width - targetRect.left > tootipRect.width + marginHorizontalSize ||
-        targetRect.right < tootipRect.width + marginHorizontalSize
+        view.width - targetRect.left > tooltipRect.width + marginHorizontalSize ||
+        targetRect.right < tooltipRect.width + marginHorizontalSize
       ) {
-        tootipPAS.left = targetRect.left;
-        if(targetRect.width / 2 > tootipRect.width) arrowPAS.right = 8;
-        else arrowPAS.left = clamp(targetRect.width / 2, 14, tootipRect.width - 14);
+        tootipStyle.left = targetRect.left;
+        tootipStyle.right = "unset";
+        if(targetRect.width / 2 > tooltipRect.width) arrowStyle.right = 8;
+        else arrowStyle.left = clamp(targetRect.width / 2, tooltipBRL + 2, tooltipRect.width - arrowRect.width - tooltipBRR - 2);
       } else {
-        tootipPAS.right = view.rootWidth - targetRect.right;
-        if(targetRect.width / 2 > tootipRect.width) arrowPAS.left = 18;
-        else arrowPAS.right = clamp(targetRect.width / 2 - 8, 14, tootipRect.width - 14);
+        tootipStyle.right = view.rootWidth - targetRect.right;
+        tootipStyle.left = "unset";
+        if(targetRect.width / 2 > tooltipRect.width) arrowStyle.left = 18;
+        else arrowStyle.right = clamp(targetRect.width / 2, tooltipBRR + 2, tooltipRect.width - arrowRect.width - tooltipBRL - 2);
       }
 
-      setStyle(highlight, highlightPAS);
-      setStyle(tooltip, tootipPAS);
-      setStyle(arrow, arrowPAS);
+      setStyle(highlight, highlightStyle);
+      setStyle(tooltip, tootipStyle);
+      setStyle(arrow, arrowStyle);
       tooltip.first().style.opacity = 0.1;
     } else {
       const highlight = this.highlight;
       const tooltip = this.tooltip;
 
-      const highlightPAS = {};
-      const tootipPAS = {};
+      const tooltipRect = getBoundingClientRect(tooltip, this.context._options.root);
 
-      highlightPAS.top = 0;
-      highlightPAS.left = 0;
-      highlightPAS.width = 0;
-      highlightPAS.height = 0;
+      const highlightStyle = {};
+      const tootipStyle = {};
 
-      tootipPAS.top = view.height / 2 + view.scrollY - view.rootTop;
-      tootipPAS.left = view.width / 2 + view.scrollX - view.rootLeft;
+      highlightStyle.top = 0;
+      highlightStyle.left = 0;
+      highlightStyle.width = 0;
+      highlightStyle.height = 0;
+
+      tootipStyle.top = view.height / 2 + view.scrollY - view.rootTop - (tooltipRect.height / 2);
+      tootipStyle.left = view.width / 2 + view.scrollX - view.rootLeft - (tooltipRect.width / 2);
 
       tooltip.addClass("guided-tour-arrow-none");
-      tooltip.addClass("guided-tour-center");
 
-      setStyle(highlight, highlightPAS);
-      setStyle(tooltip, tootipPAS);
+      setStyle(highlight, highlightStyle);
+      setStyle(tooltip, tootipStyle);
       highlight.first().style.boxShadow = "none";
       tooltip.first().style.opacity = 0.1;
-      this.context._background.show();
+      this.context._overlay.show();
     }
   }
   adjust() {
     const view = getViewportRect(this.context._options.root);
 
     const tooltip = this.tooltip;
-    const rect = getBoundingClientRect(tooltip, this.context._options.root);
 
-    const tootipPAS = {};
+    const tooltipRect = getBoundingClientRect(tooltip, this.context._options.root);
 
-    if (rect.viewTop < 0) {
-      tootipPAS.top = 8 + view.scrollY;
-      tootipPAS.bottom = "unset";
-    } else if (rect.viewBottom > view.height) {
-      tootipPAS.top = "unset";
-      tootipPAS.bottom = view.rootHeight - rect.height - view.scrollY + 8;
+    const tootipStyle = {};
+
+    if (tooltipRect.viewTop < 8) {
+      tootipStyle.top = (8 - tooltipRect.viewTop) + tooltipRect.top;
+      tootipStyle.bottom = "unset";
+    } else if (tooltipRect.viewBottom + 8 > view.height) {
+      tootipStyle.top = "unset";
+      tootipStyle.bottom = view.rootHeight - (tooltipRect.bottom - (tooltipRect.viewBottom + 8 - view.height));
     }
-    if (rect.viewLeft < 0) {
-      tootipPAS.left = 8 + view.scrollX;
-      tootipPAS.right = "unset";
+    if (tooltipRect.viewLeft < 8) {
+      tootipStyle.left = (8 - tooltipRect.viewLeft) + tooltipRect.left;
+      tootipStyle.right = "unset";
     } else if (
-      (view.width >= 760 && rect.viewRight + 38 > view.width) ||
-      (view.width < 760 && rect.viewRight + 18 > view.width)
+      (view.width >= 760 && tooltipRect.viewRight + 38 > view.width) ||
+      (view.width < 760 && tooltipRect.viewRight + 18 > view.width)
     ) {
-      tootipPAS.left = "unset";
-      tootipPAS.right = view.rootWidth - view.width - view.scrollX + (view.width >= 760 ? 38 : 18);
+      tootipStyle.left = "unset";
+      tootipStyle.right = view.rootWidth - (tooltipRect.right - (tooltipRect.viewRight + (view.width >= 760 ? 38 : 18) - view.width));
     }
 
-    setStyle(tooltip, tootipPAS);
+    setStyle(tooltip, tootipStyle);
     tooltip.first().style.opacity = 1;
   }
   cancel() {
@@ -219,15 +271,46 @@ export default class Step {
   }
   show() {
     this.cancel();
-    if (!this.visible) {
+    if (!this.active) {
       const show = () => {
-        this.context._background.hide();
+        this.context._overlay.hide();
         this.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
         this.position();
         this.adjust();
-        this.visible = true;
+        if(isTargetValid(this.target)) {
+          if(getStyle(this.target, "position") === "static") {
+            this.target.style.position = "relative";
+          }
+          u(this.target).addClass("guided-tour-target");
+        }
+
+        this.actions.forEach((a) => {
+          try {
+            const eventType = getEventType(a.event);
+            if(eventType) {
+              const eventHandler = (e) => {
+                if(a) {
+                  const eventAttrs = getEventAttrs(a.event);
+                  const isMatched = !(eventAttrs.filter((attr) => e[attr.key] !== attr.value).length);
+
+                  if(isMatched) this.context.action(e, a);
+                }
+              };
+              a.handler = eventHandler;
+              a.target = a.target || this.target;
+              u(a.target).on(eventType, a.handler);
+            } else {
+              console.warn(`Wrong event on action.event: ${a.event} on step #${this.index}`);
+            }
+          } catch (error) {
+            console.warn(`Could not find action.target: ${a.target} on step #${this.index}`);
+            console.warn(error);
+          }
+        });
+
+        this.active = true;
       };
-      if (this.target) {
+      if (isTargetValid(this.target)) {
         this._scrollCancel = scrollIntoView(this.target, {
           time: this.context.options.animationspeed,
           cancellable: false,
@@ -239,18 +322,33 @@ export default class Step {
   }
   hide() {
     this.cancel();
-    if (this.visible) {
+    if (this.active) {
+      if(isTargetValid(this.target)) {
+        u(this.target).removeClass("guided-tour-target");
+      }
       this.el.removeClass("active");
       this.tooltip.removeClass("guided-tour-arrow-top");
       this.tooltip.removeClass("guided-tour-arrow-bottom");
-      this.visible = false;
-      this.context._background.show();
+      this.context._overlay.show();
+
+      this.actions.forEach((a) => {
+        try {
+          const eventType = getEventType(a.event);
+          if(eventType) {
+            u(a.target).off(eventType, a.handler);
+          }
+        } catch (error) {
+          console.warn(error);
+        }
+      });
+
+      this.active = false;
       return true;
     }
     return false;
   }
   toJSON() {
-    // eslint-disable-next-line no-undef
-    return { index, title, contnet, image, active } = this;
+    const { index, title, content, image, active } = this;
+    return { index, title, content, image, active };
   }
 }

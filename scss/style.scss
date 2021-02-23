@@ -14,7 +14,15 @@ $fontSize: 12pt;
     position: relative !important;
 }
 
-.guided-tour-background {
+blockquote {
+    background: #f9f9f9;
+    border-left: 10px solid #ccc;
+    margin: 1.5em 10px;
+    padding: 1em 10px 0.1em 10px;
+    quotes: "\201C""\201D""\2018""\2019";
+}
+  
+.guided-tour-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -27,6 +35,10 @@ $fontSize: 12pt;
     &.active {
         display: block;
     }
+}
+
+.guided-tour-target {
+    z-index: 1025;
 }
 
 .guided-tour-step {
@@ -43,7 +55,6 @@ $fontSize: 12pt;
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 1024;
         pointer-events: all;
 
         .guided-tour-step-highlight {
@@ -51,13 +62,13 @@ $fontSize: 12pt;
             box-sizing: border-box;
             border-radius: 4px;
             box-shadow: 0 0 0 999em $overlay;
-            z-index: 1;
+            z-index: 1024;
         }
 
         .guided-tour-step-tooltip {
             position: absolute;
             margin: 16px 0;
-            z-index: 2;
+            z-index: 1025;
             background-color: $background;
             min-width: 280px;
             max-width: 400px;
@@ -74,13 +85,6 @@ $fontSize: 12pt;
                 right: 18px !important;
             }
 
-            &.guided-tour-center {
-                transform: translate(-50%, -50%);
-                @media screen and (max-width: 760px) {
-                    transform: translate(0, -50%);
-                }
-            }
-
             .guided-tour-step-tooltip-inner {
                 position: relative;
                 padding: 32px 32px 28px 32px;
@@ -88,12 +92,7 @@ $fontSize: 12pt;
 
                 .guided-tour-arrow {
                     position: absolute;
-                    border-top: 8px solid transparent;
-                    border-left: 8px solid transparent;
-                    border-right: 8px solid transparent;
-                    border-bottom: 8px solid transparent;
-                    margin-left: -8px;
-                    margin-top: -8px;
+                    background: transparent;
                 }
 
                 .guided-tour-step-image {
@@ -216,9 +215,28 @@ $fontSize: 12pt;
             &.guided-tour-arrow-top {
                 .guided-tour-step-tooltip-inner {
                     .guided-tour-arrow {
-                        border-bottom-color: $background;
-                        margin-top: -16px;
                         top: 0;
+                        margin-top: -18px;
+
+                        .guided-tour-arrow-inner {
+                            width: 18px;
+                            height: 18px;
+                            position: relative;
+                            overflow: hidden;
+                            background: transparent;
+    
+                            &::after {
+                                content: "";
+                                position: absolute;
+                                width: 12px;
+                                height: 12px;
+                                background: $background;
+                                transform: rotate(225deg);
+                                top: 13px;
+                                left: 4px;
+                                box-shadow: 1px 1px 6px -3px #000;
+                            }
+                        }
                     }
                 }
             }
@@ -226,9 +244,28 @@ $fontSize: 12pt;
             &.guided-tour-arrow-bottom {
                 .guided-tour-step-tooltip-inner {
                     .guided-tour-arrow {
-                        border-top-color: $background;
-                        margin-bottom: -16px;
+                        margin-bottom: -18px;
                         bottom: 0;
+
+                        .guided-tour-arrow-inner {
+                            width: 18px;
+                            height: 18px;
+                            position: relative;
+                            overflow: hidden;
+                            background: transparent;
+    
+                            &::after {
+                                content: "";
+                                position: absolute;
+                                width: 12px;
+                                height: 12px;
+                                background: $background;
+                                transform: rotate(45deg);
+                                top: -6px;
+                                left: 4px;
+                                box-shadow: 1px 1px 6px -3px #000;
+                            }
+                        }
                     }
                 }
             }
