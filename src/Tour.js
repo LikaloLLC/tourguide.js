@@ -69,6 +69,7 @@ export default class Tour {
             bullet: "#ff4141",
             bulletVisited: "#aaa",
             bulletCurrent: "#b50000",
+            stepButtonPrev: "#ff4141",
             stepButtonNext: "#ff4141",
             stepButtonComplete: "#b50000",
           },
