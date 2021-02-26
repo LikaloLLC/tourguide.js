@@ -71,15 +71,15 @@ var tourguide = new Tourguide({options});
 * `colors`: if you want to customize the color schema of this plugin, use this attribute. object will be combine with default values.
 
   Here is the defult
-  ```js
+  ```json
   {
-    overlay: "rgba(0, 0, 0, 0.5)",
-    background: "#fff",
-    bullet: "#ff4141",
-    bulletVisited: "#aaa",
-    bulletCurrent: "#b50000",
-    stepButtonNext: "#ff4141",
-    stepButtonComplete: "#b50000",
+    "overlay": "rgba(0, 0, 0, 0.5)",
+    "background": "#fff",
+    "bullet": "#ff4141",
+    "bulletVisited": "#aaa",
+    "bulletCurrent": "#b50000",
+    "stepButtonNext": "#ff4141",
+    "stepButtonComplete": "#b50000",
   }
   ```
 
@@ -92,14 +92,14 @@ var tourguide = new Tourguide({options});
     View This doc for more details about the KeyboardEvent: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
   
   Here is the defult
-  ```js
+  ```json
   {
-    next: "ArrowRight",
-    prev: "ArrowLeft",
-    first: "ArrowUp",
-    last: "ArrowDown",
-    complete: "End",
-    stop: "Delete"
+    "next": "ArrowRight",
+    "prev": "ArrowLeft",
+    "first": "ArrowUp",
+    "last": "ArrowDown",
+    "complete": "End",
+    "stop": "Delete"
   }
   ```
 * `request`: if you want to load the tour from a remote URL you may provide request headers here
