@@ -68,7 +68,7 @@ var tourguide = new Tourguide({options});
 
 * `restoreinitialposition`: if you want to restore the scroll position after the tour ended, you may set this attribute to true; default is true
 
-* `colors`: if you want to customize the color schema of this plugin, use this attribute.
+* `colors`: if you want to customize the color schema of this plugin, use this attribute. object will be combine with default values.
 
   Here is the defult
   ```js
@@ -83,6 +83,25 @@ var tourguide = new Tourguide({options});
   }
   ```
 
+* `keyboardNavigation`: if you want to enable keyboard navigation, use this attribute. each attribute can be number, string or object.
+  If you want to disable the keyboard navigation, just set this option to `false`.
+  
+  * number - used as `keyCode` : [DEPRECATED](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode)
+  * string - used as `key`
+  * object - All KeyboardEvent attribute is accepted including `keyCode`, `altKey`, `metaKey`, `ctrlKey` and etc.
+    View This doc for more details about the KeyboardEvent: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
+  
+  Here is the defult
+  ```js
+  {
+    next: "ArrowRight",
+    prev: "ArrowLeft",
+    first: "ArrowUp",
+    last: "ArrowDown",
+    complete: "End",
+    stop: "Delete"
+  }
+  ```
 * `request`: if you want to load the tour from a remote URL you may provide request headers here
 
 * `onStart`: callback function triggered when the tour starts
@@ -184,7 +203,8 @@ About step details, See [Step](#Step) section.
 
   * `event<object | string>`: event details. if you want just use only the event type, set it as a string value, otherwise set it as an object.
   
-    All event attribute is accepted including `keyCode`, `altKey`, `metaKey`, `ctrlKey` and etc.
+    All KeyboardEvent attribute is accepted including `keyCode`, `altKey`, `metaKey`, `ctrlKey` and etc.
+    View This doc for more details about the KeyboardEvent: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
     
   Example:
   ```js
@@ -193,7 +213,7 @@ About step details, See [Step](#Step) section.
     "actions": [
       {
         "target": "body",
-        "act": (event, currentstep, curaction) => { /* your logic here */ }
+        "act": (event, currentstep, curaction, tourguide) => { /* your logic here */ }
         "event": {
           "type": "keyup"
           "keyCode": 39, // arrow right
