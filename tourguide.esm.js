@@ -3737,6 +3737,58 @@ var StepsSource = {
   REMOTE: 2
 };
 
+function isEventAttrbutesMatched(event, keyOption) {
+  var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "keyup";
+
+  if ((typeof event === "undefined" ? "undefined" : _typeof(event)) === "object") {
+    var eventAttrsMap = { type: type };
+    if (typeof keyOption === "number") {
+      eventAttrsMap.keyCode = keyOption;
+    } else if (typeof keyOption === "string") {
+      eventAttrsMap.key = keyOption;
+    } else if ((typeof keyOption === "undefined" ? "undefined" : _typeof(keyOption)) === "object") {
+      eventAttrsMap = _extends({}, keyOption, { type: type });
+    } else {
+      throw new Error("keyboardNavigation option invalid. should be predefined object or false. Check documentation.");
+    }
+
+    var eventAttrs = Object.entries(eventAttrsMap).map(function (_ref) {
+      var _ref2 = slicedToArray(_ref, 2),
+          key = _ref2[0],
+          value = _ref2[1];
+
+      return {
+        key: key,
+        value: value
+      };
+    });
+    return !eventAttrs.filter(function (attr) {
+      return event[attr.key] !== attr.value;
+    }).length;
+  }
+
+  return false;
+}
+
+var defaultKeyNavOptions = {
+  next: "ArrowRight",
+  prev: "ArrowLeft",
+  first: "ArrowUp",
+  last: "ArrowDown",
+  complete: "End",
+  stop: "Delete"
+};
+
+var defaultColors = {
+  overlay: "rgba(0, 0, 0, 0.5)",
+  background: "#fff",
+  bullet: "#ff4141",
+  bulletVisited: "#aaa",
+  bulletCurrent: "#b50000",
+  stepButtonNext: "#ff4141",
+  stepButtonComplete: "#b50000"
+};
+
 var Tour = function () {
   createClass(Tour, [{
     key: "currentstep",
@@ -3783,6 +3835,7 @@ var Tour = function () {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     classCallCheck(this, Tour);
 
+
     this._options = Object.assign({
       root: "body",
       selector: "[data-tour]",
@@ -3801,21 +3854,14 @@ var Tour = function () {
           "Content-Type": "application/json"
         }
       },
+      keyboardNavigation: defaultKeyNavOptions,
       onStart: function onStart() {},
       onStop: function onStop() {},
       onComplete: function onComplete() {},
       onStep: function onStep() {},
       onAction: function onAction() {}
     }, options, {
-      colors: Object.assign({
-        overlay: "rgba(0, 0, 0, 0.5)",
-        background: "#fff",
-        bullet: "#ff4141",
-        bulletVisited: "#aaa",
-        bulletCurrent: "#b50000",
-        stepButtonNext: "#ff4141",
-        stepButtonComplete: "#b50000"
-      }, options.colors || {})
+      colors: Object.assign(defaultColors, options.colors || {})
     });
     this._overlay = null;
     this._steps = [];
@@ -3855,6 +3901,7 @@ var Tour = function () {
     this.stop = this.stop.bind(this);
     this.complete = this.complete.bind(this);
     this.action = this.action.bind(this);
+    this._keyboardHandler = this._keyboardHandler.bind(this);
   }
 
   createClass(Tour, [{
@@ -3878,6 +3925,23 @@ var Tour = function () {
       var colorStyleTags = umbrella_min("style#tourguide-color-schema");
       if (colorStyleTags.length > 0) {
         colorStyleTags.remove();
+      }
+    }
+  }, {
+    key: "_keyboardHandler",
+    value: function _keyboardHandler(event) {
+      if (this._options.keyboardNavigation.next && isEventAttrbutesMatched(event, this._options.keyboardNavigation.next)) {
+        this.next();
+      } else if (this._options.keyboardNavigation.prev && isEventAttrbutesMatched(event, this._options.keyboardNavigation.prev)) {
+        this.previous();
+      } else if (this._options.keyboardNavigation.first && isEventAttrbutesMatched(event, this._options.keyboardNavigation.first)) {
+        this.go(0);
+      } else if (this._options.keyboardNavigation.last && isEventAttrbutesMatched(event, this._options.keyboardNavigation.last)) {
+        this.go(this._steps.length - 1);
+      } else if (this._options.keyboardNavigation.stop && isEventAttrbutesMatched(event, this._options.keyboardNavigation.stop)) {
+        this.stop();
+      } else if (this._options.keyboardNavigation.complete && isEventAttrbutesMatched(event, this._options.keyboardNavigation.complete)) {
+        this.complete();
       }
     }
   }, {
@@ -3940,6 +4004,12 @@ var Tour = function () {
           this.currentstep.show();
           this._active = true;
           this._options.onStart(this._options);
+
+          if (this._options.keyboardNavigation) {
+            if (Object.prototype.toString.call(this._options.keyboardNavigation) !== "[object Object]") throw new Error("keyboardNavigation option invalid. should be predefined object or false. Check documentation.");
+
+            umbrella_min(":root").on("keyup", this._keyboardHandler);
+          }
         } else {
           this.go(step, "start");
         }
@@ -3954,7 +4024,7 @@ var Tour = function () {
         var currentstep = this.currentstep;
 
         if (typeof _action.act === "function") {
-          _action.act(event, currentstep.toJSON(), _action);
+          _action.act(event, currentstep.toJSON(), this, _action);
         } else if (typeof _action.act === "number") {
           this.go(_action.act, "action");
         } else if (_action.act === "next") {
@@ -4010,6 +4080,9 @@ var Tour = function () {
         umbrella_min(this._options.root).removeClass("guided-tour");
         if (this._options.restoreinitialposition) {
           umbrella_min(this._options.root).first().scrollTo(this._initialposition);
+        }
+        if (this._options.keyboardNavigation) {
+          umbrella_min(":root").off("keyup", this._keyboardHandler);
         }
         this._options.onStop(this._options);
       }
