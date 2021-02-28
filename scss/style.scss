@@ -4,6 +4,7 @@ $bullet: var(--tourguide-bullet);
 $bullet-visited: var(--tourguide-bullet-visited);
 $bullet-current: var(--tourguide-bullet-current);
 $button-next: var(--tourguide-step-button-next);
+$button-prev: var(--tourguide-step-button-prev);
 $button-complete: var(--tourguide-step-button-complete);
 $font: #333;
 $fontFamily: "Open Sans", Arimo, "Droid Sans", Helvetica, Arial, sans-serif;
@@ -135,16 +136,39 @@ blockquote {
                     }
                 }
 
+                .guided-tour-step-button-close {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 32px;
+                    height: 32px;
+                }
+
+                .guided-tour-step-button-prev,
                 .guided-tour-step-button-next,
                 .guided-tour-step-button-complete {
-                    border: 2px solid currentColor;
-                    box-shadow: 5px 0 1em 0 rgba(0, 0, 0, 0.4);
                     width: 48px;
                     height: 48px;
+                    border: 2px solid currentColor;
                     background: $background;
                     border-radius: 50%;
-                    position: absolute;
                     margin-top: -24px;
+                    position: absolute;
+                }
+
+                .guided-tour-step-button-prev {
+                    color: $button-prev;
+                    box-shadow: -5px 0 1em 0 rgba(0, 0, 0, 0.4);
+                    left: -30px;
+                    top: 50%;
+                    @media screen and (max-width: 760px) {
+                        left: -10px;
+                    }
+                }
+
+                .guided-tour-step-button-next {
+                    color: $button-next;
+                    box-shadow: 5px 0 1em 0 rgba(0, 0, 0, 0.4);
                     right: -30px;
                     top: 50%;
                     @media screen and (max-width: 760px) {
@@ -152,20 +176,14 @@ blockquote {
                     }
                 }
 
-                .guided-tour-step-button-next {
-                    color: $button-next;
-                }
-
                 .guided-tour-step-button-complete {
                     color: $button-complete;
-                }
-
-                .guided-tour-step-button-close {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    width: 32px;
-                    height: 32px;
+                    box-shadow: 5px 0 1em 0 rgba(0, 0, 0, 0.4);
+                    right: -30px;
+                    top: 50%;
+                    @media screen and (max-width: 760px) {
+                        right: -10px;
+                    }
                 }
 
                 .guided-tour-step-bullets {

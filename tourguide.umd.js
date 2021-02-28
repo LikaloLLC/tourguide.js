@@ -17,7 +17,7 @@
 	});
 	var umbrella_min_1 = umbrella_min.u;
 
-	var Icons = "<svg id=\"GuidedTourIconSet\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"display: none;\">\n<symbol id=\"tour-icon-close\" viewBox=\"0 0 20 20\"><path d=\"M16,16 L4,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path><path d=\"M16,4 L4,16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path></symbol>\n<symbol id=\"tour-icon-next\" viewBox=\"0 0 20 20\"><polyline points=\"7 4 13 10 7 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n<symbol id=\"tour-icon-complete\" viewBox=\"0 0 20 20\"><polyline points=\"4,10 8,15 17,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n</svg>";
+	var Icons = "<svg id=\"GuidedTourIconSet\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" style=\"display: none;\">\n<symbol id=\"tour-icon-close\" viewBox=\"0 0 20 20\"><path d=\"M16,16 L4,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path><path d=\"M16,4 L4,16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></path></symbol>\n<symbol id=\"tour-icon-next\" viewBox=\"0 0 20 20\"><polyline points=\"7 4 13 10 7 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n<symbol id=\"tour-icon-prev\" viewBox=\"0 0 20 20\"><polyline points=\"12 4 6 10 12 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n<symbol id=\"tour-icon-complete\" viewBox=\"0 0 20 20\"><polyline points=\"4,10 8,15 17,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline></symbol>\n</svg>";
 
 	var COMPLETE = 'complete',
 	    CANCELED = 'canceled';
@@ -3351,9 +3351,10 @@
 	        var image = umbrella_min("<div role=\"figure\" class=\"guided-tour-step-image\">" + (this.image ? "<img src=\"" + this.image + "\" />" : "") + "</div>");
 	        var title = umbrella_min("<div role=\"heading\" class=\"guided-tour-step-title\">" + this.title + "</div>");
 	        var content = umbrella_min("<div class=\"guided-tour-step-content\">" + this.content + "</div>");
-	        var footer = umbrella_min("<div class=\"guided-tour-step-footer\">\n                <span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                    <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                </span>\n                " + (this.last ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use></svg>\n                    </span>" : "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use></svg>\n                    </span>") + "\n                " + (this.context._steps.length > 1 ? "<div class=\"guided-tour-step-bullets\">\n                    <ul>" + this.context._steps.map(function (step, i) {
+	        var footer = umbrella_min("<div class=\"guided-tour-step-footer\">\n                <span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                    <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                </span>\n                " + (!this.first ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-prev\" title=\"Prev step\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-prev\"></use>\n                  </svg>\n                </span>" : "") + "\n                " + (this.last ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use>\n                  </svg>\n                </span>" : "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use>\n                  </svg>\n                </span>") + "\n                " + (this.context._steps.length > 1 ? "<div class=\"guided-tour-step-bullets\">\n                    <ul>" + this.context._steps.map(function (step, i) {
 	          return "<li  title=\"Go to step " + (i + 1) + "\" data-index=\"" + i + "\" class=\"" + (step.index < _this.index ? "complete" : step.index == _this.index ? "current" : "") + "\"></li>";
 	        }).join("") + "</ul>\n                </div>" : "") + "\n            </div>");
+	        footer.find(".guided-tour-step-button-prev").on("click", this.context.previous);
 	        footer.find(".guided-tour-step-button-next").on("click", this.context.next);
 	        footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
 	        footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
@@ -3743,6 +3744,59 @@
 	  REMOTE: 2
 	};
 
+	function isEventAttrbutesMatched(event, keyOption) {
+	  var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "keyup";
+
+	  if ((typeof event === "undefined" ? "undefined" : _typeof(event)) === "object") {
+	    var eventAttrsMap = { type: type };
+	    if (typeof keyOption === "number") {
+	      eventAttrsMap.keyCode = keyOption;
+	    } else if (typeof keyOption === "string") {
+	      eventAttrsMap.key = keyOption;
+	    } else if ((typeof keyOption === "undefined" ? "undefined" : _typeof(keyOption)) === "object") {
+	      eventAttrsMap = _extends({}, keyOption, { type: type });
+	    } else {
+	      throw new Error("keyboardNavigation option invalid. should be predefined object or false. Check documentation.");
+	    }
+
+	    var eventAttrs = Object.entries(eventAttrsMap).map(function (_ref) {
+	      var _ref2 = slicedToArray(_ref, 2),
+	          key = _ref2[0],
+	          value = _ref2[1];
+
+	      return {
+	        key: key,
+	        value: value
+	      };
+	    });
+	    return !eventAttrs.filter(function (attr) {
+	      return event[attr.key] !== attr.value;
+	    }).length;
+	  }
+
+	  return false;
+	}
+
+	var defaultKeyNavOptions = {
+	  next: "ArrowRight",
+	  prev: "ArrowLeft",
+	  first: "ArrowUp",
+	  last: "ArrowDown",
+	  complete: "End",
+	  stop: "Delete"
+	};
+
+	var defaultColors = {
+	  overlay: "rgba(0, 0, 0, 0.5)",
+	  background: "#fff",
+	  bullet: "#ff4141",
+	  bulletVisited: "#aaa",
+	  bulletCurrent: "#b50000",
+	  stepButtonPrev: "#ff4141",
+	  stepButtonNext: "#ff4141",
+	  stepButtonComplete: "#b50000"
+	};
+
 	var Tour = function () {
 	  createClass(Tour, [{
 	    key: "currentstep",
@@ -3789,6 +3843,7 @@
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	    classCallCheck(this, Tour);
 
+
 	    this._options = Object.assign({
 	      root: "body",
 	      selector: "[data-tour]",
@@ -3807,21 +3862,14 @@
 	          "Content-Type": "application/json"
 	        }
 	      },
+	      keyboardNavigation: defaultKeyNavOptions,
 	      onStart: function onStart() {},
 	      onStop: function onStop() {},
 	      onComplete: function onComplete() {},
 	      onStep: function onStep() {},
 	      onAction: function onAction() {}
 	    }, options, {
-	      colors: Object.assign({
-	        overlay: "rgba(0, 0, 0, 0.5)",
-	        background: "#fff",
-	        bullet: "#ff4141",
-	        bulletVisited: "#aaa",
-	        bulletCurrent: "#b50000",
-	        stepButtonNext: "#ff4141",
-	        stepButtonComplete: "#b50000"
-	      }, options.colors || {})
+	      colors: Object.assign(defaultColors, options.colors || {})
 	    });
 	    this._overlay = null;
 	    this._steps = [];
@@ -3861,6 +3909,7 @@
 	    this.stop = this.stop.bind(this);
 	    this.complete = this.complete.bind(this);
 	    this.action = this.action.bind(this);
+	    this._keyboardHandler = this._keyboardHandler.bind(this);
 	  }
 
 	  createClass(Tour, [{
@@ -3884,6 +3933,23 @@
 	      var colorStyleTags = umbrella_min("style#tourguide-color-schema");
 	      if (colorStyleTags.length > 0) {
 	        colorStyleTags.remove();
+	      }
+	    }
+	  }, {
+	    key: "_keyboardHandler",
+	    value: function _keyboardHandler(event) {
+	      if (this._options.keyboardNavigation.next && isEventAttrbutesMatched(event, this._options.keyboardNavigation.next)) {
+	        this.next();
+	      } else if (this._options.keyboardNavigation.prev && isEventAttrbutesMatched(event, this._options.keyboardNavigation.prev)) {
+	        this.previous();
+	      } else if (this._options.keyboardNavigation.first && isEventAttrbutesMatched(event, this._options.keyboardNavigation.first)) {
+	        this.go(0);
+	      } else if (this._options.keyboardNavigation.last && isEventAttrbutesMatched(event, this._options.keyboardNavigation.last)) {
+	        this.go(this._steps.length - 1);
+	      } else if (this._options.keyboardNavigation.stop && isEventAttrbutesMatched(event, this._options.keyboardNavigation.stop)) {
+	        this.stop();
+	      } else if (this._options.keyboardNavigation.complete && isEventAttrbutesMatched(event, this._options.keyboardNavigation.complete)) {
+	        this.complete();
 	      }
 	    }
 	  }, {
@@ -3946,6 +4012,12 @@
 	          this.currentstep.show();
 	          this._active = true;
 	          this._options.onStart(this._options);
+
+	          if (this._options.keyboardNavigation) {
+	            if (Object.prototype.toString.call(this._options.keyboardNavigation) !== "[object Object]") throw new Error("keyboardNavigation option invalid. should be predefined object or false. Check documentation.");
+
+	            umbrella_min(":root").on("keyup", this._keyboardHandler);
+	          }
 	        } else {
 	          this.go(step, "start");
 	        }
@@ -3960,7 +4032,7 @@
 	        var currentstep = this.currentstep;
 
 	        if (typeof _action.act === "function") {
-	          _action.act(event, currentstep.toJSON(), _action);
+	          _action.act(event, currentstep.toJSON(), this, _action);
 	        } else if (typeof _action.act === "number") {
 	          this.go(_action.act, "action");
 	        } else if (_action.act === "next") {
@@ -4016,6 +4088,9 @@
 	        umbrella_min(this._options.root).removeClass("guided-tour");
 	        if (this._options.restoreinitialposition) {
 	          umbrella_min(this._options.root).first().scrollTo(this._initialposition);
+	        }
+	        if (this._options.keyboardNavigation) {
+	          umbrella_min(":root").off("keyup", this._keyboardHandler);
 	        }
 	        this._options.onStop(this._options);
 	      }

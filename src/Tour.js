@@ -12,6 +12,49 @@ const StepsSource = {
   REMOTE: 2
 };
 
+function isEventAttrbutesMatched(event, keyOption, type = "keyup") {
+  if (typeof event === "object") {
+    let eventAttrsMap = { type };
+    if (typeof keyOption === "number") {
+      eventAttrsMap.keyCode = keyOption;
+    } else if (typeof keyOption === "string") {
+      eventAttrsMap.key = keyOption;
+    } else if (typeof keyOption === "object") {
+      eventAttrsMap = { ...keyOption, type };
+    } else {
+      throw new Error("keyboardNavigation option invalid. should be predefined object or false. Check documentation.");
+    }
+
+    const eventAttrs = Object.entries(eventAttrsMap).map(([key, value]) => ({
+      key,
+      value,
+    }));
+    return !(eventAttrs.filter((attr) => event[attr.key] !== attr.value).length);
+  }
+
+  return false;
+}
+
+const defaultKeyNavOptions = {
+  next: "ArrowRight",
+  prev: "ArrowLeft",
+  first: "ArrowUp",
+  last: "ArrowDown",
+  complete: "End",
+  stop: "Delete"
+};
+
+const defaultColors = {
+  overlay: "rgba(0, 0, 0, 0.5)",
+  background: "#fff",
+  bullet: "#ff4141",
+  bulletVisited: "#aaa",
+  bulletCurrent: "#b50000",
+  stepButtonPrev: "#ff4141",
+  stepButtonNext: "#ff4141",
+  stepButtonComplete: "#b50000",
+};
+
 export default class Tour {
   get currentstep() {
     return this._steps[this._current];
@@ -35,6 +78,7 @@ export default class Tour {
     return this._options;
   }
   constructor(options = {}) {
+
     this._options = Object.assign(
       {
         root: "body",
@@ -54,6 +98,7 @@ export default class Tour {
             "Content-Type": "application/json",
           },
         },
+        keyboardNavigation: defaultKeyNavOptions,
         onStart: () => {},
         onStop: () => {},
         onComplete: () => {},
@@ -63,18 +108,10 @@ export default class Tour {
       options,
       {
         colors: Object.assign(
-          {
-            overlay: "rgba(0, 0, 0, 0.5)",
-            background: "#fff",
-            bullet: "#ff4141",
-            bulletVisited: "#aaa",
-            bulletCurrent: "#b50000",
-            stepButtonNext: "#ff4141",
-            stepButtonComplete: "#b50000",
-          },
+          defaultColors,
           options.colors || {}
         ),
-      }
+      },
     );
     this._overlay = null;
     this._steps = [];
@@ -115,6 +152,7 @@ export default class Tour {
     this.stop = this.stop.bind(this);
     this.complete = this.complete.bind(this);
     this.action = this.action.bind(this);
+    this._keyboardHandler = this._keyboardHandler.bind(this);
   }
   _injectIcons() {
     if (u("#GuidedTourIconSet").length === 0) {
@@ -135,6 +173,21 @@ export default class Tour {
     const colorStyleTags = u("style#tourguide-color-schema");
     if (colorStyleTags.length > 0) {
       colorStyleTags.remove();
+    }
+  }
+  _keyboardHandler(event) {
+    if (this._options.keyboardNavigation.next && isEventAttrbutesMatched(event, this._options.keyboardNavigation.next)) {
+      this.next();
+    } else if (this._options.keyboardNavigation.prev && isEventAttrbutesMatched(event, this._options.keyboardNavigation.prev)) {
+      this.previous();
+    } else if (this._options.keyboardNavigation.first && isEventAttrbutesMatched(event, this._options.keyboardNavigation.first)) {
+      this.go(0);
+    } else if (this._options.keyboardNavigation.last && isEventAttrbutesMatched(event, this._options.keyboardNavigation.last)) {
+      this.go(this._steps.length - 1);
+    } else if (this._options.keyboardNavigation.stop && isEventAttrbutesMatched(event, this._options.keyboardNavigation.stop)) {
+      this.stop();
+    } else if (this._options.keyboardNavigation.complete && isEventAttrbutesMatched(event, this._options.keyboardNavigation.complete)) {
+      this.complete();
     }
   }
   init() {
@@ -179,6 +232,13 @@ export default class Tour {
         this.currentstep.show();
         this._active = true;
         this._options.onStart(this._options);
+
+        if (this._options.keyboardNavigation) {
+          if (Object.prototype.toString.call(this._options.keyboardNavigation) !== "[object Object]")
+            throw new Error("keyboardNavigation option invalid. should be predefined object or false. Check documentation.");
+
+          u(":root").on("keyup", this._keyboardHandler);
+        }
       } else {
         this.go(step, "start");
       }
@@ -190,7 +250,7 @@ export default class Tour {
     if (this._active) {
       const { currentstep } = this;
       if(typeof action.act === "function") {
-        action.act(event, currentstep.toJSON(), action);
+        action.act(event, currentstep.toJSON(), this, action);
       } else if(typeof action.act === "number") {
         this.go(action.act, "action");
       } else if(action.act === "next") {
@@ -236,6 +296,9 @@ export default class Tour {
       u(this._options.root).removeClass("guided-tour");
       if (this._options.restoreinitialposition) {
         u(this._options.root).first().scrollTo(this._initialposition);
+      }
+      if (this._options.keyboardNavigation) {
+        u(":root").off("keyup", this._keyboardHandler);
       }
       this._options.onStop(this._options);
     }

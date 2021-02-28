@@ -43,15 +43,25 @@ export default class Step {
                 <span role="button" class="guided-tour-step-button guided-tour-step-button-close" title="End tour">
                     <svg class="guided-tour-icon" viewBox="0 0 20 20" width="16" height="16"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-close"></use></svg>
                 </span>
+                ${!this.first ? `<span role="button" class="guided-tour-step-button guided-tour-step-button-prev" title="Prev step">
+                  <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
+                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-prev"></use>
+                  </svg>
+                </span>` : ""}
                 ${this.last ? `<span role="button" class="guided-tour-step-button guided-tour-step-button-complete" title="Complete tour">
-                        <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-complete"></use></svg>
-                    </span>`: `<span role="button" class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
-                        <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-next"></use></svg>
-                    </span>`}
+                  <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
+                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-complete"></use>
+                  </svg>
+                </span>` : `<span role="button" class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
+                  <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
+                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-next"></use>
+                  </svg>
+                </span>`}
                 ${this.context._steps.length > 1 ? `<div class="guided-tour-step-bullets">
                     <ul>${this.context._steps.map((step, i) => `<li  title="Go to step ${i + 1}" data-index="${i}" class="${step.index < this.index ? "complete" : step.index == this.index ? "current" : ""}"></li>`).join("")}</ul>
                 </div>` : ""}
             </div>`);
+      footer.find(".guided-tour-step-button-prev").on("click", this.context.previous);
       footer.find(".guided-tour-step-button-next").on("click", this.context.next);
       footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
       footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
