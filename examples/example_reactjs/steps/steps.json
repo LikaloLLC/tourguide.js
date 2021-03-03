@@ -1,0 +1,105 @@
+[
+  {
+    "selector": null,
+    "step": 1,
+    "title": "Markdown",
+    "actions": [
+      {
+        "target": ":root",
+        "act": "next",
+        "event": {
+          "type": "keydown",
+          "key": "ArrowRight",
+          "ctrlKey": true
+        }
+      }
+    ],
+    "marked": true,
+    "content": "# Tourguide.js support Markdown now.\n\n## Link\n\nThis is the [link](http://localhost)\n\n## List\n\n- list item 1\n- list item 2\n\n> press <kbd>Ctrl</kbd> + <kbd>></kbd> to continue.\n"
+  },
+  {
+    "selector": null,
+    "step": 2,
+    "image": "https://tn.visamiddleeast.com/dam/VCOM/regional/ap/taiwan/global-elements/images/tw-visa-classic-card-498x280.png",
+    "title": "Image Support",
+    "marked": true,
+    "content": "Tourguide.js support Image now.\n\n> press <kbd>></kbd> to continue.\n",
+    "actions": [
+      {
+        "target": ":root",
+        "act": "next",
+        "event": {
+          "type": "keyup",
+          "key": "ArrowRight",
+          "ctrlKey": false
+        }
+      }
+    ]
+  },
+  {
+    "selector": "[tour-component=\"header\"]",
+    "step": 3,
+    "title": "Heading",
+    "content": "This is the heading content"
+  },
+  {
+    "selector": "[tour-component=\"start\"]",
+    "step": 4,
+    "title": "Start Button",
+    "marked": true,
+    "content": "Click here to start the tour.\n\n> invalid action target.\n",
+    "actions": [
+      {
+        "target": "[tour-component=\"start\"] button",
+        "act": 0,
+        "event": "click"
+      }
+    ]
+  },
+  {
+    "selector": "[tour-component=\"cart\"]",
+    "step": 4,
+    "title": "Your cart",
+    "content": "Example cart description text displays cart description"
+  },
+  {
+    "selector": "[tour-component=\"code\"]",
+    "step": 5,
+    "title": "Promo code",
+    "marked": true,
+    "content": "Example cart promo code text displays promo code description.\n\n> press <kbd>Enter</kbd> on input or click button to continue.\n",
+    "actions": [
+      {
+        "target": "[tour-component=\"code\"] input",
+        "act": "next",
+        "event": {
+          "type": "keyup",
+          "key": "Enter"
+        }
+      },
+      {
+        "target": "[tour-component=\"code\"] button",
+        "act": "next",
+        "event": "click"
+      }
+    ]
+  },
+  {
+    "selector": "[tour-component=\"customer\"]",
+    "step": 6,
+    "title": "Customer name",
+    "content": "Example cart customer name text displays customer name description"
+  },
+  {
+    "selector": "[tour-component=\"payment\"]",
+    "step": 7,
+    "title": "Payment",
+    "content": "Example cart Payment text displays Payment description"
+  },
+  {
+    "selector": "[tour-component=\"submit\"]",
+    "step": 8,
+    "title": "Continue",
+    "content": "Example cart continue button text displays continue button description"
+  }
+]
