@@ -10,7 +10,7 @@ import {
   getStyle,
   parseNumber,
 } from "../utils";
-import marked from "marked";
+import snarkdown from "snarkdown";
 // data-step="title: Step1; content: .../<>"
 
 function getEventType(event) {
@@ -121,7 +121,7 @@ export default class Step {
     this.title = data.title;
     this.content = data.content;
     if (data.marked) {
-      this.content = marked(this.content);
+      this.content = snarkdown(this.content);
     }
     this.image = data.image;
     if (data.image &&
