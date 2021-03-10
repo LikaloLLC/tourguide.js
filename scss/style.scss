@@ -81,9 +81,9 @@ blockquote {
             @media screen and (max-width: 760px) {
                 max-width: unset;
                 min-width: unset;
-                width: calc(100% - 36px);
-                left: 18px !important;
-                right: 18px !important;
+                width: calc(100% - 64px);
+                left: 32px !important;
+                right: 32px !important;
             }
 
             .guided-tour-step-tooltip-inner {
@@ -108,16 +108,10 @@ blockquote {
                 .guided-tour-step-title {
                     font-weight: bold;
                     margin-bottom: 1em;
-                    @media screen and (max-width: 760px) {
-                        padding-right: 15px;
-                    }
                 }
 
-                .guided-tour-step-content {
-                    @media screen and (max-width: 760px) {
-                        padding-right: 15px;
-                    }
-                }
+                // .guided-tour-step-content {
+                // }
 
                 .guided-tour-icon {
                     display: inline-block;
@@ -159,31 +153,25 @@ blockquote {
                 .guided-tour-step-button-prev {
                     color: $button-prev;
                     box-shadow: -5px 0 1em 0 rgba(0, 0, 0, 0.4);
-                    left: -30px;
+                    left: 0;
+                    transform: translateX(-50%);
                     top: 50%;
-                    @media screen and (max-width: 760px) {
-                        left: -10px;
-                    }
                 }
 
                 .guided-tour-step-button-next {
                     color: $button-next;
                     box-shadow: 5px 0 1em 0 rgba(0, 0, 0, 0.4);
-                    right: -30px;
+                    right: 0;
+                    transform: translateX(50%);
                     top: 50%;
-                    @media screen and (max-width: 760px) {
-                        right: -10px;
-                    }
                 }
 
                 .guided-tour-step-button-complete {
                     color: $button-complete;
                     box-shadow: 5px 0 1em 0 rgba(0, 0, 0, 0.4);
-                    right: -30px;
+                    right: 0;
+                    transform: translateX(50%);
                     top: 50%;
-                    @media screen and (max-width: 760px) {
-                        right: -10px;
-                    }
                 }
 
                 .guided-tour-step-bullets {
