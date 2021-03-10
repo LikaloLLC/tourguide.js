@@ -1150,26 +1150,6 @@
 	  return false;
 	}
 
-	var defaultKeyNavOptions = {
-	  next: "ArrowRight",
-	  prev: "ArrowLeft",
-	  first: "Home",
-	  last: "End",
-	  complete: null,
-	  stop: "Escape"
-	};
-
-	var defaultColors = {
-	  overlay: "rgba(0, 0, 0, 0.5)",
-	  background: "#fff",
-	  bullet: "#ff4141",
-	  bulletVisited: "#aaa",
-	  bulletCurrent: "#b50000",
-	  stepButtonPrev: "#ff4141",
-	  stepButtonNext: "#ff4141",
-	  stepButtonComplete: "#b50000"
-	};
-
 	var Tour = function () {
 	  createClass(Tour, [{
 	    key: "currentstep",
@@ -1216,6 +1196,25 @@
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	    classCallCheck(this, Tour);
 
+	    var defaultKeyNavOptions = {
+	      next: "ArrowRight",
+	      prev: "ArrowLeft",
+	      first: "Home",
+	      last: "End",
+	      complete: null,
+	      stop: "Escape"
+	    };
+
+	    var defaultColors = {
+	      overlay: "rgba(0, 0, 0, 0.5)",
+	      background: "#fff",
+	      bullet: "#ff4141",
+	      bulletVisited: "#aaa",
+	      bulletCurrent: "#b50000",
+	      stepButtonPrev: "#ff4141",
+	      stepButtonNext: "#ff4141",
+	      stepButtonComplete: "#b50000"
+	    };
 
 	    this._options = Object.assign({
 	      root: "body",
@@ -1298,6 +1297,8 @@
 	    value: function _injectStyles() {
 	      // inject colors
 	      this._removeStyles();
+	      // eslint-disable-next-line no-console
+	      console.log(this._options.colors);
 	      var colors = umbrella_min("<style id=\"tourguide-color-schema\">" + colorObjToStyleVarString(this._options.colors, "--tourguide") + "</style>");
 	      umbrella_min(":root > head").append(colors);
 	    }
