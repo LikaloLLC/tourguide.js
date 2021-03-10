@@ -238,7 +238,7 @@ export function animateScroll(scrollItems, time) {
   function ease(v) {
     return 1 - Math.pow(1 - v, v / 2);
   }
-  
+
   function animate(el, x, y) {
     if(!el) {
       console.warn(`target element ${el} not found, skip`);

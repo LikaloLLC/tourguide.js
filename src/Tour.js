@@ -35,26 +35,6 @@ function isEventAttrbutesMatched(event, keyOption, type = "keyup") {
   return false;
 }
 
-const defaultKeyNavOptions = {
-  next: "ArrowRight",
-  prev: "ArrowLeft",
-  first: "Home",
-  last: "End",
-  complete: null,
-  stop: "Escape"
-};
-
-const defaultColors = {
-  overlay: "rgba(0, 0, 0, 0.5)",
-  background: "#fff",
-  bullet: "#ff4141",
-  bulletVisited: "#aaa",
-  bulletCurrent: "#b50000",
-  stepButtonPrev: "#ff4141",
-  stepButtonNext: "#ff4141",
-  stepButtonComplete: "#b50000",
-};
-
 export default class Tour {
   get currentstep() {
     return this._steps[this._current];
@@ -78,6 +58,25 @@ export default class Tour {
     return this._options;
   }
   constructor(options = {}) {
+    const defaultKeyNavOptions = {
+      next: "ArrowRight",
+      prev: "ArrowLeft",
+      first: "Home",
+      last: "End",
+      complete: null,
+      stop: "Escape"
+    };
+
+    const defaultColors = {
+      overlay: "rgba(0, 0, 0, 0.5)",
+      background: "#fff",
+      bullet: "#ff4141",
+      bulletVisited: "#aaa",
+      bulletCurrent: "#b50000",
+      stepButtonPrev: "#ff4141",
+      stepButtonNext: "#ff4141",
+      stepButtonComplete: "#b50000",
+    };    
 
     this._options = Object.assign(
       {
@@ -163,6 +162,8 @@ export default class Tour {
   _injectStyles() {
     // inject colors
     this._removeStyles();
+    // eslint-disable-next-line no-console
+    console.log(this._options.colors);
     const colors = u(
       "<style id=\"tourguide-color-schema\">" +
       colorObjToStyleVarString(this._options.colors, "--tourguide") +
