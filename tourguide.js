@@ -404,8 +404,14 @@ var Tourguide = (function () {
 	  return target && target.offsetParent !== null;
 	}
 
-	function getBoundingClientRect(el, root) {
-	  var rect = umbrella_min(el).size();
+	/**
+	 * getting bounding client rect and additional properties
+	 * @param {Element | string} element target element or selector
+	 * @param {Element} root root element
+	 * @returns {{ width: number, height: number, top: number, bottom: number, left: number, right: number, viewTop: number, viewBottom: number, viewLeft: number, viewRight: number }} object
+	 */
+	function getBoundingClientRect(element, root) {
+	  var rect = umbrella_min(element).size();
 	  var view = getViewportRect(root);
 
 	  return {
@@ -422,10 +428,15 @@ var Tourguide = (function () {
 	  };
 	}
 
-	function getViewportRect(root) {
+	/**
+	 * getting viewport rect and additional properties
+	 * @param {Element | string} element target element or selector
+	 * @returns {{ width: number, height: number, scrollX: number, scrollY: number, rootWidth: number, rootHeight: number, rootTop: number, rootLeft: number }} object
+	 */
+	function getViewportRect(element) {
 	  try {
-	    var rootEl = umbrella_min(root).first();
-	    var rect = umbrella_min(root).size();
+	    var rootEl = umbrella_min(element).first();
+	    var rect = umbrella_min(element).size();
 	    return {
 	      width: window.innerWidth,
 	      height: window.innerHeight,
@@ -433,18 +444,23 @@ var Tourguide = (function () {
 	      scrollY: rootEl.scrollTop,
 	      rootWidth: rect.width,
 	      rootHeight: rect.height,
-	      rootTop: rootEl.scrollTop === window.scrollY ? 0 : rect.top,
-	      rootLeft: rootEl.scrollLeft === window.scrollX ? 0 : rect.left
+	      rootTop: rect.top,
+	      rootLeft: rect.left
 	    };
 	  } catch (error) {
 	    console.error(error);
-	    throw Error("root is not valid: " + root);
+	    throw Error("element is invalid: " + element);
 	  }
 	}
 
-	// alternative for jQuery .css() get method
-	function getStyle(el, css3Prop) {
-	  var originalEl = umbrella_min(el).first();
+	/**
+	 * alternative for jQuery .css() get method
+	 * @param {Element | string} element target element or selector
+	 * @param {string} css3Prop css3 property
+	 * @returns {string} value
+	 */
+	function getStyle(element, css3Prop) {
+	  var originalEl = umbrella_min(element).first();
 
 	  // FF, Chrome etc.
 	  if (window.getComputedStyle) {
@@ -467,12 +483,19 @@ var Tourguide = (function () {
 	}
 
 	var allowedProperties = ["top", "left", "right", "bottom", "width", "height", "maxWidth", "minWidth", "transform"];
-	function setStyle(element, object) {
-	  if (!Object.prototype.toString.call(object) === "[object Object]") return;
+	/**
+	 * convert the color object to the sets of css variables.
+	 * @important all style properties will merge with current styles!
+	 * @param {Element | string} element target element or selector
+	 * @param {Object<string, string | number>} styleObj style object. allowed keys are:\
+	 *  "top" | "left" | "right" | "bottom" | "width" | "height" | "maxWidth" | "minWidth" | "transform"
+	 */
+	function setStyle(element, styleObj) {
+	  if (!Object.prototype.toString.call(styleObj) === "[object Object]") return;
 
 	  var style = umbrella_min(element).first().style;
 
-	  Object.entries(object).filter(function (_ref) {
+	  Object.entries(styleObj).filter(function (_ref) {
 	    var _ref2 = slicedToArray(_ref, 2),
 	        key = _ref2[0],
 	        val = _ref2[1];
@@ -519,20 +542,21 @@ var Tourguide = (function () {
 	}
 
 	/**
-	 * TODO: This func is convert the color object to the sets of css variables
-	 * @param {*} obj colorObject 
-	 * @param {*} prefix prefix of css variable name
-	 * @param {*} selector target css selector
-	 * Example:
+	 * convert the color object to the sets of css variables
+	 * @param {Object<string, string | number>} colors color object
+	 * @param {string} [prefix] prefix of css variable name. default: "--tourguide"
+	 * @param {string} [selector] target css selector. default: ":root"
+	 * @returns {string} converted string
+	 * @example
 	 *  input: { overlay: "gray", background: "white", bulletCurrent: "red" }
-	 *  output: ":root { --tourguide-overlay: "gray"; --tourguide-background: "white"; --tourguide-bullet-current: "red"; }"
+	 *  output: ":root { --tourguide-overlay: gray; --tourguide-background: white; --tourguide-bullet-current: red; }"
 	 */
-	function colorObjToStyleVarString(obj) {
+	function colorObjToStyleVarString(colors) {
 	  var prefix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "--tourguide";
 	  var selector = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ":root";
 
 	  var styleArray = [];
-	  Object.entries(obj).forEach(function (_ref5) {
+	  Object.entries(colors).forEach(function (_ref5) {
 	    var _ref6 = slicedToArray(_ref5, 2),
 	        key = _ref6[0],
 	        value = _ref6[1];
@@ -549,6 +573,99 @@ var Tourguide = (function () {
 	    styleArray.push(splitedNameArray.join("-") + ": " + value);
 	  });
 	  return selector + " {\n" + styleArray.join(";\n") + ";\n}";
+	}
+
+	/**
+	 * scroll element by coordinates (cross browser support)
+	 * @param {Element} element target element
+	 * @param {number} x scroll offset from left
+	 * @param {number} y scroll offset from top
+	 */
+	function setElementScroll$1(element, x, y) {
+	  if (element.self === element) {
+	    element.scrollTo(x, y);
+	  } else {
+	    element.scrollLeft = x;
+	    element.scrollTop = y;
+	  }
+	}
+
+	/**
+	 * Smooth scroll element by coordinates (cross browser support)
+	 * @param {{ element: Element, x: number, y: number }[]} scrollItems
+	 * @param {number} time duration time
+	 */
+	function animateScroll(scrollItems, time) {
+	  var startTime = Date.now();
+
+	  function raf(task) {
+	    if ("requestAnimationFrame" in window) {
+	      return window.requestAnimationFrame(task);
+	    }
+
+	    setTimeout(task, 16);
+	  }
+
+	  function ease(v) {
+	    return 1 - Math.pow(1 - v, v / 2);
+	  }
+
+	  function animate(el, x, y) {
+	    if (!el) {
+	      console.warn("target element " + el + " not found, skip");
+	      return;
+	    }
+
+	    var diffTime = Date.now() - startTime;
+	    var timeValue = Math.min(1 / time * diffTime, 1);
+	    var easeValue = 1 - ease(timeValue);
+
+	    var differenceX = x - el.scrollLeft;
+	    var differenceY = y - el.scrollTop;
+
+	    setElementScroll$1(el, x - differenceX * easeValue, y - differenceY * easeValue);
+
+	    if (diffTime >= time) {
+	      setElementScroll$1(el, x, y);
+	      return;
+	    }
+
+	    raf(animate.bind(null, el, x, y));
+	  }
+
+	  scrollItems.forEach(function (item) {
+	    animate(item.element, item.x, item.y);
+	  });
+	}
+
+	/**
+	 * Getting scroll coordinates (cross browser support)
+	 * @param {Element | string} target target element
+	 * @returns {{ element: Element, x: number, y: number }[]} scrollItems
+	 */
+	function getScrollCoordinates(target) {
+	  var scrollItems = [];
+	  var targetUEl = umbrella_min(target);
+
+	  do {
+	    if (!targetUEl) targetUEl = false;
+	    if (!targetUEl.first()) targetUEl = false;
+	    try {
+	      var element = targetUEl.first();
+	      if (element.scrollHeight !== element.height || element.scrollWidth !== element.width) {
+	        scrollItems.push({
+	          element: targetUEl.first(),
+	          x: targetUEl.first().scrollLeft,
+	          y: targetUEl.first().scrollTop
+	        });
+	      }
+	      targetUEl = targetUEl.parent();
+	    } catch (error) {
+	      targetUEl = false;
+	    }
+	  } while (targetUEl);
+
+	  return scrollItems;
 	}
 
 	var e={"":["<em>","</em>"],_:["<strong>","</strong>"],"*":["<strong>","</strong>"],"~":["<s>","</s>"],"\n":["<br />"]," ":["<br />"],"-":["<hr />"]};function n(e){return e.replace(RegExp("^"+(e.match(/^(\t| )+/)||"")[0],"gm"),"")}function r(e){return (e+"").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}function t(a,c){var o,l,g,s,p,u=/((?:^|\n+)(?:\n---+|\* \*(?: \*)+)\n)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|(  \n\n*|\n{2,}|__|\*\*|[_*]|~~)/gm,m=[],h="",i=c||{},d=0;function f(n){var r=e[n[1]||""],t=m[m.length-1]==n;return r?r[1]?(t?m.pop():m.push(n),r[0|t]):r[0]:n}function $(){for(var e="";m.length;)e+=f(m[m.length-1]);return e}for(a=a.replace(/^\[(.+?)\]:\s*(.+)$/gm,function(e,n,r){return i[n.toLowerCase()]=r,""}).replace(/^\n+|\n+$/g,"");g=u.exec(a);)l=a.substring(d,g.index),d=u.lastIndex,o=g[0],l.match(/[^\\](\\\\)*\\$/)||((p=g[3]||g[4])?o='<pre class="code '+(g[4]?"poetry":g[2].toLowerCase())+'"><code'+(g[2]?' class="language-'+g[2].toLowerCase()+'"':"")+">"+n(r(p).replace(/^\n+|\n+$/g,""))+"</code></pre>":(p=g[6])?(p.match(/\./)&&(g[5]=g[5].replace(/^\d+/gm,"")),s=t(n(g[5].replace(/^\s*[>*+.-]/gm,""))),">"==p?p="blockquote":(p=p.match(/\./)?"ol":"ul",s=s.replace(/^(.*)(\n|$)/gm,"<li>$1</li>")),o="<"+p+">"+s+"</"+p+">"):g[8]?o='<img src="'+r(g[8])+'" alt="'+r(g[7])+'">':g[10]?(h=h.replace("<a>",'<a href="'+r(g[11]||i[l.toLowerCase()])+'">'),o=$()+"</a>"):g[9]?o="<a>":g[12]||g[14]?o="<"+(p="h"+(g[14]?g[14].length:g[13]>"="?1:2))+">"+t(g[12]||g[15],i)+"</"+p+">":g[16]?o="<code>"+r(g[16])+"</code>":(g[17]||g[1])&&(o=f(g[17]||"--"))),h+=l,h+=o;return (h+a.substring(d)+$()).replace(/^\n+|\n+$/g,"")}
@@ -578,6 +695,14 @@ var Tourguide = (function () {
 	  }
 
 	  return [];
+	}
+
+	function getPosition(align) {
+	  if (align === "top") return 0.1;
+	  if (align === "bottom") return 0.9;
+	  if (align === "center") return 0.5;
+
+	  return 0;
 	}
 
 	var Step = function () {
@@ -770,6 +895,8 @@ var Tourguide = (function () {
 
 	        _tootipStyle.top = view.height / 2 + view.scrollY - view.rootTop - _tooltipRect.height / 2;
 	        _tootipStyle.left = view.width / 2 + view.scrollX - view.rootLeft - _tooltipRect.width / 2;
+	        _tootipStyle.bottom = "unset";
+	        _tootipStyle.right = "unset";
 
 	        _tooltip.addClass("guided-tour-arrow-none");
 
@@ -798,12 +925,12 @@ var Tourguide = (function () {
 	        tootipStyle.top = "unset";
 	        tootipStyle.bottom = view.rootHeight - (tooltipRect.bottom - (tooltipRect.viewBottom + 8 - view.height));
 	      }
-	      if (tooltipRect.viewLeft < 8) {
-	        tootipStyle.left = 8 - tooltipRect.viewLeft + tooltipRect.left;
+	      if (tooltipRect.viewLeft < 32) {
+	        tootipStyle.left = 32 - tooltipRect.viewLeft + tooltipRect.left;
 	        tootipStyle.right = "unset";
-	      } else if (view.width >= 760 && tooltipRect.viewRight + 38 > view.width || view.width < 760 && tooltipRect.viewRight + 18 > view.width) {
+	      } else if (tooltipRect.viewRight + 32 > view.width) {
 	        tootipStyle.left = "unset";
-	        tootipStyle.right = view.rootWidth - (tooltipRect.right - (tooltipRect.viewRight + (view.width >= 760 ? 38 : 18) - view.width));
+	        tootipStyle.right = view.rootWidth - (tooltipRect.right - (tooltipRect.viewRight + 32 - view.width));
 	      }
 
 	      setStyle(tooltip, tootipStyle);
@@ -823,8 +950,8 @@ var Tourguide = (function () {
 	      this.cancel();
 	      if (!this.active) {
 	        var show = function show() {
-	          _this3.context._overlay.hide();
 	          _this3.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
+	          _this3.context._overlay.hide();
 	          _this3.position();
 	          _this3.adjust();
 	          if (isTargetValid(_this3.target)) {
@@ -865,7 +992,11 @@ var Tourguide = (function () {
 	        if (isTargetValid(this.target)) {
 	          this._scrollCancel = scrollIntoView(this.target, {
 	            time: this.context.options.animationspeed,
-	            cancellable: false
+	            cancellable: false,
+	            align: {
+	              top: getPosition(this.context.options.align),
+	              left: 0.5
+	            }
 	          }, show);
 	        } else this._timerHandler = setTimeout(show, this.context.options.animationspeed);
 	        return true;
@@ -1019,10 +1150,10 @@ var Tourguide = (function () {
 	var defaultKeyNavOptions = {
 	  next: "ArrowRight",
 	  prev: "ArrowLeft",
-	  first: "ArrowUp",
-	  last: "ArrowDown",
-	  complete: "End",
-	  stop: "Delete"
+	  first: "Home",
+	  last: "End",
+	  complete: null,
+	  stop: "Escape"
 	};
 
 	var defaultColors = {
@@ -1101,6 +1232,7 @@ var Tourguide = (function () {
 	          "Content-Type": "application/json"
 	        }
 	      },
+	      align: "top", // top, bottom, center
 	      keyboardNavigation: defaultKeyNavOptions,
 	      onStart: function onStart() {},
 	      onStop: function onStop() {},
@@ -1230,15 +1362,7 @@ var Tourguide = (function () {
 	      if (this._ready) {
 	        this._injectStyles();
 	        if (this._options.restoreinitialposition) {
-	          var _getViewportRect = getViewportRect(this._options.root),
-	              scrollX = _getViewportRect.scrollX,
-	              scrollY = _getViewportRect.scrollY;
-
-	          this._initialposition = {
-	            left: scrollX,
-	            top: scrollY,
-	            behavior: "smooth"
-	          };
+	          this._initialposition = getScrollCoordinates(this._options.root);
 	        }
 	        if (!this._active) {
 	          umbrella_min(this._options.root).addClass("guided-tour");
@@ -1261,7 +1385,9 @@ var Tourguide = (function () {
 	          this.go(step, "start");
 	        }
 	      } else {
-	        throw new Error("Tour is not configured properly. Check documentation.");
+	        setTimeout(function () {
+	          _this3.start(step);
+	        }, 50);
 	      }
 	    }
 	  }, {
@@ -1325,11 +1451,11 @@ var Tourguide = (function () {
 	          return step.remove();
 	        });
 	        umbrella_min(this._options.root).removeClass("guided-tour");
-	        if (this._options.restoreinitialposition) {
-	          umbrella_min(this._options.root).first().scrollTo(this._initialposition);
-	        }
 	        if (this._options.keyboardNavigation) {
 	          umbrella_min(":root").off("keyup", this._keyboardHandler);
+	        }
+	        if (this._options.restoreinitialposition && this._initialposition) {
+	          animateScroll(this._initialposition, this._options.animationspeed);
 	        }
 	        this._options.onStop(this._options);
 	      }
