@@ -1,10 +1,11 @@
-const assert = require('assert');
+const assert = require('chai').assert
+
 // Load the full build.
 const _ = require('lodash');
-const markdownSteps = require("./markdown/steps.json");
 
 debugger;
 let Tourguide = require("../tourguide.umd.js");
+const markdownSteps = require("./markdown/steps.json");
 
 let steps = [
   {
@@ -52,7 +53,12 @@ describe('Tourguide', function () {
     "steps": steps
   });
 
-  // console.log("document", document, "window", window.scrollTo);
+  let jsdomScrollTo
+
+  before(() => {
+    jsdomScrollTo = window.scrollTo
+    window.scrollTo = () => {}
+  })
 
   describe('Constructor', function () {
 
@@ -82,7 +88,7 @@ describe('Tourguide', function () {
         const expectedStepKeys = [
           "index", "first", "last", "_target", "container", "highlight", "tooltip", "arrow", "rect",
           "image", "title", "content", "active", "context", "visible", "selector", "actiontarget",
-          "_timerHandler", "_scrollCancel"
+          "_timerHandler", "_scrollCancel", "_selector", "actions"
         ];
 
         // Check that all fields in step returned from constructor are as expected
@@ -110,20 +116,20 @@ describe('Tourguide', function () {
 
       // these are the default keys that should present in tourguide._options
       const tourConstructorOptions = ['root', 'selector', 'animationspeed', 'padding', 'steps', 'src', 'restoreinitialposition',
-        'preloadimages', 'request', 'onStart', 'onComplete', 'onStep', 'onAction', 'onStop', 'colors'];
+        'preloadimages', 'request', 'onStart', 'onComplete', 'onStep', 'onAction', 'onStop', 'colors', 'keyboardNavigation'];
 
       // Check that all options returned from constructor are as expected
       const difference = _.difference(_options, tourConstructorOptions);
 
       // check that difference.length is 0, _difference does not care in what order the elements are in array
-      assert.strictEqual(difference.length, 0);
+      assert.strictEqual(difference.length, 0, `Expected ${JSON.stringify(tourConstructorOptions)}, but received ${JSON.stringify(_options)}. Extra keys: ${JSON.stringify(difference)}`);
     });
 
     // check some more options returned from tourguide constructor
     it('checks if the tourguide constructor has fields returned  as expected', function () {
 
       const tourGuideFields = ["_current", "_active", "_stepsSrc", "_ready", "_initialposition", "start", "action",
-        "next", "previous", "go", "stop", "complete", "_steps", "_options", "_background"];
+        "next", "previous", "go", "stop", "complete", "_steps", "_options", "_background", "_overlay", "_keyboardHandler"];
 
       // get keys of tourguide._options
       const tourGuideKeys = Object.keys(tourguide);
@@ -143,16 +149,7 @@ describe('Tourguide', function () {
     describe("tourGuide.init()", function() {
 
       it("should verify that tour is initialized and ready to start", function () {
-
-        const jsdomScrollTo = window.scrollTo;  // remember the jsdom alert
-
-        window.scrollTo = () => { };
-
         tourguide.init();
-
-        // console.log("after tourguide.init", tourguide);
-
-        window.scrollTo = jsdomScrollTo;
 
         // init() func sets _active to false, verify them
         assert.strictEqual(tourguide._active, false);
@@ -259,17 +256,7 @@ describe('Tourguide', function () {
 
         // tourguide.start();
 
-        // [[this is a workaround for window.scrollTo not implemented error, since this is unit tests, reassign scrollTo
-        // to window as show below, to implement a sample scrollTo function, that lets the test case work]]
-        const jsdomScrollTo = window.scrollTo;  // remember the jsdom alert
-
-        window.scrollTo = () => { };
-
         tourguide.stop();
-
-        window.scrollTo = jsdomScrollTo;
-
-        // console.log("tourguide constructor value after closing", tourguide);
 
         // after closing tourguide, _active is set to false, verify that
         assert.strictEqual(tourguide._active, false);
@@ -303,15 +290,9 @@ describe('Tourguide', function () {
 
       it("should verify that tour is complete", function () {
 
-        const jsdomScrollTo = window.scrollTo;  // remember the jsdom alert
-
-        window.scrollTo = () => { };
-
         // tourguide.start(2);
 
         tourguide.complete();
-
-        window.scrollTo = jsdomScrollTo;
 
         // complete() func sets _active to false
         assert.strictEqual(tourguide._active, false);
@@ -323,15 +304,9 @@ describe('Tourguide', function () {
 
       it("should verify that tour is reset, after starting at a step", function () {
 
-        const jsdomScrollTo = window.scrollTo;  // remember the jsdom alert
-
-        window.scrollTo = () => { };
-
         tourguide.start(2);
 
         tourguide.reset();
-
-        window.scrollTo = jsdomScrollTo;
 
         // reset() func sets _active to false and sets _current to 0, verify them
         assert.strictEqual(tourguide._active, false);
@@ -351,23 +326,43 @@ describe('Tourguide', function () {
 
     describe("Check contents are correct", function () {
       it("Heading level 1 should be 'h1' tag", function () {
-        const head = document.querySelector(".guided-tour-step .guided-tour-step-content #heading-level-1");
-        assert.strictEqual(!!head, true);
-        assert.strictEqual(head.nodeName, "H1");
+        const heads = document.querySelectorAll(".guided-tour-step .guided-tour-step-content h1");
+
+        assert.strictEqual(!!heads, true);
+        assert.strictEqual(heads.length > 1, true);
+        let index = 0;
+        for (; index < heads.length; index++) {
+          const element = heads[index];
+          if(element.textContent === 'Heading level 1') {
+            break;
+          }
+        }
+        assert.strictEqual(index < heads.length, true);
       });
 
       it("Heading level 2 should be 'h2' tag", function () {
-        const head = document.querySelector(".guided-tour-step .guided-tour-step-content #heading-level-2");
-        assert.strictEqual(!!head, true);
-        assert.strictEqual(head.nodeName, "H2");
+        const heads = document.querySelectorAll(".guided-tour-step .guided-tour-step-content h2");
+
+        assert.strictEqual(!!heads, true);
+        assert.strictEqual(heads.length > 1, true);
+
+        let index = 0;
+        for (; index < heads.length; index++) {
+          const element = heads[index];
+          if(element.textContent === 'Heading level 2') {
+            break;
+          }
+        }
+        assert.strictEqual(index < heads.length, true);
       });
     });
 
     after(() => {
-      const jsdomScrollTo = window.scrollTo;  // remember the jsdom alert
-      window.scrollTo = () => { };
       tourguide.reset();
-      window.scrollTo = jsdomScrollTo;
     })
   });
+
+  after(() => {
+    window.scrollTo = jsdomScrollTo
+  })
 });

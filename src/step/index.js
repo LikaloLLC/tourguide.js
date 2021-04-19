@@ -10,7 +10,7 @@ import {
   getStyle,
   parseNumber,
 } from "../utils";
-import marked from "marked";
+import snarkdown from "snarkdown";
 // data-step="title: Step1; content: .../<>"
 
 function getEventType(event) {
@@ -31,6 +31,14 @@ function getEventAttrs(event) {
   }
 
   return [];
+}
+
+function getPosition(align) {
+  if (align === "top") return 0.1;
+  if (align === "bottom") return 0.9;
+  if (align === "center") return 0.5;
+
+  return 0;
 }
 
 export default class Step {
@@ -121,7 +129,7 @@ export default class Step {
     this.title = data.title;
     this.content = data.content;
     if (data.marked) {
-      this.content = marked(this.content);
+      this.content = snarkdown(this.content);
     }
     this.image = data.image;
     if (data.image &&
@@ -235,6 +243,8 @@ export default class Step {
 
       tootipStyle.top = view.height / 2 + view.scrollY - view.rootTop - (tooltipRect.height / 2);
       tootipStyle.left = view.width / 2 + view.scrollX - view.rootLeft - (tooltipRect.width / 2);
+      tootipStyle.bottom = "unset";
+      tootipStyle.right = "unset";
 
       tooltip.addClass("guided-tour-arrow-none");
 
@@ -261,15 +271,12 @@ export default class Step {
       tootipStyle.top = "unset";
       tootipStyle.bottom = view.rootHeight - (tooltipRect.bottom - (tooltipRect.viewBottom + 8 - view.height));
     }
-    if (tooltipRect.viewLeft < 8) {
-      tootipStyle.left = (8 - tooltipRect.viewLeft) + tooltipRect.left;
+    if (tooltipRect.viewLeft < 32) {
+      tootipStyle.left = (32 - tooltipRect.viewLeft) + tooltipRect.left;
       tootipStyle.right = "unset";
-    } else if (
-      (view.width >= 760 && tooltipRect.viewRight + 38 > view.width) ||
-      (view.width < 760 && tooltipRect.viewRight + 18 > view.width)
-    ) {
+    } else if (tooltipRect.viewRight + 32 > view.width) {
       tootipStyle.left = "unset";
-      tootipStyle.right = view.rootWidth - (tooltipRect.right - (tooltipRect.viewRight + (view.width >= 760 ? 38 : 18) - view.width));
+      tootipStyle.right = view.rootWidth - (tooltipRect.right - (tooltipRect.viewRight + 32 - view.width));
     }
 
     setStyle(tooltip, tootipStyle);
@@ -283,8 +290,8 @@ export default class Step {
     this.cancel();
     if (!this.active) {
       const show = () => {
-        this.context._overlay.hide();
         this.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
+        this.context._overlay.hide();
         this.position();
         this.adjust();
         if(isTargetValid(this.target)) {
@@ -324,6 +331,10 @@ export default class Step {
         this._scrollCancel = scrollIntoView(this.target, {
           time: this.context.options.animationspeed,
           cancellable: false,
+          align: {
+            top: getPosition(this.context.options.align),
+            left: 0.5
+          }
         }, show);
       } else this._timerHandler = setTimeout(show, this.context.options.animationspeed);
       return true;

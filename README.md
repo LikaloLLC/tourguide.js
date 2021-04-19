@@ -60,6 +60,8 @@ var tourguide = new Tourguide({options});
 
 * `padding`: additional padding to add to step highlighter; default is 5(px)
 
+* `align<'top' | 'bottom' | 'center'>`: the vertical alignment of the tour targets. default is 'top'
+
 * `steps`: if you choose to take JSON based tour approach provide use this property to provide the data; default is null
 
 * `src`: if you want to load the tour from a remote URL you may specify it here; default is null
@@ -92,15 +94,15 @@ var tourguide = new Tourguide({options});
   * object - All KeyboardEvent attribute is accepted including `keyCode`, `altKey`, `metaKey`, `ctrlKey` and etc.
     View This doc for more details about the KeyboardEvent: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
   
-  Here is the defult
+  Here is the default
   ```json
   {
     "next": "ArrowRight",
     "prev": "ArrowLeft",
-    "first": "ArrowUp",
-    "last": "ArrowDown",
-    "complete": "End",
-    "stop": "Delete"
+    "first": "Home",
+    "last": "End",
+    "complete": null,
+    "stop": "Escape"
   }
   ```
 * `request`: if you want to load the tour from a remote URL you may provide request headers here

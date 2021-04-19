@@ -2,7 +2,7 @@ import u from "umbrellajs";
 import Icons from "./icons";
 import Step from "./step";
 import Overlay from "./overlay";
-import { clamp, getViewportRect, colorObjToStyleVarString } from "./utils";
+import { animateScroll, clamp, colorObjToStyleVarString, getScrollCoordinates } from "./utils";
 
 import "../scss/style.scss";
 
@@ -35,26 +35,6 @@ function isEventAttrbutesMatched(event, keyOption, type = "keyup") {
   return false;
 }
 
-const defaultKeyNavOptions = {
-  next: "ArrowRight",
-  prev: "ArrowLeft",
-  first: "ArrowUp",
-  last: "ArrowDown",
-  complete: "End",
-  stop: "Delete"
-};
-
-const defaultColors = {
-  overlay: "rgba(0, 0, 0, 0.5)",
-  background: "#fff",
-  bullet: "#ff4141",
-  bulletVisited: "#aaa",
-  bulletCurrent: "#b50000",
-  stepButtonPrev: "#ff4141",
-  stepButtonNext: "#ff4141",
-  stepButtonComplete: "#b50000",
-};
-
 export default class Tour {
   get currentstep() {
     return this._steps[this._current];
@@ -78,6 +58,25 @@ export default class Tour {
     return this._options;
   }
   constructor(options = {}) {
+    const defaultKeyNavOptions = {
+      next: "ArrowRight",
+      prev: "ArrowLeft",
+      first: "Home",
+      last: "End",
+      complete: null,
+      stop: "Escape"
+    };
+
+    const defaultColors = {
+      overlay: "rgba(0, 0, 0, 0.5)",
+      background: "#fff",
+      bullet: "#ff4141",
+      bulletVisited: "#aaa",
+      bulletCurrent: "#b50000",
+      stepButtonPrev: "#ff4141",
+      stepButtonNext: "#ff4141",
+      stepButtonComplete: "#b50000",
+    };    
 
     this._options = Object.assign(
       {
@@ -98,6 +97,7 @@ export default class Tour {
             "Content-Type": "application/json",
           },
         },
+        align: "top", // top, bottom, center
         keyboardNavigation: defaultKeyNavOptions,
         onStart: () => {},
         onStop: () => {},
@@ -162,6 +162,8 @@ export default class Tour {
   _injectStyles() {
     // inject colors
     this._removeStyles();
+    // eslint-disable-next-line no-console
+    console.log(this._options.colors);
     const colors = u(
       "<style id=\"tourguide-color-schema\">" +
       colorObjToStyleVarString(this._options.colors, "--tourguide") +
@@ -216,12 +218,7 @@ export default class Tour {
     if (this._ready) {
       this._injectStyles();
       if (this._options.restoreinitialposition) {
-        const { scrollX, scrollY } = getViewportRect(this._options.root);
-        this._initialposition = {
-          left: scrollX,
-          top: scrollY,
-          behavior: "smooth"
-        };
+        this._initialposition = getScrollCoordinates(this._options.root);
       }
       if (!this._active) {
         u(this._options.root).addClass("guided-tour");
@@ -243,7 +240,9 @@ export default class Tour {
         this.go(step, "start");
       }
     } else {
-      throw new Error("Tour is not configured properly. Check documentation.");
+      setTimeout(() => {
+        this.start(step);
+      }, 50);
     }
   }
   action(event, action) {
@@ -294,11 +293,14 @@ export default class Tour {
       this._overlay.remove();
       this._steps.forEach(step => step.remove());
       u(this._options.root).removeClass("guided-tour");
-      if (this._options.restoreinitialposition) {
-        u(this._options.root).first().scrollTo(this._initialposition);
-      }
       if (this._options.keyboardNavigation) {
         u(":root").off("keyup", this._keyboardHandler);
+      }
+      if (this._options.restoreinitialposition && this._initialposition) {
+        animateScroll(
+          this._initialposition,
+          this._options.animationspeed
+        );
       }
       this._options.onStop(this._options);
     }
