@@ -2,14 +2,19 @@ import u from "umbrellajs";
 import Icons from "./icons";
 import Step from "./step";
 import Overlay from "./overlay";
-import { animateScroll, clamp, colorObjToStyleVarString, getScrollCoordinates } from "./utils";
+import {
+  animateScroll,
+  clamp,
+  colorObjToStyleVarString,
+  getScrollCoordinates,
+} from "./utils";
 
 import "../scss/style.scss";
 
 const StepsSource = {
   DOM: 0,
   JSON: 1,
-  REMOTE: 2
+  REMOTE: 2,
 };
 
 function isEventAttrbutesMatched(event, keyOption, type = "keyup") {
@@ -22,14 +27,16 @@ function isEventAttrbutesMatched(event, keyOption, type = "keyup") {
     } else if (typeof keyOption === "object") {
       eventAttrsMap = { ...keyOption, type };
     } else {
-      throw new Error("keyboardNavigation option invalid. should be predefined object or false. Check documentation.");
+      throw new Error(
+        "keyboardNavigation option invalid. should be predefined object or false. Check documentation."
+      );
     }
 
     const eventAttrs = Object.entries(eventAttrsMap).map(([key, value]) => ({
       key,
       value,
     }));
-    return !(eventAttrs.filter((attr) => event[attr.key] !== attr.value).length);
+    return !eventAttrs.filter((attr) => event[attr.key] !== attr.value).length;
   }
 
   return false;
@@ -43,7 +50,7 @@ export default class Tour {
     return this._steps.length;
   }
   get steps() {
-    return this._steps.map(step => step.toJSON());
+    return this._steps.map((step) => step.toJSON());
   }
   get hasnext() {
     return this.nextstep !== this._current;
@@ -64,19 +71,19 @@ export default class Tour {
       first: "Home",
       last: "End",
       complete: null,
-      stop: "Escape"
+      stop: "Escape",
     };
 
     const defaultColors = {
       overlay: "rgba(0, 0, 0, 0.5)",
       background: "#fff",
-      bullet: "#ff4141",
+      bullet: "#9ca3af",
       bulletVisited: "#aaa",
-      bulletCurrent: "#b50000",
-      stepButtonPrev: "#ff4141",
-      stepButtonNext: "#ff4141",
-      stepButtonComplete: "#b50000",
-    };    
+      bulletCurrent: "#39464e",
+      stepButtonPrev: "#6b7280",
+      stepButtonNext: "#111827",
+      stepButtonComplete: "#111827",
+    };
 
     this._options = Object.assign(
       {
@@ -89,11 +96,11 @@ export default class Tour {
         restoreinitialposition: true,
         preloadimages: false,
         request: {
-          "options": {
-            "mode": "cors",
-            "cache": "no-cache",
+          options: {
+            mode: "cors",
+            cache: "no-cache",
           },
-          "headers": {
+          headers: {
             "Content-Type": "application/json",
           },
         },
@@ -107,11 +114,8 @@ export default class Tour {
       },
       options,
       {
-        colors: Object.assign(
-          defaultColors,
-          options.colors || {}
-        ),
-      },
+        colors: Object.assign(defaultColors, options.colors || {}),
+      }
     );
     this._overlay = null;
     this._steps = [];
@@ -121,23 +125,22 @@ export default class Tour {
     this._ready = false;
     this._initialposition = null;
     this._injectIcons();
-    if (typeof this._options.steps === "object" && Array.isArray(this._options.steps)) {
+    if (
+      typeof this._options.steps === "object" &&
+      Array.isArray(this._options.steps)
+    ) {
       this._stepsSrc = StepsSource.JSON;
-      this._steps = this._options.steps.map(o => new Step(
-        o,
-        this
-      ));
+      this._steps = this._options.steps.map((o) => new Step(o, this));
       this._ready = true;
     } else if (typeof this._options.src === "string") {
       this._stepsSrc = StepsSource.REMOTE;
-      fetch(new Request(this._options.src, this._options.request))
-        .then(response => response.json().then(data => {
-          this._steps = data.map(o => new Step(
-            o,
-            this
-          ));
-          this._ready = true;
-        }));
+      fetch(new Request(this._options.src, this._options.request)).then(
+        (response) =>
+          response.json().then((data) => {
+            this._steps = data.map((o) => new Step(o, this));
+            this._ready = true;
+          })
+      );
     } else if (u(this._options.selector).length > 0) {
       this._stepsSrc = StepsSource.DOM;
       this._ready = true;
@@ -165,9 +168,10 @@ export default class Tour {
     // eslint-disable-next-line no-console
     console.log(this._options.colors);
     const colors = u(
-      "<style id=\"tourguide-color-schema\">" +
-      colorObjToStyleVarString(this._options.colors, "--tourguide") +
-      "</style>"
+      `<style id="tourguide-color-schema">${colorObjToStyleVarString(
+        this._options.colors,
+        "--tourguide"
+      )}</style>`
     );
     u(":root > head").append(colors);
   }
@@ -178,17 +182,35 @@ export default class Tour {
     }
   }
   _keyboardHandler(event) {
-    if (this._options.keyboardNavigation.next && isEventAttrbutesMatched(event, this._options.keyboardNavigation.next)) {
+    if (
+      this._options.keyboardNavigation.next &&
+      isEventAttrbutesMatched(event, this._options.keyboardNavigation.next)
+    ) {
       this.next();
-    } else if (this._options.keyboardNavigation.prev && isEventAttrbutesMatched(event, this._options.keyboardNavigation.prev)) {
+    } else if (
+      this._options.keyboardNavigation.prev &&
+      isEventAttrbutesMatched(event, this._options.keyboardNavigation.prev)
+    ) {
       this.previous();
-    } else if (this._options.keyboardNavigation.first && isEventAttrbutesMatched(event, this._options.keyboardNavigation.first)) {
+    } else if (
+      this._options.keyboardNavigation.first &&
+      isEventAttrbutesMatched(event, this._options.keyboardNavigation.first)
+    ) {
       this.go(0);
-    } else if (this._options.keyboardNavigation.last && isEventAttrbutesMatched(event, this._options.keyboardNavigation.last)) {
+    } else if (
+      this._options.keyboardNavigation.last &&
+      isEventAttrbutesMatched(event, this._options.keyboardNavigation.last)
+    ) {
       this.go(this._steps.length - 1);
-    } else if (this._options.keyboardNavigation.stop && isEventAttrbutesMatched(event, this._options.keyboardNavigation.stop)) {
+    } else if (
+      this._options.keyboardNavigation.stop &&
+      isEventAttrbutesMatched(event, this._options.keyboardNavigation.stop)
+    ) {
       this.stop();
-    } else if (this._options.keyboardNavigation.complete && isEventAttrbutesMatched(event, this._options.keyboardNavigation.complete)) {
+    } else if (
+      this._options.keyboardNavigation.complete &&
+      isEventAttrbutesMatched(event, this._options.keyboardNavigation.complete)
+    ) {
       this.complete();
     }
   }
@@ -198,10 +220,7 @@ export default class Tour {
     this._overlay = new Overlay(this);
     if (this._stepsSrc === StepsSource.DOM) {
       const steps = u(this._options.selector).nodes;
-      this._steps = steps.map(el => new Step(
-        el,
-        this
-      ));
+      this._steps = steps.map((el) => new Step(el, this));
     }
     this._steps = this._steps.sort((a, b) => a.index - b.index);
     this._steps[0].first = true;
@@ -224,15 +243,20 @@ export default class Tour {
         u(this._options.root).addClass("guided-tour");
         this.init();
         this._overlay.attach(this._options.root);
-        this._steps.forEach(step => step.attach(this._options.root));
+        this._steps.forEach((step) => step.attach(this._options.root));
         this._current = step;
         this.currentstep.show();
         this._active = true;
         this._options.onStart(this._options);
 
         if (this._options.keyboardNavigation) {
-          if (Object.prototype.toString.call(this._options.keyboardNavigation) !== "[object Object]")
-            throw new Error("keyboardNavigation option invalid. should be predefined object or false. Check documentation.");
+          if (
+            Object.prototype.toString.call(this._options.keyboardNavigation) !==
+            "[object Object]"
+          )
+            throw new Error(
+              "keyboardNavigation option invalid. should be predefined object or false. Check documentation."
+            );
 
           u(":root").on("keyup", this._keyboardHandler);
         }
@@ -248,21 +272,24 @@ export default class Tour {
   action(event, action) {
     if (this._active) {
       const { currentstep } = this;
-      if(typeof action.act === "function") {
+      if (typeof action.act === "function") {
         action.act(event, currentstep.toJSON(), this, action);
-      } else if(typeof action.act === "number") {
+      } else if (typeof action.act === "number") {
         this.go(action.act, "action");
-      } else if(action.act === "next") {
+      } else if (action.act === "next") {
         this.next();
-      } else if(action.act === "previous") {
+      } else if (action.act === "previous") {
         this.previous();
-      } else if(action.act === "stop") {
+      } else if (action.act === "stop") {
         this.stop();
-      } else if(action.act === "complete") {
+      } else if (action.act === "complete") {
         this.complete();
       }
 
-      if(this._options.onAction && typeof this._options.onAction === "function") {
+      if (
+        this._options.onAction &&
+        typeof this._options.onAction === "function"
+      ) {
         this._options.onAction(event, currentstep.toJSON(), action);
       }
     }
@@ -291,16 +318,13 @@ export default class Tour {
       this.currentstep.hide();
       this._active = false;
       this._overlay.remove();
-      this._steps.forEach(step => step.remove());
+      this._steps.forEach((step) => step.remove());
       u(this._options.root).removeClass("guided-tour");
       if (this._options.keyboardNavigation) {
         u(":root").off("keyup", this._keyboardHandler);
       }
       if (this._options.restoreinitialposition && this._initialposition) {
-        animateScroll(
-          this._initialposition,
-          this._options.animationspeed
-        );
+        animateScroll(this._initialposition, this._options.animationspeed);
       }
       this._options.onStop(this._options);
     }

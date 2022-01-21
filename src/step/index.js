@@ -86,7 +86,7 @@ export default class Step {
     return this.container;
   }
   get target() {
-    return this._target || u(this._selector).first();
+    return this._target || this._selector && u(this._selector).first();
   }
   set target(target) {
     this._target = target;

@@ -7,7 +7,7 @@
     "content": "# Heading level 1\n## Heading level 2\n### Heading level 3\n\nHeading level 1\n===============\nHeading level 2\n---------------\n"
   },
   {
-    "selector": null,
+    "selector": "h2",
     "step": 2,
     "title": "Paragraphs & Emphasis",
     "marked": true,
@@ -21,7 +21,7 @@
     "content": "> Dorothy followed her through many of the beautiful rooms in her castle.\n> \n> The Witch bade her clean the pots and kettles and sweep the floor and keep the fire fed with wood.\n1. First item\n2. Second item\n3. Third item\n4. Fourth item"
   },
   {
-    "selector": null,
+    "selector": "",
     "step": 4,
     "title": "Remember!!!",
     "marked": true,
