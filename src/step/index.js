@@ -127,10 +127,7 @@ export default class Step {
     }
     this.index = parseInt(data.step);
     this.title = data.title;
-    this.content = data.content;
-    if (data.marked) {
-      this.content = snarkdown(this.content);
-    }
+    this.content = snarkdown(data.content);
     this.image = data.image;
     if (data.image &&
       context.options.preloadimages &&
