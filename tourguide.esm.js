@@ -789,10 +789,10 @@ var Step = function () {
     }
     this.index = parseInt(data.step);
     this.title = data.title;
-    this.content = data.content;
-    if (data.marked) {
-      this.content = t(this.content);
-    }
+    this.content = t(data.content);
+    // if (data.marked) {
+    //   this.content = snarkdown(this.content);
+    // }
     this.image = data.image;
     if (data.image && context.options.preloadimages && !/^data:/i.test(data.image)) {
       var preload = new Image();
