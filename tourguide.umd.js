@@ -682,6 +682,7 @@
 	}
 
 	var e={"":["<em>","</em>"],_:["<strong>","</strong>"],"*":["<strong>","</strong>"],"~":["<s>","</s>"],"\n":["<br />"]," ":["<br />"],"-":["<hr />"]};function n(e){return e.replace(RegExp("^"+(e.match(/^(\t| )+/)||"")[0],"gm"),"")}function r(e){return (e+"").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}function t(a,c){var o,l,g,s,p,u=/((?:^|\n+)(?:\n---+|\* \*(?: \*)+)\n)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|(  \n\n*|\n{2,}|__|\*\*|[_*]|~~)/gm,m=[],h="",i=c||{},d=0;function f(n){var r=e[n[1]||""],t=m[m.length-1]==n;return r?r[1]?(t?m.pop():m.push(n),r[0|t]):r[0]:n}function $(){for(var e="";m.length;)e+=f(m[m.length-1]);return e}for(a=a.replace(/^\[(.+?)\]:\s*(.+)$/gm,function(e,n,r){return i[n.toLowerCase()]=r,""}).replace(/^\n+|\n+$/g,"");g=u.exec(a);)l=a.substring(d,g.index),d=u.lastIndex,o=g[0],l.match(/[^\\](\\\\)*\\$/)||((p=g[3]||g[4])?o='<pre class="code '+(g[4]?"poetry":g[2].toLowerCase())+'"><code'+(g[2]?' class="language-'+g[2].toLowerCase()+'"':"")+">"+n(r(p).replace(/^\n+|\n+$/g,""))+"</code></pre>":(p=g[6])?(p.match(/\./)&&(g[5]=g[5].replace(/^\d+/gm,"")),s=t(n(g[5].replace(/^\s*[>*+.-]/gm,""))),">"==p?p="blockquote":(p=p.match(/\./)?"ol":"ul",s=s.replace(/^(.*)(\n|$)/gm,"<li>$1</li>")),o="<"+p+">"+s+"</"+p+">"):g[8]?o='<img src="'+r(g[8])+'" alt="'+r(g[7])+'">':g[10]?(h=h.replace("<a>",'<a href="'+r(g[11]||i[l.toLowerCase()])+'">'),o=$()+"</a>"):g[9]?o="<a>":g[12]||g[14]?o="<"+(p="h"+(g[14]?g[14].length:g[13]>"="?1:2))+">"+t(g[12]||g[15],i)+"</"+p+">":g[16]?o="<code>"+r(g[16])+"</code>":(g[17]||g[1])&&(o=f(g[17]||"--"))),h+=l,h+=o;return (h+a.substring(d)+$()).replace(/^\n+|\n+$/g,"")}
+	//# sourceMappingURL=snarkdown.es.js.map
 
 	// data-step="title: Step1; content: .../<>"
 
@@ -728,7 +729,7 @@
 	        var image = umbrella_min("<div role=\"figure\" class=\"guided-tour-step-image\">" + (this.image ? "<img src=\"" + this.image + "\" />" : "") + "</div>");
 	        var title = umbrella_min("<div role=\"heading\" class=\"guided-tour-step-title\">" + this.title + "</div>");
 	        var content = umbrella_min("<div class=\"guided-tour-step-content\">" + this.content + "</div>");
-	        var footer = umbrella_min("<div class=\"guided-tour-step-footer\">\n                <span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                    <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                </span>\n                " + (!this.first ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-prev\" title=\"Prev step\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-prev\"></use>\n                  </svg>\n                </span>" : "") + "\n                " + (this.last ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use>\n                  </svg>\n                </span>" : "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use>\n                  </svg>\n                </span>") + "\n                " + (this.context._steps.length > 1 ? "<div class=\"guided-tour-step-bullets\">\n                    <ul>" + this.context._steps.map(function (step, i) {
+	        var footer = umbrella_min("<div class=\"guided-tour-step-footer\">\n                <span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                    <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                </span>\n                " + (!this.first ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-prev\" title=\"Prev step\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-prev\"></use>\n                  </svg>\n                </span>" : "") + "\n                " + (this.last ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use>\n                  </svg>\n                </span>" : !this.blocking && "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use>\n                  </svg>\n                </span>") + "\n                " + (this.context._steps.length > 1 ? "<div class=\"guided-tour-step-bullets\">\n                    <ul>" + this.context._steps.map(function (step, i) {
 	          return "<li  title=\"Go to step " + (i + 1) + "\" data-index=\"" + i + "\" class=\"" + (step.index < _this.index ? "complete" : step.index == _this.index ? "current" : "") + "\"></li>";
 	        }).join("") + "</ul>\n                </div>" : "") + "\n            </div>");
 	        footer.find(".guided-tour-step-button-prev").on("click", this.context.previous);
@@ -771,6 +772,8 @@
 	    this.active = false;
 	    this.first = false;
 	    this.last = false;
+	    this.blocking = false;
+	    this.awaitel = false;
 
 	    this.container = null;
 	    this.highlight = null;
@@ -796,10 +799,9 @@
 	    this.index = parseInt(data.step);
 	    this.title = data.title;
 	    this.content = t(data.content);
-	    // if (data.marked) {
-	    //   this.content = snarkdown(this.content);
-	    // }
 	    this.image = data.image;
+	    this.blocking = data.blocking;
+	    this.awaitel = data.awaitel;
 	    if (data.image && context.options.preloadimages && !/^data:/i.test(data.image)) {
 	      var preload = new Image();
 	      // preload.onload = (e) => {
@@ -967,13 +969,12 @@
 	          _this3.context._overlay.hide();
 	          _this3.position();
 	          _this3.adjust();
-	          if (isTargetValid(_this3.target)) {
-	            if (getStyle(_this3.target, "position") === "static") {
-	              _this3.target.style.position = "relative";
-	            }
-	            umbrella_min(_this3.target).addClass("guided-tour-target");
-	          }
-
+	          // if(isTargetValid(this.target)) {
+	          //   if(getStyle(this.target, "position") === "static") {
+	          //     this.target.style.position = "relative";
+	          //   }
+	          //   u(this.target).addClass("guided-tour-target");
+	          // }
 	          _this3.actions.forEach(function (a) {
 	            try {
 	              var eventType = getEventType(a.event);
@@ -989,7 +990,7 @@
 	                  }
 	                };
 	                a.handler = eventHandler;
-	                a.target = a.target || _this3.target;
+	                a.target = _this3.highlight;
 	                umbrella_min(a.target).on(eventType, a.handler);
 	              } else {
 	                console.warn("Wrong event on action.event: " + a.event + " on step #" + _this3.index);
@@ -1406,26 +1407,61 @@
 	    }
 	  }, {
 	    key: "action",
-	    value: function action(event, _action) {
+	    value: function action(event, _action2) {
 	      if (this._active) {
-	        var currentstep = this.currentstep;
+	        if (Array.isArray(_action2.act)) {
+	          var _iteratorNormalCompletion = true;
+	          var _didIteratorError = false;
+	          var _iteratorError = undefined;
 
-	        if (typeof _action.act === "function") {
-	          _action.act(event, currentstep.toJSON(), this, _action);
-	        } else if (typeof _action.act === "number") {
-	          this.go(_action.act, "action");
-	        } else if (_action.act === "next") {
-	          this.next();
-	        } else if (_action.act === "previous") {
-	          this.previous();
-	        } else if (_action.act === "stop") {
-	          this.stop();
-	        } else if (_action.act === "complete") {
-	          this.complete();
-	        }
+	          try {
+	            for (var _iterator = _action2.act[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	              var a = _step.value;
 
-	        if (this._options.onAction && typeof this._options.onAction === "function") {
-	          this._options.onAction(event, currentstep.toJSON(), _action);
+	              var _action = _extends({}, _action2, {
+	                act: a
+	              });
+	              this.action(event, _action);
+	            }
+	          } catch (err) {
+	            _didIteratorError = true;
+	            _iteratorError = err;
+	          } finally {
+	            try {
+	              if (!_iteratorNormalCompletion && _iterator.return) {
+	                _iterator.return();
+	              }
+	            } finally {
+	              if (_didIteratorError) {
+	                throw _iteratorError;
+	              }
+	            }
+	          }
+	        } else {
+	          var currentstep = this.currentstep;
+
+	          switch (true) {
+	            case typeof _action2.act === "function":
+	              _action2.act(event, currentstep.toJSON(), this, _action2);
+	              break;
+	            case typeof _action2.act === "number":
+	              this.go(_action2.act, "action");break;
+	            case _action2.act === "next":
+	              this.next();break;
+	            case _action2.act === "previous":
+	              this.previous();break;
+	            case _action2.act === "stop":
+	              this.stop();break;
+	            case _action2.act === "complete":
+	              this.complete();break;
+	            case _action2.act === "propagate":
+	              {
+	                currentstep.target[_action2.event]();
+	              }break;
+	          }
+	          if (typeof this._options.onAction === "function") {
+	            this._options.onAction(event, currentstep.toJSON(), _action2);
+	          }
 	        }
 	      }
 	    }
