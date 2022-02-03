@@ -60,7 +60,7 @@ export default class Step {
                   <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
                     <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-complete"></use>
                   </svg>
-                </span>` : `<span role="button" class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
+                </span>` : !this.blocking && `<span role="button" class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
                   <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
                     <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-next"></use>
                   </svg>
@@ -99,6 +99,8 @@ export default class Step {
     this.active = false;
     this.first = false;
     this.last = false;
+    this.blocking = false;
+    this.awaitel = false;
 
     this.container = null;
     this.highlight = null;
@@ -129,6 +131,8 @@ export default class Step {
     this.title = data.title;
     this.content = snarkdown(data.content);
     this.image = data.image;
+    this.blocking = data.blocking;
+    this.awaitel = data.awaitel;
     if (data.image &&
       context.options.preloadimages &&
       !(/^data:/i.test(data.image))) {
@@ -291,13 +295,12 @@ export default class Step {
         this.context._overlay.hide();
         this.position();
         this.adjust();
-        if(isTargetValid(this.target)) {
-          if(getStyle(this.target, "position") === "static") {
-            this.target.style.position = "relative";
-          }
-          u(this.target).addClass("guided-tour-target");
-        }
-
+        // if(isTargetValid(this.target)) {
+        //   if(getStyle(this.target, "position") === "static") {
+        //     this.target.style.position = "relative";
+        //   }
+        //   u(this.target).addClass("guided-tour-target");
+        // }
         this.actions.forEach((a) => {
           try {
             const eventType = getEventType(a.event);
@@ -311,7 +314,7 @@ export default class Step {
                 }
               };
               a.handler = eventHandler;
-              a.target = a.target || this.target;
+              a.target = this.highlight;
               u(a.target).on(eventType, a.handler);
             } else {
               console.warn(`Wrong event on action.event: ${a.event} on step #${this.index}`);
