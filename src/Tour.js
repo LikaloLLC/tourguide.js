@@ -271,26 +271,34 @@ export default class Tour {
   }
   action(event, action) {
     if (this._active) {
-      const { currentstep } = this;
-      if (typeof action.act === "function") {
-        action.act(event, currentstep.toJSON(), this, action);
-      } else if (typeof action.act === "number") {
-        this.go(action.act, "action");
-      } else if (action.act === "next") {
-        this.next();
-      } else if (action.act === "previous") {
-        this.previous();
-      } else if (action.act === "stop") {
-        this.stop();
-      } else if (action.act === "complete") {
-        this.complete();
-      }
-
-      if (
-        this._options.onAction &&
-        typeof this._options.onAction === "function"
-      ) {
-        this._options.onAction(event, currentstep.toJSON(), action);
+      if (Array.isArray(action.act)) {
+        for(let a of action.act) {
+          const _action = {
+            ...action,
+            act: a
+          };
+          this.action(event, _action);
+        }
+      } else {
+        const { currentstep } = this;
+        switch (true) {
+          case (typeof action.act === "function"):
+            action.act(event, currentstep.toJSON(), this, action);
+          break;
+          case (typeof action.act === "number"): this.go(action.act, "action"); break;
+          case (action.act === "next"): this.next(); break;
+          case (action.act === "previous"): this.previous(); break;
+          case (action.act === "stop"): this.stop(); break;
+          case (action.act === "complete"): this.complete(); break;
+          case (action.act === "propagate"):{
+            currentstep.target[action.event]();
+          } break;
+        }
+        if (
+          typeof this._options.onAction === "function"
+        ) {
+          this._options.onAction(event, currentstep.toJSON(), action);
+        }
       }
     }
   }
