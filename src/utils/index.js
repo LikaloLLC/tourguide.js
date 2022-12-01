@@ -51,10 +51,10 @@ export function getBoundingClientRect(element, root) {
   return {
     width: rect.width,
     height: rect.height,
-    top: rect.top + view.scrollY - view.rootTop,
-    bottom: rect.bottom + view.scrollY - view.rootTop,
-    left: rect.left + view.scrollX - view.rootLeft,
-    right: rect.right + view.scrollX - view.rootLeft,
+    top: rect.top + view.scrollY,
+    bottom: rect.bottom + view.scrollY,
+    left: rect.left + view.scrollX,
+    right: rect.right + view.scrollX,
     viewTop: rect.top,
     viewBottom: rect.bottom,
     viewLeft: rect.left,
@@ -142,37 +142,37 @@ export function setStyle(element, styleObj) {
   Object.entries(styleObj)
     .filter(([key, val]) => allowedProperties.includes(key) && (typeof val === "number" || typeof val === "string"))
     .forEach(([key, val]) => {
-      const value = typeof val === "number" ? `${val}px` : val;
+      const value = typeof val === "number" ? `${val.toFixed(1)}px` : val;
       switch (key) {
-      case "top":
-        style.top = value;
-        break;
-      case "left":
-        style.left = value;
-        break;
-      case "right":
-        style.right = value;
-        break;
-      case "bottom":
-        style.bottom = value;
-        break;
-      case "width":
-        style.width = value;
-        break;
-      case "height":
-        style.height = value;
-        break;
-      case "maxWidth":
-        style.maxWidth = value;
-        break;
-      case "minWidth":
-        style.minWidth = value;
-        break;
-      case "transform":
-        style.transform = value;
-        break;
-      default:
-        break;
+        case "top":
+          style.top = value;
+          break;
+        case "left":
+          style.left = value;
+          break;
+        case "right":
+          style.right = value;
+          break;
+        case "bottom":
+          style.bottom = value;
+          break;
+        case "width":
+          style.width = value;
+          break;
+        case "height":
+          style.height = value;
+          break;
+        case "maxWidth":
+          style.maxWidth = value;
+          break;
+        case "minWidth":
+          style.minWidth = value;
+          break;
+        case "transform":
+          style.transform = value;
+          break;
+        default:
+          break;
       }
     });
 }
@@ -187,19 +187,19 @@ export function setStyle(element, styleObj) {
  *  input: { overlay: "gray", background: "white", bulletCurrent: "red" }
  *  output: ":root { --tourguide-overlay: gray; --tourguide-background: white; --tourguide-bullet-current: red; }"
  */
-export function colorObjToStyleVarString(colors, prefix = "--tourguide", selector = ":root") {
+export function colorObjToStyleVarString(colors, prefix = "--tourguide", selector = ":host") {
   const styleArray = [];
   Object.entries(colors).forEach(([key, value]) => {
-    const splitedNameArray = [prefix];
+    const splitNameArray = [prefix];
     let prevIndex = 0;
     for (let i = 0; i < key.length; i += 1) {
       if ("A" <= key[i] && key[i] <= "Z") {
-        splitedNameArray.push(key.substring(prevIndex, i).toLowerCase());
+        splitNameArray.push(key.substring(prevIndex, i).toLowerCase());
         prevIndex = i;
       }
     }
-    splitedNameArray.push(key.substring(prevIndex, key.length).toLowerCase());
-    styleArray.push(`${splitedNameArray.join("-")}: ${value}`);
+    splitNameArray.push(key.substring(prevIndex, key.length).toLowerCase());
+    styleArray.push(`${splitNameArray.join("-")}: ${value}`);
   });
   return `${selector} {\n${styleArray.join(";\n")};\n}`;
 }
@@ -231,16 +231,16 @@ export function animateScroll(scrollItems, time) {
     if ("requestAnimationFrame" in window) {
       return window.requestAnimationFrame(task);
     }
-  
+
     setTimeout(task, 16);
   }
-  
+
   function ease(v) {
     return 1 - Math.pow(1 - v, v / 2);
   }
 
   function animate(el, x, y) {
-    if(!el) {
+    if (!el) {
       console.warn(`target element ${el} not found, skip`);
       return;
     }
@@ -252,7 +252,7 @@ export function animateScroll(scrollItems, time) {
     const differenceX = x - el.scrollLeft;
     const differenceY = y - el.scrollTop;
 
-    setElementScroll( el, x - differenceX * easeValue, y - differenceY * easeValue);
+    setElementScroll(el, x - differenceX * easeValue, y - differenceY * easeValue);
 
     if (diffTime >= time) {
       setElementScroll(el, x, y);
@@ -298,4 +298,13 @@ export function getScrollCoordinates(target) {
   } while (targetUEl);
 
   return scrollItems;
+}
+
+export function getMaxZIndex() {
+  return Math.max(
+    ...Array.from(document.querySelectorAll('body *'), el =>
+      parseFloat(window.getComputedStyle(el).zIndex),
+    ).filter(zIndex => !Number.isNaN(zIndex)),
+    0,
+  );
 }

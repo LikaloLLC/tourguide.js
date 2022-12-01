@@ -13,25 +13,25 @@ import {
 import snarkdown from "snarkdown";
 // data-step="title: Step1; content: .../<>"
 
-function getEventType(event) {
-  let eventType = "";
-  if (typeof event === "string") {
-    eventType = event;
-  } else if (typeof event === "object") {
-    eventType = event.type;
-  }
+// function getEventType(event) {
+//   let eventType = "";
+//   if (typeof event === "string") {
+//     eventType = event;
+//   } else if (typeof event === "object") {
+//     eventType = event.type;
+//   }
 
-  return eventType;
-}
+//   return eventType;
+// }
 
-function getEventAttrs(event) {
-  if (typeof event === "object") {
-    return Object.entries(event)
-      .map(([key, value]) => ({ key, value }));
-  }
+// function getEventAttrs(event) {
+//   if (typeof event === "object") {
+//     return Object.entries(event)
+//       .map(([key, value]) => ({ key, value }));
+//   }
 
-  return [];
-}
+//   return [];
+// }
 
 function getPosition(align) {
   if (align === "top") return 0.1;
@@ -45,42 +45,46 @@ export default class Step {
   get el() {
     if (!this.container) {
       const image = u(`<div role="figure" class="guided-tour-step-image">${this.image ? `<img src="${this.image}" />` : ""}</div>`);
-      const title = u(`<div role="heading" class="guided-tour-step-title">${this.title}</div>`);
-      const content = u(`<div class="guided-tour-step-content">${this.content}</div>`);
+      const content = u(`<div class="guided-tour-step-content-wrapper">
+        <div id="tooltip-title-${this.index}" role="heading" class="guided-tour-step-title">${this.title}</div>
+        <div class="guided-tour-step-content">${this.content}</div>
+      </div>`);
       const footer = u(`<div class="guided-tour-step-footer">
-                <span role="button" class="guided-tour-step-button guided-tour-step-button-close" title="End tour">
+                <button class="guided-tour-step-button guided-tour-step-button-close" title="End tour">
                     <svg class="guided-tour-icon" viewBox="0 0 20 20" width="16" height="16"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-close"></use></svg>
-                </span>
-                ${!this.first ? `<span role="button" class="guided-tour-step-button guided-tour-step-button-prev" title="Prev step">
+                </button>
+                ${!this.first ? `<button class="guided-tour-step-button guided-tour-step-button-prev" title="Prev step">
                   <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
                     <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-prev"></use>
                   </svg>
-                </span>` : ""}
-                ${this.last ? `<span role="button" class="guided-tour-step-button guided-tour-step-button-complete" title="Complete tour">
+                </button>` : ""}
+                ${this.last ? `<button class="guided-tour-step-button guided-tour-step-button-complete" title="Complete tour">
                   <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
                     <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-complete"></use>
                   </svg>
-                </span>` : !this.blocking && `<span role="button" class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
+                </button>` : `<button class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
                   <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
                     <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-next"></use>
                   </svg>
-                </span>`}
+                </button>`}
                 ${this.context._steps.length > 1 ? `<div class="guided-tour-step-bullets">
-                    <ul>${this.context._steps.map((step, i) => `<li  title="Go to step ${i + 1}" data-index="${i}" class="${step.index < this.index ? "complete" : step.index == this.index ? "current" : ""}"></li>`).join("")}</ul>
+                    <ul>${this.context._steps.map((step, i) => `<li><button title="Go to step ${i + 1}" data-index="${i}" class="${step.index < this.index ? "complete" : step.index == this.index ? "current" : ""}"></button></li>`).join("")}</ul>
                 </div>` : ""}
             </div>`);
       footer.find(".guided-tour-step-button-prev").on("click", this.context.previous);
       footer.find(".guided-tour-step-button-next").on("click", this.context.next);
       footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
       footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
-      footer.find(".guided-tour-step-bullets li").on("click", (e) => this.context.go(parseInt(u(e.target).data("index"))));
+      footer.find(".guided-tour-step-bullets button").on("click", (e) => this.context.go(parseInt(u(e.target).data("index"))));
       const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
-      const tooltip = this.tooltip = u("<div role=\"tooltip\" class=\"guided-tour-step-tooltip\"></div>");
+      const tooltip = this.tooltip = u("<div role=\"document\" class=\"guided-tour-step-tooltip\"></div>");
       const tooltipinner = u("<div class=\"guided-tour-step-tooltip-inner\"></div>");
       const arrow = this.arrow = u("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"><div aria-hidden=\"true\" class=\"guided-tour-arrow-inner\"></div></div>");
-      tooltipinner.append(arrow).append(image).append(title).append(content).append(footer);
+      const container = u(`<div class="guided-tour-step-content-container${this.layout==="horizontal" ? " step-layout-horizontal" : ""}"></div>`);
+      container.append(image).append(content);
+      tooltipinner.append(arrow).append(container).append(footer);
       tooltip.append(tooltipinner);
-      this.container = u(`<div role="dialog" class="guided-tour-step${this.first ? " guided-tour-step-first" : ""}${this.last ? " guided-tour-step-last" : ""}"></div>`);
+      this.container = u(`<div role="dialog" aria-labelleby="tooltip-title-${this.index}" class="guided-tour-step${this.first ? " guided-tour-step-first" : ""}${this.last ? " guided-tour-step-last" : ""}"></div>`);
       this.container.append(highlight).append(tooltip);
     }
     return this.container;
@@ -114,7 +118,7 @@ export default class Step {
 
     let data;
     if (!(step instanceof HTMLElement)) {
-      if(!(step.hasOwnProperty("title") && step.hasOwnProperty("content") && step.hasOwnProperty("step"))) {
+      if (!(step.hasOwnProperty("title") && step.hasOwnProperty("content") && step.hasOwnProperty("step"))) {
         throw new Error(
           "invalid step parameter:\n" +
           JSON.stringify(step, null, 2) + "\n" +
@@ -132,6 +136,7 @@ export default class Step {
     this.content = snarkdown(data.content);
     this.image = data.image;
     this.blocking = data.blocking;
+    this.layout = data.layout || "vertical";
     this.awaitel = data.awaitel;
     if (data.image &&
       context.options.preloadimages &&
@@ -147,13 +152,14 @@ export default class Step {
     }
 
     this.actions = [];
-    if(data.actions) {
-      if(!Array.isArray(data.actions)) {
+    if (data.actions) {
+      if (!Array.isArray(data.actions)) {
         console.error(new Error(`actions must be array but got ${typeof data.actions}`));
       } else {
         this.actions = data.actions;
       }
     }
+    this.adjust = this.adjust.bind(this);
   }
   attach(root) {
     u(root).append(this.el);
@@ -194,16 +200,20 @@ export default class Step {
         targetRect.viewTop < tooltipRect.height + marginVerticalSize
       ) {
         tootipStyle.top = targetRect.top + targetRect.height;
-        tootipStyle.bottom = "unset";
+        // tootipStyle.bottom = "unset";
         tooltip.addClass("guided-tour-arrow-top");
         tooltipBRL = parseNumber(getStyle(tooltip, "border-top-left-radius"));
         tooltipBRR = parseNumber(getStyle(tooltip, "border-top-right-radius"));
       } else {
-        tootipStyle.bottom = view.rootHeight - targetRect.top;
-        tootipStyle.top = "unset";
+        tootipStyle.top = targetRect.top - tooltipRect.height - marginVerticalSize;
+        // tootipStyle.bottom = "unset";
         tooltip.addClass("guided-tour-arrow-bottom");
         tooltipBRL = parseNumber(getStyle(tooltip, "border-bottom-left-radius"));
         tooltipBRR = parseNumber(getStyle(tooltip, "border-bottom-right-radius"));
+      }
+      // Adjust vertical position
+      if(tootipStyle.top + tooltipRect.height > view.rootHeight) {
+        tootipStyle.top = view.rootHeight - tooltipRect.height - marginVerticalSize;
       }
 
       const arrowRect = getBoundingClientRect(arrow, this.context._options.root);
@@ -214,20 +224,20 @@ export default class Step {
         targetRect.right < tooltipRect.width + marginHorizontalSize
       ) {
         tootipStyle.left = targetRect.left;
-        tootipStyle.right = "unset";
-        if(targetRect.width / 2 > tooltipRect.width) arrowStyle.right = 8;
+        // tootipStyle.right = "unset";
+        if (targetRect.width / 2 > tooltipRect.width) arrowStyle.right = 8;
         else arrowStyle.left = clamp(targetRect.width / 2, tooltipBRL + 2, tooltipRect.width - arrowRect.width - tooltipBRR - 2);
       } else {
-        tootipStyle.right = view.rootWidth - targetRect.right;
-        tootipStyle.left = "unset";
-        if(targetRect.width / 2 > tooltipRect.width) arrowStyle.left = 18;
+        tootipStyle.left = targetRect.right - tooltipRect.width;
+        // tootipStyle.right = "unset";
+        if (targetRect.width / 2 > tooltipRect.width) arrowStyle.left = 18;
         else arrowStyle.right = clamp(targetRect.width / 2, tooltipBRR + 2, tooltipRect.width - arrowRect.width - tooltipBRL - 2);
       }
 
       setStyle(highlight, highlightStyle);
       setStyle(tooltip, tootipStyle);
       setStyle(arrow, arrowStyle);
-      tooltip.first().style.opacity = 0.1;
+      // tooltip.first().style.opacity = 0.1;
     } else {
       const highlight = this.highlight;
       const tooltip = this.tooltip;
@@ -252,7 +262,7 @@ export default class Step {
       setStyle(highlight, highlightStyle);
       setStyle(tooltip, tootipStyle);
       highlight.first().style.boxShadow = "none";
-      tooltip.first().style.opacity = 0.1;
+      // tooltip.first().style.opacity = 0.1;
       this.context._overlay.show();
     }
   }
@@ -266,26 +276,22 @@ export default class Step {
     const tootipStyle = {};
 
     if (tooltipRect.viewTop < 8) {
-      tootipStyle.top = (8 - tooltipRect.viewTop) + tooltipRect.top;
-      tootipStyle.bottom = "unset";
-    } else if (tooltipRect.viewBottom + 8 > view.height) {
-      tootipStyle.top = "unset";
-      tootipStyle.bottom = view.rootHeight - (tooltipRect.bottom - (tooltipRect.viewBottom + 8 - view.height));
+      tootipStyle.top = 8;
+    } else if (tooltipRect.viewTop + tooltipRect.height + 8 > view.rootHeight) {
+      tootipStyle.top = view.rootHeight - tooltipRect.height - 8;
     }
-    if (tooltipRect.viewLeft < 32) {
-      tootipStyle.left = (32 - tooltipRect.viewLeft) + tooltipRect.left;
-      tootipStyle.right = "unset";
-    } else if (tooltipRect.viewRight + 32 > view.width) {
-      tootipStyle.left = "unset";
-      tootipStyle.right = view.rootWidth - (tooltipRect.right - (tooltipRect.viewRight + 32 - view.width));
+    if (tooltipRect.viewLeft < 42) {
+      tootipStyle.left = 32;
+    } else if (tooltipRect.viewLeft + tooltipRect.width + 42 > view.rootWidth) {
+      tootipStyle.left = view.rootWidth - tooltipRect.width - 32;
     }
 
     setStyle(tooltip, tootipStyle);
-    tooltip.first().style.opacity = 1;
+    // tooltip.first().style.opacity = 1;
   }
   cancel() {
-    if(this._timerHandler) clearTimeout(this._timerHandler);
-    if(this._scrollCancel) this._scrollCancel();
+    if (this._timerHandler) clearTimeout(this._timerHandler);
+    if (this._scrollCancel) this._scrollCancel();
   }
   show() {
     this.cancel();
@@ -295,35 +301,37 @@ export default class Step {
         this.context._overlay.hide();
         this.position();
         this.adjust();
+        this.container.find(".guided-tour-step-button-next, .guided-tour-step-button-complete").first().focus();
+        // requestAnimationFrame(this.adjust);
         // if(isTargetValid(this.target)) {
         //   if(getStyle(this.target, "position") === "static") {
         //     this.target.style.position = "relative";
         //   }
         //   u(this.target).addClass("guided-tour-target");
         // }
-        this.actions.forEach((a) => {
-          try {
-            const eventType = getEventType(a.event);
-            if(eventType) {
-              const eventHandler = (e) => {
-                if(a) {
-                  const eventAttrs = getEventAttrs(a.event);
-                  const isMatched = !(eventAttrs.filter((attr) => e[attr.key] !== attr.value).length);
+        // this.actions.forEach((a) => {
+        //   try {
+        //     const eventType = getEventType(a.event);
+        //     if (eventType) {
+        //       const eventHandler = (e) => {
+        //         if (a) {
+        //           const eventAttrs = getEventAttrs(a.event);
+        //           const isMatched = !(eventAttrs.filter((attr) => e[attr.key] !== attr.value).length);
 
-                  if(isMatched) this.context.action(e, a);
-                }
-              };
-              a.handler = eventHandler;
-              a.target = this.highlight;
-              u(a.target).on(eventType, a.handler);
-            } else {
-              console.warn(`Wrong event on action.event: ${a.event} on step #${this.index}`);
-            }
-          } catch (error) {
-            console.warn(`Could not find action.target: ${a.target} on step #${this.index}`);
-            console.warn(error);
-          }
-        });
+        //           if (isMatched) this.context.action(e, a);
+        //         }
+        //       };
+        //       a.handler = eventHandler;
+        //       a.target = this.highlight;
+        //       u(a.target).on(eventType, a.handler);
+        //     } else {
+        //       console.warn(`Wrong event on action.event: ${a.event} on step #${this.index}`);
+        //     }
+        //   } catch (error) {
+        //     console.warn(`Could not find action.target: ${a.target} on step #${this.index}`);
+        //     console.warn(error);
+        //   }
+        // });
 
         this.active = true;
       };
@@ -344,24 +352,24 @@ export default class Step {
   hide() {
     this.cancel();
     if (this.active) {
-      if(isTargetValid(this.target)) {
-        u(this.target).removeClass("guided-tour-target");
-      }
+      // if (isTargetValid(this.target)) {
+      //   u(this.target).removeClass("guided-tour-target");
+      // }
       this.el.removeClass("active");
       this.tooltip.removeClass("guided-tour-arrow-top");
       this.tooltip.removeClass("guided-tour-arrow-bottom");
       this.context._overlay.show();
 
-      this.actions.forEach((a) => {
-        try {
-          const eventType = getEventType(a.event);
-          if(eventType) {
-            u(a.target).off(eventType, a.handler);
-          }
-        } catch (error) {
-          console.warn(error);
-        }
-      });
+      // this.actions.forEach((a) => {
+      //   try {
+      //     const eventType = getEventType(a.event);
+      //     if (eventType) {
+      //       u(a.target).off(eventType, a.handler);
+      //     }
+      //   } catch (error) {
+      //     console.warn(error);
+      //   }
+      // });
 
       this.active = false;
       return true;
