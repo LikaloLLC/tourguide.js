@@ -22,7 +22,7 @@ export default [{
         "./src/**",
       ]
     }),
-    sass({ output: "tourguide.css", options: { outputStyle: "compressed" } }),
+    sass({ options: { outputStyle: "compressed" } }),
     resolve({ mainFields: ["module", "jsnext:main", "browser"], browser: true, preferBuiltins: true }),
     commonjs({
       exclude: "node_modules/process-es6/**",
