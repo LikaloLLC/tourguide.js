@@ -18,11 +18,12 @@ export default [{
   },
   plugins: [
     eslint({
+      fix: true,
       include: [
         "./src/**",
       ]
     }),
-    sass({ options: { outputStyle: "compressed" } }),
+    sass({ insert: false }),
     resolve({ mainFields: ["module", "jsnext:main", "browser"], browser: true, preferBuiltins: true }),
     commonjs({
       exclude: "node_modules/process-es6/**",
