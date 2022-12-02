@@ -452,13 +452,12 @@ function getBoundingClientRect(element, root) {
  */
 function getViewportRect(element) {
   try {
-    var rootEl = umbrella_min(element).first();
     var rect = umbrella_min(element).size();
     return {
       width: window.innerWidth,
       height: window.innerHeight,
-      scrollX: rootEl.scrollLeft,
-      scrollY: rootEl.scrollTop,
+      scrollX: window.scrollX,
+      scrollY: window.scrollY,
       rootWidth: rect.width,
       rootHeight: rect.height,
       rootTop: rect.top,

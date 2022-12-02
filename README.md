@@ -81,20 +81,20 @@ var tourguide = new Tourguide({options});
   ```json
   {
 
-      fontFamily: "sans-serif",
-      fontSize: "12pt",
-      tooltipWidth: "40vw",
-      overlay: "rgba(0, 0, 0, 0.5)",
-      background: "#fff",
-      textColor: "#333",
-      focusColor: "#0d6efd",
-      bullet: "#7f8b92",
-      bulletVisited: "#ccc",
-      bulletCurrent: "#0d6efd",
-      stepButtonClose: "#6b7280",
-      stepButtonPrev: "#6b7280",
-      stepButtonNext: "#0d6efd",
-      stepButtonComplete: "#0d6efd",
+      "fontFamily": "sans-serif",
+      "fontSize": "12pt",
+      "tooltipWidth": "40vw",
+      "overlay": "rgba(0, 0, 0, 0.5)",
+      "background": "#fff",
+      "textColor": "#333",
+      "focusColor": "#0d6efd",
+      "bullet": "#7f8b92",
+      "bulletVisited": "#ccc",
+      "bulletCurrent": "#0d6efd",
+      "stepButtonClose": "#6b7280",
+      "stepButtonPrev": "#6b7280",
+      "stepButtonNext": "#0d6efd",
+      "stepButtonComplete": "#0d6efd",
   }
   ```
 
@@ -199,7 +199,7 @@ About step details, See [Step](#Step) section.
 
 * `title<string>`: tour step title
 
-* `content<string>`: tour step description. if `marked` is `true`, you can write the content with [markdown](https://en.wikipedia.org/wiki/Markdown) language.
+* `content<string>`: write the content in [markdown](https://en.wikipedia.org/wiki/Markdown) language.
 
 * `image?<url>`: tour step illustration
 
