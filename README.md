@@ -15,8 +15,8 @@ npm i tourguidejs
 ```
 
 or add it from jsdelivr
-https://cdn.jsdelivr.net/npm/tourguidejs@1.0.0/tourguide.min.js
-https://cdn.jsdelivr.net/npm/tourguidejs@1.0.0/tourguide.js
+https://cdn.jsdelivr.net/npm/tourguidejs@1.0.1/tourguide.min.js <br>
+https://cdn.jsdelivr.net/npm/tourguidejs@1.0.1/tourguide.js
 
 ## Why do I need Tourguide.js
 
