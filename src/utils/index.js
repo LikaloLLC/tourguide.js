@@ -69,13 +69,12 @@ export function getBoundingClientRect(element, root) {
  */
 export function getViewportRect(element) {
   try {
-    const rootEl = u(element).first();
     const rect = u(element).size();
     return {
       width: window.innerWidth,
       height: window.innerHeight,
-      scrollX: rootEl.scrollLeft,
-      scrollY: rootEl.scrollTop,
+      scrollX: window.scrollX,
+      scrollY: window.scrollY,
       rootWidth: rect.width,
       rootHeight: rect.height,
       rootTop: rect.top,
