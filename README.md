@@ -13,6 +13,11 @@ Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/euge
 ```
 npm i tourguidejs
 ```
+
+or add it from jsdelivr
+https://cdn.jsdelivr.net/npm/tourguidejs@1.0.0/tourguide.min.js
+https://cdn.jsdelivr.net/npm/tourguidejs@1.0.0/tourguide.js
+
 ## Why do I need Tourguide.js
 
 Every time you build you next awesome web app, you sit back and stare lovingly at your handy-work :) But then inevitably someone comes along asking one and the same inconvenient question: *"So, how do I use it?"*
