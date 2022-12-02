@@ -14,7 +14,7 @@ Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/euge
 npm i tourguidejs
 ```
 
-or add it from jsdelivr
+or add it from jsdelivr <br>
 https://cdn.jsdelivr.net/npm/tourguidejs@1.0.1/tourguide.min.js <br>
 https://cdn.jsdelivr.net/npm/tourguidejs@1.0.1/tourguide.js
 
