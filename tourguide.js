@@ -371,6 +371,16 @@ var Tourguide = (function () {
 	  };
 	}();
 
+	var toConsumableArray = function (arr) {
+	  if (Array.isArray(arr)) {
+	    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+	    return arr2;
+	  } else {
+	    return Array.from(arr);
+	  }
+	};
+
 	function clamp(number, min, max) {
 	  min = isNaN(min) ? number : min;
 	  max = isNaN(max) ? number : max;
@@ -427,10 +437,10 @@ var Tourguide = (function () {
 	  return {
 	    width: rect.width,
 	    height: rect.height,
-	    top: rect.top + view.scrollY - view.rootTop,
-	    bottom: rect.bottom + view.scrollY - view.rootTop,
-	    left: rect.left + view.scrollX - view.rootLeft,
-	    right: rect.right + view.scrollX - view.rootLeft,
+	    top: rect.top + view.scrollY,
+	    bottom: rect.bottom + view.scrollY,
+	    left: rect.left + view.scrollX,
+	    right: rect.right + view.scrollX,
 	    viewTop: rect.top,
 	    viewBottom: rect.bottom,
 	    viewLeft: rect.left,
@@ -516,7 +526,7 @@ var Tourguide = (function () {
 	        key = _ref4[0],
 	        val = _ref4[1];
 
-	    var value = typeof val === "number" ? val + "px" : val;
+	    var value = typeof val === "number" ? val.toFixed(1) + "px" : val;
 	    switch (key) {
 	      case "top":
 	        style.top = value;
@@ -563,7 +573,7 @@ var Tourguide = (function () {
 	 */
 	function colorObjToStyleVarString(colors) {
 	  var prefix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "--tourguide";
-	  var selector = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ":root";
+	  var selector = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ":host";
 
 	  var styleArray = [];
 	  Object.entries(colors).forEach(function (_ref5) {
@@ -571,16 +581,16 @@ var Tourguide = (function () {
 	        key = _ref6[0],
 	        value = _ref6[1];
 
-	    var splitedNameArray = [prefix];
+	    var splitNameArray = [prefix];
 	    var prevIndex = 0;
 	    for (var i = 0; i < key.length; i += 1) {
 	      if ("A" <= key[i] && key[i] <= "Z") {
-	        splitedNameArray.push(key.substring(prevIndex, i).toLowerCase());
+	        splitNameArray.push(key.substring(prevIndex, i).toLowerCase());
 	        prevIndex = i;
 	      }
 	    }
-	    splitedNameArray.push(key.substring(prevIndex, key.length).toLowerCase());
-	    styleArray.push(splitedNameArray.join("-") + ": " + value);
+	    splitNameArray.push(key.substring(prevIndex, key.length).toLowerCase());
+	    styleArray.push(splitNameArray.join("-") + ": " + value);
 	  });
 	  return selector + " {\n" + styleArray.join(";\n") + ";\n}";
 	}
@@ -678,34 +688,37 @@ var Tourguide = (function () {
 	  return scrollItems;
 	}
 
+	function getMaxZIndex() {
+	  return Math.max.apply(Math, toConsumableArray(Array.from(document.querySelectorAll('body *'), function (el) {
+	    return parseFloat(window.getComputedStyle(el).zIndex);
+	  }).filter(function (zIndex) {
+	    return !Number.isNaN(zIndex);
+	  })).concat([0]));
+	}
+
 	var e={"":["<em>","</em>"],_:["<strong>","</strong>"],"*":["<strong>","</strong>"],"~":["<s>","</s>"],"\n":["<br />"]," ":["<br />"],"-":["<hr />"]};function n(e){return e.replace(RegExp("^"+(e.match(/^(\t| )+/)||"")[0],"gm"),"")}function r(e){return (e+"").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}function t(a,c){var o,l,g,s,p,u=/((?:^|\n+)(?:\n---+|\* \*(?: \*)+)\n)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|(  \n\n*|\n{2,}|__|\*\*|[_*]|~~)/gm,m=[],h="",i=c||{},d=0;function f(n){var r=e[n[1]||""],t=m[m.length-1]==n;return r?r[1]?(t?m.pop():m.push(n),r[0|t]):r[0]:n}function $(){for(var e="";m.length;)e+=f(m[m.length-1]);return e}for(a=a.replace(/^\[(.+?)\]:\s*(.+)$/gm,function(e,n,r){return i[n.toLowerCase()]=r,""}).replace(/^\n+|\n+$/g,"");g=u.exec(a);)l=a.substring(d,g.index),d=u.lastIndex,o=g[0],l.match(/[^\\](\\\\)*\\$/)||((p=g[3]||g[4])?o='<pre class="code '+(g[4]?"poetry":g[2].toLowerCase())+'"><code'+(g[2]?' class="language-'+g[2].toLowerCase()+'"':"")+">"+n(r(p).replace(/^\n+|\n+$/g,""))+"</code></pre>":(p=g[6])?(p.match(/\./)&&(g[5]=g[5].replace(/^\d+/gm,"")),s=t(n(g[5].replace(/^\s*[>*+.-]/gm,""))),">"==p?p="blockquote":(p=p.match(/\./)?"ol":"ul",s=s.replace(/^(.*)(\n|$)/gm,"<li>$1</li>")),o="<"+p+">"+s+"</"+p+">"):g[8]?o='<img src="'+r(g[8])+'" alt="'+r(g[7])+'">':g[10]?(h=h.replace("<a>",'<a href="'+r(g[11]||i[l.toLowerCase()])+'">'),o=$()+"</a>"):g[9]?o="<a>":g[12]||g[14]?o="<"+(p="h"+(g[14]?g[14].length:g[13]>"="?1:2))+">"+t(g[12]||g[15],i)+"</"+p+">":g[16]?o="<code>"+r(g[16])+"</code>":(g[17]||g[1])&&(o=f(g[17]||"--"))),h+=l,h+=o;return (h+a.substring(d)+$()).replace(/^\n+|\n+$/g,"")}
 
 	// data-step="title: Step1; content: .../<>"
 
-	function getEventType(event) {
-	  var eventType = "";
-	  if (typeof event === "string") {
-	    eventType = event;
-	  } else if ((typeof event === "undefined" ? "undefined" : _typeof(event)) === "object") {
-	    eventType = event.type;
-	  }
+	// function getEventType(event) {
+	//   let eventType = "";
+	//   if (typeof event === "string") {
+	//     eventType = event;
+	//   } else if (typeof event === "object") {
+	//     eventType = event.type;
+	//   }
 
-	  return eventType;
-	}
+	//   return eventType;
+	// }
 
-	function getEventAttrs(event) {
-	  if ((typeof event === "undefined" ? "undefined" : _typeof(event)) === "object") {
-	    return Object.entries(event).map(function (_ref) {
-	      var _ref2 = slicedToArray(_ref, 2),
-	          key = _ref2[0],
-	          value = _ref2[1];
+	// function getEventAttrs(event) {
+	//   if (typeof event === "object") {
+	//     return Object.entries(event)
+	//       .map(([key, value]) => ({ key, value }));
+	//   }
 
-	      return { key: key, value: value };
-	    });
-	  }
-
-	  return [];
-	}
+	//   return [];
+	// }
 
 	function getPosition(align) {
 	  if (align === "top") return 0.1;
@@ -723,25 +736,26 @@ var Tourguide = (function () {
 
 	      if (!this.container) {
 	        var image = umbrella_min("<div role=\"figure\" class=\"guided-tour-step-image\">" + (this.image ? "<img src=\"" + this.image + "\" />" : "") + "</div>");
-	        var title = umbrella_min("<div role=\"heading\" class=\"guided-tour-step-title\">" + this.title + "</div>");
-	        var content = umbrella_min("<div class=\"guided-tour-step-content\">" + this.content + "</div>");
-	        var footer = umbrella_min("<div class=\"guided-tour-step-footer\">\n                <span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                    <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                </span>\n                " + (!this.first ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-prev\" title=\"Prev step\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-prev\"></use>\n                  </svg>\n                </span>" : "") + "\n                " + (this.last ? "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use>\n                  </svg>\n                </span>" : "<span role=\"button\" class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use>\n                  </svg>\n                </span>") + "\n                " + (this.context._steps.length > 1 ? "<div class=\"guided-tour-step-bullets\">\n                    <ul>" + this.context._steps.map(function (step, i) {
-	          return "<li  title=\"Go to step " + (i + 1) + "\" data-index=\"" + i + "\" class=\"" + (step.index < _this.index ? "complete" : step.index == _this.index ? "current" : "") + "\"></li>";
+	        var content = umbrella_min("<div class=\"guided-tour-step-content-wrapper\">\n        <div id=\"tooltip-title-" + this.index + "\" role=\"heading\" class=\"guided-tour-step-title\">" + this.title + "</div>\n        <div class=\"guided-tour-step-content\">" + this.content + "</div>\n      </div>");
+	        var footer = umbrella_min("<div class=\"guided-tour-step-footer\">\n                <button class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                    <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                </button>\n                " + (!this.first ? "<button class=\"guided-tour-step-button guided-tour-step-button-prev\" title=\"Prev step\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-prev\"></use>\n                  </svg>\n                </button>" : "") + "\n                " + (this.last ? "<button class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use>\n                  </svg>\n                </button>" : "<button class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                  <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                    <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use>\n                  </svg>\n                </button>") + "\n                " + (this.context._steps.length > 1 ? "<div class=\"guided-tour-step-bullets\">\n                    <ul>" + this.context._steps.map(function (step, i) {
+	          return "<li><button title=\"Go to step " + (i + 1) + "\" data-index=\"" + i + "\" class=\"" + (step.index < _this.index ? "complete" : step.index == _this.index ? "current" : "") + "\"></button></li>";
 	        }).join("") + "</ul>\n                </div>" : "") + "\n            </div>");
 	        footer.find(".guided-tour-step-button-prev").on("click", this.context.previous);
 	        footer.find(".guided-tour-step-button-next").on("click", this.context.next);
 	        footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
 	        footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
-	        footer.find(".guided-tour-step-bullets li").on("click", function (e) {
+	        footer.find(".guided-tour-step-bullets button").on("click", function (e) {
 	          return _this.context.go(parseInt(umbrella_min(e.target).data("index")));
 	        });
 	        var highlight = this.highlight = umbrella_min("<div class=\"guided-tour-step-highlight\"></div>");
-	        var tooltip = this.tooltip = umbrella_min("<div role=\"tooltip\" class=\"guided-tour-step-tooltip\"></div>");
+	        var tooltip = this.tooltip = umbrella_min("<div role=\"document\" class=\"guided-tour-step-tooltip\"></div>");
 	        var tooltipinner = umbrella_min("<div class=\"guided-tour-step-tooltip-inner\"></div>");
 	        var arrow = this.arrow = umbrella_min("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"><div aria-hidden=\"true\" class=\"guided-tour-arrow-inner\"></div></div>");
-	        tooltipinner.append(arrow).append(image).append(title).append(content).append(footer);
+	        var container = umbrella_min("<div class=\"guided-tour-step-content-container" + (this.layout === "horizontal" ? " step-layout-horizontal" : "") + "\"></div>");
+	        container.append(image).append(content);
+	        tooltipinner.append(arrow).append(container).append(footer);
 	        tooltip.append(tooltipinner);
-	        this.container = umbrella_min("<div role=\"dialog\" class=\"guided-tour-step" + (this.first ? " guided-tour-step-first" : "") + (this.last ? " guided-tour-step-last" : "") + "\"></div>");
+	        this.container = umbrella_min("<div role=\"dialog\" aria-labelleby=\"tooltip-title-" + this.index + "\" class=\"guided-tour-step" + (this.first ? " guided-tour-step-first" : "") + (this.last ? " guided-tour-step-last" : "") + "\"></div>");
 	        this.container.append(highlight).append(tooltip);
 	      }
 	      return this.container;
@@ -768,6 +782,8 @@ var Tourguide = (function () {
 	    this.active = false;
 	    this.first = false;
 	    this.last = false;
+	    this.blocking = false;
+	    this.awaitel = false;
 
 	    this.container = null;
 	    this.highlight = null;
@@ -793,10 +809,10 @@ var Tourguide = (function () {
 	    this.index = parseInt(data.step);
 	    this.title = data.title;
 	    this.content = t(data.content);
-	    // if (data.marked) {
-	    //   this.content = snarkdown(this.content);
-	    // }
 	    this.image = data.image;
+	    this.blocking = data.blocking;
+	    this.layout = data.layout || "vertical";
+	    this.awaitel = data.awaitel;
 	    if (data.image && context.options.preloadimages && !/^data:/i.test(data.image)) {
 	      var preload = new Image();
 	      // preload.onload = (e) => {
@@ -816,6 +832,7 @@ var Tourguide = (function () {
 	        this.actions = data.actions;
 	      }
 	    }
+	    this.adjust = this.adjust.bind(this);
 	  }
 
 	  createClass(Step, [{
@@ -860,16 +877,20 @@ var Tourguide = (function () {
 	        // Compute vertical position
 	        if (view.height - targetRect.viewBottom > tooltipRect.height + marginVerticalSize || targetRect.viewTop < tooltipRect.height + marginVerticalSize) {
 	          tootipStyle.top = targetRect.top + targetRect.height;
-	          tootipStyle.bottom = "unset";
+	          // tootipStyle.bottom = "unset";
 	          tooltip.addClass("guided-tour-arrow-top");
 	          tooltipBRL = parseNumber(getStyle(tooltip, "border-top-left-radius"));
 	          tooltipBRR = parseNumber(getStyle(tooltip, "border-top-right-radius"));
 	        } else {
-	          tootipStyle.bottom = view.rootHeight - targetRect.top;
-	          tootipStyle.top = "unset";
+	          tootipStyle.top = targetRect.top - tooltipRect.height - marginVerticalSize;
+	          // tootipStyle.bottom = "unset";
 	          tooltip.addClass("guided-tour-arrow-bottom");
 	          tooltipBRL = parseNumber(getStyle(tooltip, "border-bottom-left-radius"));
 	          tooltipBRR = parseNumber(getStyle(tooltip, "border-bottom-right-radius"));
+	        }
+	        // Adjust vertical position
+	        if (tootipStyle.top + tooltipRect.height > view.rootHeight) {
+	          tootipStyle.top = view.rootHeight - tooltipRect.height - marginVerticalSize;
 	        }
 
 	        var arrowRect = getBoundingClientRect(arrow, this.context._options.root);
@@ -877,18 +898,18 @@ var Tourguide = (function () {
 	        // Compute horizontal position
 	        if (view.width - targetRect.left > tooltipRect.width + marginHorizontalSize || targetRect.right < tooltipRect.width + marginHorizontalSize) {
 	          tootipStyle.left = targetRect.left;
-	          tootipStyle.right = "unset";
+	          // tootipStyle.right = "unset";
 	          if (targetRect.width / 2 > tooltipRect.width) arrowStyle.right = 8;else arrowStyle.left = clamp(targetRect.width / 2, tooltipBRL + 2, tooltipRect.width - arrowRect.width - tooltipBRR - 2);
 	        } else {
-	          tootipStyle.right = view.rootWidth - targetRect.right;
-	          tootipStyle.left = "unset";
+	          tootipStyle.left = targetRect.right - tooltipRect.width;
+	          // tootipStyle.right = "unset";
 	          if (targetRect.width / 2 > tooltipRect.width) arrowStyle.left = 18;else arrowStyle.right = clamp(targetRect.width / 2, tooltipBRR + 2, tooltipRect.width - arrowRect.width - tooltipBRL - 2);
 	        }
 
 	        setStyle(highlight, highlightStyle);
 	        setStyle(tooltip, tootipStyle);
 	        setStyle(arrow, arrowStyle);
-	        tooltip.first().style.opacity = 0.1;
+	        // tooltip.first().style.opacity = 0.1;
 	      } else {
 	        var _highlight = this.highlight;
 	        var _tooltip = this.tooltip;
@@ -913,7 +934,7 @@ var Tourguide = (function () {
 	        setStyle(_highlight, _highlightStyle);
 	        setStyle(_tooltip, _tootipStyle);
 	        _highlight.first().style.boxShadow = "none";
-	        _tooltip.first().style.opacity = 0.1;
+	        // tooltip.first().style.opacity = 0.1;
 	        this.context._overlay.show();
 	      }
 	    }
@@ -929,22 +950,18 @@ var Tourguide = (function () {
 	      var tootipStyle = {};
 
 	      if (tooltipRect.viewTop < 8) {
-	        tootipStyle.top = 8 - tooltipRect.viewTop + tooltipRect.top;
-	        tootipStyle.bottom = "unset";
-	      } else if (tooltipRect.viewBottom + 8 > view.height) {
-	        tootipStyle.top = "unset";
-	        tootipStyle.bottom = view.rootHeight - (tooltipRect.bottom - (tooltipRect.viewBottom + 8 - view.height));
+	        tootipStyle.top = 8;
+	      } else if (tooltipRect.viewTop + tooltipRect.height + 8 > view.rootHeight) {
+	        tootipStyle.top = view.rootHeight - tooltipRect.height - 8;
 	      }
-	      if (tooltipRect.viewLeft < 32) {
-	        tootipStyle.left = 32 - tooltipRect.viewLeft + tooltipRect.left;
-	        tootipStyle.right = "unset";
-	      } else if (tooltipRect.viewRight + 32 > view.width) {
-	        tootipStyle.left = "unset";
-	        tootipStyle.right = view.rootWidth - (tooltipRect.right - (tooltipRect.viewRight + 32 - view.width));
+	      if (tooltipRect.viewLeft < 42) {
+	        tootipStyle.left = 32;
+	      } else if (tooltipRect.viewLeft + tooltipRect.width + 42 > view.rootWidth) {
+	        tootipStyle.left = view.rootWidth - tooltipRect.width - 32;
 	      }
 
 	      setStyle(tooltip, tootipStyle);
-	      tooltip.first().style.opacity = 1;
+	      // tooltip.first().style.opacity = 1;
 	    }
 	  }, {
 	    key: "cancel",
@@ -964,38 +981,37 @@ var Tourguide = (function () {
 	          _this3.context._overlay.hide();
 	          _this3.position();
 	          _this3.adjust();
-	          if (isTargetValid(_this3.target)) {
-	            if (getStyle(_this3.target, "position") === "static") {
-	              _this3.target.style.position = "relative";
-	            }
-	            umbrella_min(_this3.target).addClass("guided-tour-target");
-	          }
+	          _this3.container.find(".guided-tour-step-button-next, .guided-tour-step-button-complete").first().focus();
+	          // requestAnimationFrame(this.adjust);
+	          // if(isTargetValid(this.target)) {
+	          //   if(getStyle(this.target, "position") === "static") {
+	          //     this.target.style.position = "relative";
+	          //   }
+	          //   u(this.target).addClass("guided-tour-target");
+	          // }
+	          // this.actions.forEach((a) => {
+	          //   try {
+	          //     const eventType = getEventType(a.event);
+	          //     if (eventType) {
+	          //       const eventHandler = (e) => {
+	          //         if (a) {
+	          //           const eventAttrs = getEventAttrs(a.event);
+	          //           const isMatched = !(eventAttrs.filter((attr) => e[attr.key] !== attr.value).length);
 
-	          _this3.actions.forEach(function (a) {
-	            try {
-	              var eventType = getEventType(a.event);
-	              if (eventType) {
-	                var eventHandler = function eventHandler(e) {
-	                  if (a) {
-	                    var eventAttrs = getEventAttrs(a.event);
-	                    var isMatched = !eventAttrs.filter(function (attr) {
-	                      return e[attr.key] !== attr.value;
-	                    }).length;
-
-	                    if (isMatched) _this3.context.action(e, a);
-	                  }
-	                };
-	                a.handler = eventHandler;
-	                a.target = a.target || _this3.target;
-	                umbrella_min(a.target).on(eventType, a.handler);
-	              } else {
-	                console.warn("Wrong event on action.event: " + a.event + " on step #" + _this3.index);
-	              }
-	            } catch (error) {
-	              console.warn("Could not find action.target: " + a.target + " on step #" + _this3.index);
-	              console.warn(error);
-	            }
-	          });
+	          //           if (isMatched) this.context.action(e, a);
+	          //         }
+	          //       };
+	          //       a.handler = eventHandler;
+	          //       a.target = this.highlight;
+	          //       u(a.target).on(eventType, a.handler);
+	          //     } else {
+	          //       console.warn(`Wrong event on action.event: ${a.event} on step #${this.index}`);
+	          //     }
+	          //   } catch (error) {
+	          //     console.warn(`Could not find action.target: ${a.target} on step #${this.index}`);
+	          //     console.warn(error);
+	          //   }
+	          // });
 
 	          _this3.active = true;
 	        };
@@ -1018,24 +1034,24 @@ var Tourguide = (function () {
 	    value: function hide() {
 	      this.cancel();
 	      if (this.active) {
-	        if (isTargetValid(this.target)) {
-	          umbrella_min(this.target).removeClass("guided-tour-target");
-	        }
+	        // if (isTargetValid(this.target)) {
+	        //   u(this.target).removeClass("guided-tour-target");
+	        // }
 	        this.el.removeClass("active");
 	        this.tooltip.removeClass("guided-tour-arrow-top");
 	        this.tooltip.removeClass("guided-tour-arrow-bottom");
 	        this.context._overlay.show();
 
-	        this.actions.forEach(function (a) {
-	          try {
-	            var eventType = getEventType(a.event);
-	            if (eventType) {
-	              umbrella_min(a.target).off(eventType, a.handler);
-	            }
-	          } catch (error) {
-	            console.warn(error);
-	          }
-	        });
+	        // this.actions.forEach((a) => {
+	        //   try {
+	        //     const eventType = getEventType(a.event);
+	        //     if (eventType) {
+	        //       u(a.target).off(eventType, a.handler);
+	        //     }
+	        //   } catch (error) {
+	        //     console.warn(error);
+	        //   }
+	        // });
 
 	        this.active = false;
 	        return true;
@@ -1117,6 +1133,8 @@ var Tourguide = (function () {
 	  }]);
 	  return Overlay;
 	}();
+
+	var Style = ":host{position:absolute;overflow:visible;top:0;left:0;width:0;height:0;box-sizing:border-box;line-height:1.4;text-align:left;text-rendering:optimizespeed;font-family:var(--tourguide-font-family);font-size:var(--tourguide-font-size);color:var(--tourguide-text-color);-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4}*{margin:0;padding:0;background:none;border:none;border-width:0;border-style:none;border-color:currentColor;box-shadow:none;color:inherit;appearance:none;font-size:inherit;font-weight:inherit}button{cursor:pointer}button:hover,button:focus{outline:5px auto var(--tourguide-focus-color)}.guided-tour-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;background-color:var(--tourguide-overlay)}.guided-tour-overlay.active{display:block}.guided-tour-step{display:none}.guided-tour-step.active{display:block;position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:all}.guided-tour-step.active .guided-tour-step-highlight{position:absolute;box-sizing:border-box;border-radius:4px;box-shadow:0 0 0 999rem var(--tourguide-overlay);z-index:1}.guided-tour-step.active .guided-tour-step-tooltip{position:absolute;margin:16px 0;z-index:2;background-color:var(--tourguide-background);width:var(--tourguide-tooltip-width);max-width:max-content;border-radius:5px;box-sizing:border-box;box-shadow:0 0 8px -4px #000;transition:opacity 150ms}@media screen and (max-width: 760px){.guided-tour-step.active .guided-tour-step-tooltip{max-width:85vw}}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-arrow{position:absolute;background:transparent}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-container{display:flex;flex-direction:column}@media screen and (min-width: 760px){.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-container.step-layout-horizontal{flex-direction:row}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-container.step-layout-horizontal .guided-tour-step-content-wrapper{flex:1 1 auto}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-container.step-layout-horizontal .guided-tour-step-image{width:50%;margin-bottom:calc((1rem + 24px)*-1);flex:0 0 auto}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-container.step-layout-horizontal .guided-tour-step-image img{border-radius:4px 0 0 4px;height:100%;object-fit:cover}}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-image img{width:100%;height:auto;border-radius:4px 4px 0 0}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-wrapper{margin:1.5rem 2rem}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-title{font-size:1.3rem;font-weight:bold;margin-bottom:1rem}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content b,.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content strong{font-weight:bold}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content i,.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content em{font-style:italic}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content a{cursor:pointer;text-decoration:underline}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content mark{background:inherit;text-shadow:0px 2px 4px #ff0}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content code,.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content dfn{padding:1px 6px 1px 4px;border-radius:4px}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content code{background-color:#f0f0f0;color:#e83e8c;font-family:monospace;font-size:87.5%;word-break:break-word}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content dfn{font-style:italic;background-color:#ffc6e5}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content p,.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul,.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol,.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote{margin:1rem 0}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote{padding-left:1em;border-left:4px solid silver}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul,.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol{padding-left:1.5rem}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul li,.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol li{margin:.3rem 0}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-icon{display:inline-block;overflow:hidden}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button{flex-direction:column;justify-content:center;display:inline-flex;text-align:center;cursor:pointer}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button .guided-tour-icon{align-self:center}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-close{position:absolute;top:0;right:0;width:32px;height:32px;color:var(--tourguide-step-button-close)}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-prev,.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-next,.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-complete{width:48px;height:48px;background:var(--tourguide-background);border-radius:50%;margin-top:-24px;position:absolute}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-prev{color:var(--tourguide-step-button-prev);left:0;transform:translateX(-50%);top:50%}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-next{color:var(--tourguide-step-button-next);right:0;transform:translateX(50%);top:50%}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-complete{color:var(--tourguide-step-button-complete);right:0;transform:translateX(50%);top:50%}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets{text-align:center;line-height:16px}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul{list-style:none;margin:0 1rem 1rem}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li{display:inline-block}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button{width:8px;height:8px;border-radius:50%;display:inline-block;background-color:var(--tourguide-bullet);border:8px solid var(--tourguide-background);box-sizing:content-box;cursor:pointer}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button.complete{background-color:var(--tourguide-bullet-visited)}.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button.current{background-color:var(--tourguide-bullet-current)}.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-arrow-none .guided-tour-step-tooltip-inner .guided-tour-arrow{display:none}.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-arrow-top .guided-tour-step-tooltip-inner .guided-tour-arrow{top:0;margin-top:-18px}.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-arrow-top .guided-tour-step-tooltip-inner .guided-tour-arrow .guided-tour-arrow-inner{width:18px;height:18px;position:relative;overflow:hidden;background:transparent}.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-arrow-top .guided-tour-step-tooltip-inner .guided-tour-arrow .guided-tour-arrow-inner::after{content:\"\";position:absolute;width:12px;height:12px;background:var(--tourguide-background);transform:rotate(225deg);top:13px;left:4px;box-shadow:1px 1px 6px -3px #000}.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-arrow-bottom .guided-tour-step-tooltip-inner .guided-tour-arrow{margin-bottom:-18px;bottom:0}.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-arrow-bottom .guided-tour-step-tooltip-inner .guided-tour-arrow .guided-tour-arrow-inner{width:18px;height:18px;position:relative;overflow:hidden;background:transparent}.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-arrow-bottom .guided-tour-step-tooltip-inner .guided-tour-arrow .guided-tour-arrow-inner::after{content:\"\";position:absolute;width:12px;height:12px;background:var(--tourguide-background);transform:rotate(45deg);top:-6px;left:4px;box-shadow:1px 1px 6px -3px #000}";
 
 	var StepsSource = {
 	  DOM: 0,
@@ -1213,14 +1231,21 @@ var Tourguide = (function () {
 	    };
 
 	    var defaultColors = {
+	      fontFamily: '"Open Sans", Arimo, "Droid Sans", Helvetica, Arial, sans-serif',
+	      fontSize: "12pt",
+	      tooltipWidth: "40vw",
 	      overlay: "rgba(0, 0, 0, 0.5)",
 	      background: "#fff",
-	      bullet: "#9ca3af",
-	      bulletVisited: "#aaa",
-	      bulletCurrent: "#39464e",
+	      textColor: "#333",
+
+	      focusColor: "#0d6efd",
+	      bullet: "#7f8b92",
+	      bulletVisited: "#ccc",
+	      bulletCurrent: "#0d6efd",
+	      stepButtonClose: "#6b7280",
 	      stepButtonPrev: "#6b7280",
-	      stepButtonNext: "#111827",
-	      stepButtonComplete: "#111827"
+	      stepButtonNext: "#0d6efd",
+	      stepButtonComplete: "#0d6efd"
 	    };
 
 	    this._options = Object.assign({
@@ -1258,7 +1283,6 @@ var Tourguide = (function () {
 	    this._stepsSrc = StepsSource.DOM;
 	    this._ready = false;
 	    this._initialposition = null;
-	    this._injectIcons();
 	    if (_typeof(this._options.steps) === "object" && Array.isArray(this._options.steps)) {
 	      this._stepsSrc = StepsSource.JSON;
 	      this._steps = this._options.steps.map(function (o) {
@@ -1281,6 +1305,12 @@ var Tourguide = (function () {
 	    } else {
 	      throw new Error("Tour is not configured properly. Check documentation.");
 	    }
+	    this._containerElement = document.createElement("aside");
+	    this._containerElement.classList.add("__guided-tour-container");
+	    umbrella_min(this._options.root).append(this._containerElement);
+	    this._shadowRoot = this._containerElement.attachShadow({ mode: "closed" });
+	    this._injectIcons();
+	    this._injectStyles();
 
 	    this.start = this.start.bind(this);
 	    this.next = this.next.bind(this);
@@ -1288,34 +1318,26 @@ var Tourguide = (function () {
 	    this.go = this.go.bind(this);
 	    this.stop = this.stop.bind(this);
 	    this.complete = this.complete.bind(this);
-	    this.action = this.action.bind(this);
+	    // this.action = this.action.bind(this);
 	    this._keyboardHandler = this._keyboardHandler.bind(this);
 	  }
 
 	  createClass(Tour, [{
 	    key: "_injectIcons",
 	    value: function _injectIcons() {
-	      if (umbrella_min("#GuidedTourIconSet").length === 0) {
-	        umbrella_min("body").append(umbrella_min(Icons));
+	      if (umbrella_min("#GuidedTourIconSet", this._shadowRoot).length === 0) {
+	        umbrella_min(this._shadowRoot).append(umbrella_min(Icons));
 	      }
 	    }
 	  }, {
 	    key: "_injectStyles",
 	    value: function _injectStyles() {
-	      // inject colors
-	      this._removeStyles();
-	      // eslint-disable-next-line no-console
-	      console.log(this._options.colors);
-	      var colors = umbrella_min("<style id=\"tourguide-color-schema\">" + colorObjToStyleVarString(this._options.colors, "--tourguide") + "</style>");
-	      umbrella_min(":root > head").append(colors);
-	    }
-	  }, {
-	    key: "_removeStyles",
-	    value: function _removeStyles() {
-	      var colorStyleTags = umbrella_min("style#tourguide-color-schema");
-	      if (colorStyleTags.length > 0) {
-	        colorStyleTags.remove();
-	      }
+	      // const global = u("<style>.__guided-tour-active{position:relative!important}</style>");
+	      // u(":root > head").append(global);
+	      var style = umbrella_min("<style>" + Style + "</style>");
+	      umbrella_min(this._shadowRoot).append(style);
+	      var colors = umbrella_min("<style>" + colorObjToStyleVarString(this._options.colors, "--tourguide") + "</style>");
+	      umbrella_min(this._shadowRoot).append(colors);
 	    }
 	  }, {
 	    key: "_keyboardHandler",
@@ -1340,7 +1362,7 @@ var Tourguide = (function () {
 	      var _this2 = this;
 
 	      this.reset();
-	      umbrella_min(this._options.root).addClass("guided-tour");
+	      // u(this._options.root).addClass("guided-tour");
 	      this._overlay = new Overlay(this);
 	      if (this._stepsSrc === StepsSource.DOM) {
 	        var steps = umbrella_min(this._options.selector).nodes;
@@ -1371,16 +1393,16 @@ var Tourguide = (function () {
 	      var step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
 	      if (this._ready) {
-	        this._injectStyles();
+	        this._containerElement.style.zIndex = getMaxZIndex() + 1;
 	        if (this._options.restoreinitialposition) {
 	          this._initialposition = getScrollCoordinates(this._options.root);
 	        }
 	        if (!this._active) {
-	          umbrella_min(this._options.root).addClass("guided-tour");
+	          umbrella_min(this._options.root).addClass("__guided-tour-active");
 	          this.init();
-	          this._overlay.attach(this._options.root);
+	          this._overlay.attach(this._shadowRoot);
 	          this._steps.forEach(function (step) {
-	            return step.attach(_this3._options.root);
+	            return step.attach(_this3._shadowRoot);
 	          });
 	          this._current = step;
 	          this.currentstep.show();
@@ -1401,31 +1423,40 @@ var Tourguide = (function () {
 	        }, 50);
 	      }
 	    }
-	  }, {
-	    key: "action",
-	    value: function action(event, _action) {
-	      if (this._active) {
-	        var currentstep = this.currentstep;
+	    // action(event, action) {
+	    //   if (this._active) {
+	    //     if (Array.isArray(action.act)) {
+	    //       for(let a of action.act) {
+	    //         const _action = {
+	    //           ...action,
+	    //           act: a
+	    //         };
+	    //         this.action(event, _action);
+	    //       }
+	    //     } else {
+	    //       const { currentstep } = this;
+	    //       switch (true) {
+	    //         case (typeof action.act === "function"):
+	    //           action.act(event, currentstep.toJSON(), this, action);
+	    //         break;
+	    //         case (typeof action.act === "number"): this.go(action.act, "action"); break;
+	    //         case (action.act === "next"): this.next(); break;
+	    //         case (action.act === "previous"): this.previous(); break;
+	    //         case (action.act === "stop"): this.stop(); break;
+	    //         case (action.act === "complete"): this.complete(); break;
+	    //         case (action.act === "propagate"):{
+	    //           currentstep.target[action.event]();
+	    //         } break;
+	    //       }
+	    //       if (
+	    //         typeof this._options.onAction === "function"
+	    //       ) {
+	    //         this._options.onAction(event, currentstep.toJSON(), action);
+	    //       }
+	    //     }
+	    //   }
+	    // }
 
-	        if (typeof _action.act === "function") {
-	          _action.act(event, currentstep.toJSON(), this, _action);
-	        } else if (typeof _action.act === "number") {
-	          this.go(_action.act, "action");
-	        } else if (_action.act === "next") {
-	          this.next();
-	        } else if (_action.act === "previous") {
-	          this.previous();
-	        } else if (_action.act === "stop") {
-	          this.stop();
-	        } else if (_action.act === "complete") {
-	          this.complete();
-	        }
-
-	        if (this._options.onAction && typeof this._options.onAction === "function") {
-	          this._options.onAction(event, currentstep.toJSON(), _action);
-	        }
-	      }
-	    }
 	  }, {
 	    key: "next",
 	    value: function next() {
@@ -1453,7 +1484,6 @@ var Tourguide = (function () {
 	  }, {
 	    key: "stop",
 	    value: function stop() {
-	      this._removeStyles();
 	      if (this._active) {
 	        this.currentstep.hide();
 	        this._active = false;
@@ -1461,7 +1491,7 @@ var Tourguide = (function () {
 	        this._steps.forEach(function (step) {
 	          return step.remove();
 	        });
-	        umbrella_min(this._options.root).removeClass("guided-tour");
+	        umbrella_min(this._options.root).removeClass("__guided-tour-active");
 	        if (this._options.keyboardNavigation) {
 	          umbrella_min(":root").off("keyup", this._keyboardHandler);
 	        }
@@ -1477,6 +1507,16 @@ var Tourguide = (function () {
 	      if (this._active) {
 	        this.stop();
 	        this._options.onComplete();
+	      }
+	    }
+	  }, {
+	    key: "deinit",
+	    value: function deinit() {
+	      if (this._ready) {
+	        this._containerElement.remove();
+	        this._containerElement = null;
+	        this._active = false;
+	        this._ready = false;
 	      }
 	    }
 	  }]);

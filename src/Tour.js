@@ -7,9 +7,10 @@ import {
   clamp,
   colorObjToStyleVarString,
   getScrollCoordinates,
+  getMaxZIndex,
 } from "./utils";
 
-import "../scss/style.scss";
+import Style from "../scss/style.scss";
 
 const StepsSource = {
   DOM: 0,
@@ -75,14 +76,21 @@ export default class Tour {
     };
 
     const defaultColors = {
+      fontFamily: '"Open Sans", Arimo, "Droid Sans", Helvetica, Arial, sans-serif',
+      fontSize: "12pt",
+      tooltipWidth: "40vw",
       overlay: "rgba(0, 0, 0, 0.5)",
       background: "#fff",
-      bullet: "#9ca3af",
-      bulletVisited: "#aaa",
-      bulletCurrent: "#39464e",
+      textColor: "#333",
+
+      focusColor: "#0d6efd",
+      bullet: "#7f8b92",
+      bulletVisited: "#ccc",
+      bulletCurrent: "#0d6efd",
+      stepButtonClose: "#6b7280",
       stepButtonPrev: "#6b7280",
-      stepButtonNext: "#111827",
-      stepButtonComplete: "#111827",
+      stepButtonNext: "#0d6efd",
+      stepButtonComplete: "#0d6efd",
     };
 
     this._options = Object.assign(
@@ -106,11 +114,11 @@ export default class Tour {
         },
         align: "top", // top, bottom, center
         keyboardNavigation: defaultKeyNavOptions,
-        onStart: () => {},
-        onStop: () => {},
-        onComplete: () => {},
-        onStep: () => {},
-        onAction: () => {},
+        onStart: () => { },
+        onStop: () => { },
+        onComplete: () => { },
+        onStep: () => { },
+        onAction: () => { },
       },
       options,
       {
@@ -124,7 +132,6 @@ export default class Tour {
     this._stepsSrc = StepsSource.DOM;
     this._ready = false;
     this._initialposition = null;
-    this._injectIcons();
     if (
       typeof this._options.steps === "object" &&
       Array.isArray(this._options.steps)
@@ -147,6 +154,12 @@ export default class Tour {
     } else {
       throw new Error("Tour is not configured properly. Check documentation.");
     }
+    this._containerElement = document.createElement("aside");
+    this._containerElement.classList.add("__guided-tour-container");
+    u(this._options.root).append(this._containerElement);
+    this._shadowRoot = this._containerElement.attachShadow({ mode: "closed" });
+    this._injectIcons();
+    this._injectStyles();
 
     this.start = this.start.bind(this);
     this.next = this.next.bind(this);
@@ -154,32 +167,28 @@ export default class Tour {
     this.go = this.go.bind(this);
     this.stop = this.stop.bind(this);
     this.complete = this.complete.bind(this);
-    this.action = this.action.bind(this);
+    // this.action = this.action.bind(this);
     this._keyboardHandler = this._keyboardHandler.bind(this);
   }
   _injectIcons() {
-    if (u("#GuidedTourIconSet").length === 0) {
-      u("body").append(u(Icons));
+    if (u("#GuidedTourIconSet", this._shadowRoot).length === 0) {
+      u(this._shadowRoot).append(u(Icons));
     }
   }
   _injectStyles() {
-    // inject colors
-    this._removeStyles();
-    // eslint-disable-next-line no-console
-    console.log(this._options.colors);
+    // const global = u("<style>.__guided-tour-active{position:relative!important}</style>");
+    // u(":root > head").append(global);
+    const style = u(
+      `<style>${Style}</style>`
+    );
+    u(this._shadowRoot).append(style);
     const colors = u(
-      `<style id="tourguide-color-schema">${colorObjToStyleVarString(
+      `<style>${colorObjToStyleVarString(
         this._options.colors,
         "--tourguide"
       )}</style>`
     );
-    u(":root > head").append(colors);
-  }
-  _removeStyles() {
-    const colorStyleTags = u("style#tourguide-color-schema");
-    if (colorStyleTags.length > 0) {
-      colorStyleTags.remove();
-    }
+    u(this._shadowRoot).append(colors);
   }
   _keyboardHandler(event) {
     if (
@@ -216,7 +225,7 @@ export default class Tour {
   }
   init() {
     this.reset();
-    u(this._options.root).addClass("guided-tour");
+    // u(this._options.root).addClass("guided-tour");
     this._overlay = new Overlay(this);
     if (this._stepsSrc === StepsSource.DOM) {
       const steps = u(this._options.selector).nodes;
@@ -235,15 +244,15 @@ export default class Tour {
   }
   start(step = 0) {
     if (this._ready) {
-      this._injectStyles();
+      this._containerElement.style.zIndex = (getMaxZIndex() + 1);
       if (this._options.restoreinitialposition) {
         this._initialposition = getScrollCoordinates(this._options.root);
       }
       if (!this._active) {
-        u(this._options.root).addClass("guided-tour");
+        u(this._options.root).addClass("__guided-tour-active");
         this.init();
-        this._overlay.attach(this._options.root);
-        this._steps.forEach((step) => step.attach(this._options.root));
+        this._overlay.attach(this._shadowRoot);
+        this._steps.forEach((step) => step.attach(this._shadowRoot));
         this._current = step;
         this.currentstep.show();
         this._active = true;
@@ -269,31 +278,39 @@ export default class Tour {
       }, 50);
     }
   }
-  action(event, action) {
-    if (this._active) {
-      const { currentstep } = this;
-      if (typeof action.act === "function") {
-        action.act(event, currentstep.toJSON(), this, action);
-      } else if (typeof action.act === "number") {
-        this.go(action.act, "action");
-      } else if (action.act === "next") {
-        this.next();
-      } else if (action.act === "previous") {
-        this.previous();
-      } else if (action.act === "stop") {
-        this.stop();
-      } else if (action.act === "complete") {
-        this.complete();
-      }
-
-      if (
-        this._options.onAction &&
-        typeof this._options.onAction === "function"
-      ) {
-        this._options.onAction(event, currentstep.toJSON(), action);
-      }
-    }
-  }
+  // action(event, action) {
+  //   if (this._active) {
+  //     if (Array.isArray(action.act)) {
+  //       for(let a of action.act) {
+  //         const _action = {
+  //           ...action,
+  //           act: a
+  //         };
+  //         this.action(event, _action);
+  //       }
+  //     } else {
+  //       const { currentstep } = this;
+  //       switch (true) {
+  //         case (typeof action.act === "function"):
+  //           action.act(event, currentstep.toJSON(), this, action);
+  //         break;
+  //         case (typeof action.act === "number"): this.go(action.act, "action"); break;
+  //         case (action.act === "next"): this.next(); break;
+  //         case (action.act === "previous"): this.previous(); break;
+  //         case (action.act === "stop"): this.stop(); break;
+  //         case (action.act === "complete"): this.complete(); break;
+  //         case (action.act === "propagate"):{
+  //           currentstep.target[action.event]();
+  //         } break;
+  //       }
+  //       if (
+  //         typeof this._options.onAction === "function"
+  //       ) {
+  //         this._options.onAction(event, currentstep.toJSON(), action);
+  //       }
+  //     }
+  //   }
+  // }
   next() {
     if (this._active) {
       this.go(this.nextstep, "next");
@@ -313,13 +330,12 @@ export default class Tour {
     }
   }
   stop() {
-    this._removeStyles();
     if (this._active) {
       this.currentstep.hide();
       this._active = false;
       this._overlay.remove();
       this._steps.forEach((step) => step.remove());
-      u(this._options.root).removeClass("guided-tour");
+      u(this._options.root).removeClass("__guided-tour-active");
       if (this._options.keyboardNavigation) {
         u(":root").off("keyup", this._keyboardHandler);
       }
@@ -333,6 +349,14 @@ export default class Tour {
     if (this._active) {
       this.stop();
       this._options.onComplete();
+    }
+  }
+  deinit() {
+    if (this._ready) {
+      this._containerElement.remove();
+      this._containerElement = null;
+      this._active = false;
+      this._ready = false;
     }
   }
 }

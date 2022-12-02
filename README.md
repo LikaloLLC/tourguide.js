@@ -70,19 +70,26 @@ var tourguide = new Tourguide({options});
 
 * `restoreinitialposition`: if you want to restore the scroll position after the tour ended, you may set this attribute to true; default is true
 
-* `colors`: if you want to customize the color schema of this plugin, use this attribute. object will be combine with default values.
+* `colors and styles`: if you want to customize the color schema of this plugin, use the following properties; the object you passed in will be combine with default values.
 
   Here is the defult
   ```json
   {
-    "overlay": "rgba(0, 0, 0, 0.5)",
-    "background": "#fff",
-    "bullet": "#ff4141",
-    "bulletVisited": "#aaa",
-    "bulletCurrent": "#b50000",
-    "stepButtonPrev": "#ff4141",
-    "stepButtonNext": "#ff4141",
-    "stepButtonComplete": "#b50000",
+
+      fontFamily: "sans-serif",
+      fontSize: "12pt",
+      tooltipWidth: "40vw",
+      overlay: "rgba(0, 0, 0, 0.5)",
+      background: "#fff",
+      textColor: "#333",
+      focusColor: "#0d6efd",
+      bullet: "#7f8b92",
+      bulletVisited: "#ccc",
+      bulletCurrent: "#0d6efd",
+      stepButtonClose: "#6b7280",
+      stepButtonPrev: "#6b7280",
+      stepButtonNext: "#0d6efd",
+      stepButtonComplete: "#0d6efd",
   }
   ```
 
@@ -114,8 +121,6 @@ var tourguide = new Tourguide({options});
 * `onComplete`: callback triggered when tour completes
 
 * `onStep`: callback triggered when a tour step is shown
-
-* `onAction`: callback triggered when the user-defined action processed. see [onAction](#onAction) for more detail.
 
 Once instantiated you can use tourguide instance a several different ways:
 
@@ -189,48 +194,13 @@ About step details, See [Step](#Step) section.
 
 * `title<string>`: tour step title
 
-* `marked?<boolean>`: if content is markdown, you may set this attr to true; default false.
-
 * `content<string>`: tour step description. if `marked` is `true`, you can write the content with [markdown](https://en.wikipedia.org/wiki/Markdown) language.
 
 * `image?<url>`: tour step illustration
 
-* `actions?<array>`: tour actions array.
+* `layout?<enum>`: this property can be `horizontal` or `vertical` and causes the tour step to be oriented horizontally or vertically (the default is `vertical`, works only when `image` is defined)
 
-  * `target?<string>`: [CSS selector](https://www.w3schools.com/cssref/css_selectors.asp) used to find the target element. default is current step's target.
-
-  * `act?<string | number | function>`: action after event triggered.
-    * string: "next" | "previous" | "stop" | "complete"
-    * number: same as `step.go(number)`.
-    * function: callback function. `function (event, currentstep, curaction)`
-
-  * `event<object | string>`: event details. if you want just use only the event type, set it as a string value, otherwise set it as an object.
-  
-    All KeyboardEvent attribute is accepted including `keyCode`, `altKey`, `metaKey`, `ctrlKey` and etc.
-    View This doc for more details about the KeyboardEvent: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
-    
-  Example:
-  ```js
-  {
-    ...
-    "actions": [
-      {
-        "target": "body",
-        "act": (event, currentstep, curaction, tourguide) => { /* your logic here */ }
-        "event": {
-          "type": "keyup"
-          "keyCode": 39, // arrow right
-          "ctrlKey": true // with ctrl key
-        }
-      },
-      {
-        "act": "next",
-        "event": "click"
-      }
-    ]
-    ...
-  }
-  ```
+* `target?<string>`: [CSS selector](https://www.w3schools.com/cssref/css_selectors.asp) used to find the target element. default is current step's target.
 
 > **?*** indicates the property is optional*
 
@@ -286,7 +256,6 @@ var tourguide = new Tourguide({
   `onStop:function(options){...},`
   `onComplete:function(){...},`
   `onStep:function(currentstep, type){...},`
-  `onAction:function(currentstep, e){...}`
 });
 ```
 ### onStart
@@ -314,14 +283,6 @@ Fires when tour step is activated. The callback function receives two params:
 *  `currentstep`: tour [step object](#step_object)
 
 * `type`: string representing the current direction of the tor; can be one of: "previous" | "next"
-
-### onAction
-
-Fires when user has clicked on the step target. The callback function receives two params:
-
-* `currentstep`: tour [step object](#step_object)
-
-* `event`: [MouseEvent onclick](https://developer.mozilla.org/en-US/docs/Web/API/Element/click_event)
 
 ## Step object
 
