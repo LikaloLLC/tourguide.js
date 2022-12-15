@@ -105,7 +105,7 @@ export default class Tour {
       {
         root: "body",
         selector: "[data-tour]",
-        animationspeed: 300,
+        animationspeed: 120,
         padding: 5,
         steps: null,
         src: null,
