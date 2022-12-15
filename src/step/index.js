@@ -1,5 +1,5 @@
 import u from "umbrellajs";
-import scrollIntoView from "scroll-into-view";
+// import scrollIntoView from "scroll-into-view";
 import {
   clamp,
   getDataContents,
@@ -33,56 +33,73 @@ import snarkdown from "snarkdown";
 //   return [];
 // }
 
-function getPosition(align) {
-  if (align === "top") return 0.1;
-  if (align === "bottom") return 0.9;
-  if (align === "center") return 0.5;
+// function getPosition(align) {
+//   if (align === "top") return 0.1;
+//   if (align === "bottom") return 0.9;
+//   if (align === "center") return 0.5;
 
-  return 0;
-}
+//   return 0;
+// }
 
 export default class Step {
   get el() {
     if (!this.container) {
       const image = u(`<div role="figure" class="guided-tour-step-image">${this.image ? `<img src="${this.image}" />` : ""}</div>`);
       const content = u(`<div class="guided-tour-step-content-wrapper">
-        <div id="tooltip-title-${this.index}" role="heading" class="guided-tour-step-title">${this.title}</div>
-        <div class="guided-tour-step-content">${this.content}</div>
+        <div id="tooltip-title-${this.index}" role="heading" class="guided-tour-step-title">${this.context._decorateText(this.title, this)}</div>
+        <div class="guided-tour-step-content">${this.context._decorateText(this.content, this)}</div>
       </div>`);
-      const footer = u(`<div class="guided-tour-step-footer">
-                <button class="guided-tour-step-button guided-tour-step-button-close" title="End tour">
-                    <svg class="guided-tour-icon" viewBox="0 0 20 20" width="16" height="16"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-close"></use></svg>
-                </button>
-                ${!this.first ? `<button class="guided-tour-step-button guided-tour-step-button-prev" title="Prev step">
-                  <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
-                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-prev"></use>
-                  </svg>
-                </button>` : ""}
-                ${this.last ? `<button class="guided-tour-step-button guided-tour-step-button-complete" title="Complete tour">
-                  <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
-                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-complete"></use>
-                  </svg>
-                </button>` : `<button class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
-                  <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
-                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-next"></use>
-                  </svg>
-                </button>`}
-                ${this.context._steps.length > 1 ? `<div class="guided-tour-step-bullets">
-                    <ul>${this.context._steps.map((step, i) => `<li><button title="Go to step ${i + 1}" data-index="${i}" class="${step.index < this.index ? "complete" : step.index == this.index ? "current" : ""}"></button></li>`).join("")}</ul>
-                </div>` : ""}
-            </div>`);
-      footer.find(".guided-tour-step-button-prev").on("click", this.context.previous);
-      footer.find(".guided-tour-step-button-next").on("click", this.context.next);
-      footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
-      footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
-      footer.find(".guided-tour-step-bullets button").on("click", (e) => this.context.go(parseInt(u(e.target).data("index"))));
+      if (Array.isArray(this.actions) && this.actions.length > 0) {
+        const actions = u(`<div class="guided-tour-step-actions">
+          ${this.actions
+            .map((action, index) => `<${action.href ? "a" : "button"} id="${action.id}" ${action.href ? `href="${action.href}"` : ""} ${action.target ? `target="${action.target}"` : ""} class="button${action.primary ? " primary" : ""}" data-index="${index}">${action.label}</${action.href ? "a" : "button"}>`)
+            .join("")
+          }
+        </div>`);
+        actions.find('a, button').on('click', e => {
+          const action = this.actions[parseInt(e.target.dataset.index)];
+          if (action.action) e.preventDefault();
+          this.context.action(e, action);
+        });
+        content.append(actions);
+      }
       const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
       const tooltip = this.tooltip = u("<div role=\"document\" class=\"guided-tour-step-tooltip\"></div>");
-      const tooltipinner = u("<div class=\"guided-tour-step-tooltip-inner\"></div>");
-      const arrow = this.arrow = u("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"><div aria-hidden=\"true\" class=\"guided-tour-arrow-inner\"></div></div>");
-      const container = u(`<div class="guided-tour-step-content-container${this.layout==="horizontal" ? " step-layout-horizontal" : ""}"></div>`);
+      const tooltipinner = u(`<div class="guided-tour-step-tooltip-inner${this.layout === "horizontal" ? " step-layout-horizontal" : ""}"></div>`);
+      const container = u(`<div class="guided-tour-step-content-container"></div>`);
       container.append(image).append(content);
-      tooltipinner.append(arrow).append(container).append(footer);
+
+      if (this.navigation) {
+        const arrow = this.arrow = u("<div aria-hidden=\"true\" class=\"guided-tour-arrow\"><div aria-hidden=\"true\" class=\"guided-tour-arrow-inner\"></div></div>");
+        const footer = u(`<div class="guided-tour-step-footer">
+                  <button class="guided-tour-step-button guided-tour-step-button-close" title="End tour">
+                      <svg class="guided-tour-icon" viewBox="0 0 20 20" width="16" height="16"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-close"></use></svg>
+                  </button>
+                  ${!this.first ? `<button class="guided-tour-step-button guided-tour-step-button-prev" title="Prev step">
+                    <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
+                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-prev"></use>
+                    </svg>
+                  </button>` : ""}
+                  ${this.last ? `<button class="guided-tour-step-button guided-tour-step-button-complete" title="Complete tour">
+                    <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
+                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-complete"></use>
+                    </svg>
+                  </button>` : `<button class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
+                    <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
+                      <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-next"></use>
+                    </svg>
+                  </button>`}
+                  ${this.context._steps.length > 1 ? `<div class="guided-tour-step-bullets">
+                      <ul>${this.context._steps.map((step, i) => `<li><button title="Go to step ${i + 1}" data-index="${i}" class="${step.index < this.index ? "complete" : step.index == this.index ? "current" : ""}"></button></li>`).join("")}</ul>
+                  </div>` : ""}
+              </div>`);
+        footer.find(".guided-tour-step-button-prev").on("click", this.context.previous);
+        footer.find(".guided-tour-step-button-next").on("click", this.context.next);
+        footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
+        footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
+        footer.find(".guided-tour-step-bullets button").on("click", (e) => this.context.go(parseInt(u(e.target).data("index"))));
+        tooltipinner.append(arrow).append(container).append(footer);
+      } else tooltipinner.append(container);
       tooltip.append(tooltipinner);
       this.container = u(`<div role="dialog" aria-labelleby="tooltip-title-${this.index}" class="guided-tour-step${this.first ? " guided-tour-step-first" : ""}${this.last ? " guided-tour-step-last" : ""}"></div>`);
       this.container.append(highlight).append(tooltip);
@@ -96,15 +113,9 @@ export default class Step {
     this._target = target;
   }
   constructor(step, context) {
-    this.index = 0;
-    this.image = null;
-    this.title = "";
-    this.content = "";
     this.active = false;
     this.first = false;
     this.last = false;
-    this.blocking = false;
-    this.awaitel = false;
 
     this.container = null;
     this.highlight = null;
@@ -135,9 +146,12 @@ export default class Step {
     this.title = data.title;
     this.content = snarkdown(data.content);
     this.image = data.image;
-    this.blocking = data.blocking;
+    this.width = data.width;
+    this.height = data.height;
     this.layout = data.layout || "vertical";
-    this.awaitel = data.awaitel;
+    this.align = data.align || "auto";
+    this.overlay = data.overlay !== false;
+    this.navigation = data.navigation !== false;
     if (data.image &&
       context.options.preloadimages &&
       !(/^data:/i.test(data.image))) {
@@ -183,6 +197,9 @@ export default class Step {
       const targetRect = getBoundingClientRect(this.target, this.context._options.root);
       const tooltipRect = getBoundingClientRect(tooltip, this.context._options.root);
 
+      if(this.width) highlightStyle.width = tooltipRect.width = this.width;
+      if(this.height) highlightStyle.height = tooltipRect.height = this.height;
+
       highlightStyle.top = targetRect.top - this.context.options.padding;
       highlightStyle.left = targetRect.left - this.context.options.padding;
       highlightStyle.width = targetRect.width + this.context.options.padding * 2;
@@ -212,7 +229,7 @@ export default class Step {
         tooltipBRR = parseNumber(getStyle(tooltip, "border-bottom-right-radius"));
       }
       // Adjust vertical position
-      if(tootipStyle.top + tooltipRect.height > view.rootHeight) {
+      if (tootipStyle.top + tooltipRect.height > view.rootHeight) {
         tootipStyle.top = view.rootHeight - tooltipRect.height - marginVerticalSize;
       }
 
@@ -263,7 +280,7 @@ export default class Step {
       setStyle(tooltip, tootipStyle);
       highlight.first().style.boxShadow = "none";
       // tooltip.first().style.opacity = 0.1;
-      this.context._overlay.show();
+      if (this.overlay) this.context._overlay.show();
     }
   }
   adjust() {
@@ -275,6 +292,8 @@ export default class Step {
 
     const tootipStyle = {};
 
+    if(this.width) tootipStyle.width = tooltipRect.width = this.width;
+    if(this.height) tootipStyle.height = tooltipRect.height = this.height;
     if (tooltipRect.viewTop < 8) {
       tootipStyle.top = 8;
     } else if (tooltipRect.viewTop + tooltipRect.height + 8 > view.rootHeight) {
@@ -287,6 +306,11 @@ export default class Step {
     }
 
     setStyle(tooltip, tootipStyle);
+    requestAnimationFrame(() => tooltip.first().scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "nearest"
+    }));
     // tooltip.first().style.opacity = 1;
   }
   cancel() {
@@ -301,50 +325,27 @@ export default class Step {
         this.context._overlay.hide();
         this.position();
         this.adjust();
-        this.container.find(".guided-tour-step-button-next, .guided-tour-step-button-complete").first().focus();
-        // requestAnimationFrame(this.adjust);
-        // if(isTargetValid(this.target)) {
-        //   if(getStyle(this.target, "position") === "static") {
-        //     this.target.style.position = "relative";
-        //   }
-        //   u(this.target).addClass("guided-tour-target");
-        // }
-        // this.actions.forEach((a) => {
-        //   try {
-        //     const eventType = getEventType(a.event);
-        //     if (eventType) {
-        //       const eventHandler = (e) => {
-        //         if (a) {
-        //           const eventAttrs = getEventAttrs(a.event);
-        //           const isMatched = !(eventAttrs.filter((attr) => e[attr.key] !== attr.value).length);
-
-        //           if (isMatched) this.context.action(e, a);
-        //         }
-        //       };
-        //       a.handler = eventHandler;
-        //       a.target = this.highlight;
-        //       u(a.target).on(eventType, a.handler);
-        //     } else {
-        //       console.warn(`Wrong event on action.event: ${a.event} on step #${this.index}`);
-        //     }
-        //   } catch (error) {
-        //     console.warn(`Could not find action.target: ${a.target} on step #${this.index}`);
-        //     console.warn(error);
-        //   }
-        // });
-
+        if (this.navigation)
+          this.container.find(".guided-tour-step-button-next, .guided-tour-step-button-complete").first().focus();
         this.active = true;
       };
       if (isTargetValid(this.target)) {
-        this._scrollCancel = scrollIntoView(this.target, {
-          time: this.context.options.animationspeed,
-          cancellable: false,
-          align: {
-            top: getPosition(this.context.options.align),
-            left: 0.5
-          }
-        }, show);
-      } else this._timerHandler = setTimeout(show, this.context.options.animationspeed);
+        this.target.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "nearest"
+        });
+        //   this._scrollCancel = scrollIntoView(this.target, {
+        //     time: this.context.options.animationspeed,
+        //     cancellable: false,
+        //     align: {
+        //       top: getPosition(this.context.options.align),
+        //       left: 0.5
+        //     }
+        //   }, show);
+      }
+      // else 
+      this._timerHandler = setTimeout(show, this.context.options.animationspeed);
       return true;
     }
     return false;
@@ -352,25 +353,10 @@ export default class Step {
   hide() {
     this.cancel();
     if (this.active) {
-      // if (isTargetValid(this.target)) {
-      //   u(this.target).removeClass("guided-tour-target");
-      // }
       this.el.removeClass("active");
       this.tooltip.removeClass("guided-tour-arrow-top");
       this.tooltip.removeClass("guided-tour-arrow-bottom");
-      this.context._overlay.show();
-
-      // this.actions.forEach((a) => {
-      //   try {
-      //     const eventType = getEventType(a.event);
-      //     if (eventType) {
-      //       u(a.target).off(eventType, a.handler);
-      //     }
-      //   } catch (error) {
-      //     console.warn(error);
-      //   }
-      // });
-
+      if (this.overlay) this.context._overlay.show();
       this.active = false;
       return true;
     }

@@ -1,17 +1,18 @@
-$overlay: var(--tourguide-overlay);
-$background: var(--tourguide-background);
-$bullet: var(--tourguide-bullet);
-$bullet-visited: var(--tourguide-bullet-visited);
-$bullet-current: var(--tourguide-bullet-current);
-$button-close: var(--tourguide-step-button-close);
-$button-next: var(--tourguide-step-button-next);
-$button-prev: var(--tourguide-step-button-prev);
-$button-complete: var(--tourguide-step-button-complete);
+$overlay: var(--tourguide-overlay-color);
+$background: var(--tourguide-background-color);
+$bullet: var(--tourguide-bullet-color);
+$bullet-visited: var(--tourguide-bullet-visited-color);
+$bullet-current: var(--tourguide-bullet-current-color);
+$button-close: var(--tourguide-step-button-close-color);
+$button-next: var(--tourguide-step-button-next-color);
+$button-prev: var(--tourguide-step-button-prev-color);
+$button-complete: var(--tourguide-step-button-complete-color);
+$focusColor: var(--tourguide-focus-color);
+$accentColor: var(--tourguide-accent-color);
 $fontColor: var(--tourguide-text-color);
 $fontFamily: var(--tourguide-font-family);
 $fontSize: var(--tourguide-font-size);
 $tooltipMinWidth: var(--tourguide-tooltip-width);
-$focusColor: var(--tourguide-focus-color);
 
 // .guided-tour {
 // overflow: hidden;
@@ -52,10 +53,13 @@ $focusColor: var(--tourguide-focus-color);
   appearance: none;
   font-size: inherit;
   font-weight: inherit;
+  text-decoration: none;
 }
 
+a,
 button {
   cursor: pointer;
+
   &:hover,
   &:focus {
     outline: 5px auto $focusColor;
@@ -97,7 +101,7 @@ button {
       position: absolute;
       box-sizing: border-box;
       border-radius: 4px;
-      box-shadow: 0 0 0 999rem $overlay;
+      box-shadow: 0 0 0 999em $overlay;
       z-index: 1;
     }
 
@@ -111,7 +115,7 @@ button {
       max-width: max-content;
       border-radius: 5px;
       box-sizing: border-box;
-      box-shadow: 0 0 8px -4px #000;
+      box-shadow: 0 0 3em -0.8em #000;
       transition: opacity 150ms;
 
       @media screen and (max-width: 760px) {
@@ -124,6 +128,9 @@ button {
       }
 
       .guided-tour-step-tooltip-inner {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
         // position: relative;
         // padding: 32px 32px 28px 32px;
         // display: block;
@@ -136,62 +143,77 @@ button {
         .guided-tour-step-content-container {
           display: flex;
           flex-direction: column;
+          flex-grow: 1;
+          height: calc(100% - 2.6em);
 
-          @media screen and (min-width: 760px) {
-            &.step-layout-horizontal {
-              flex-direction: row;
+          // @media screen and (min-width: 760px) {
+          //   &.step-layout-horizontal {
+          //     flex-direction: row;
+          //     height: 100%;
 
-              .guided-tour-step-content-wrapper {
-                flex: 1 1 auto;
-              }
+          //     .guided-tour-step-content-wrapper {
+          //       flex: 1 1 auto;
+          //     }
 
-              .guided-tour-step-image {
-                width: 50%;
-                margin-bottom: calc((1rem + 24px) * -1);
-                flex: 0 0 auto;
+          //     .guided-tour-step-image {
+          //       width: 50%;
+          //       height: 100%;
+          //       overflow: hidden;
+          //       margin-bottom: calc((1em + 24px) * -1);
+          //       flex: 0 0 auto;
 
-                img {
-                  border-radius: 4px 0 0 4px;
-                  height: 100%;
-                  object-fit: cover;
-                }
-              }
-            }
-          }
+          //       img {
+          //         border-radius: 4px 0 0 4px;
+          //         height: 100%;
+          //         object-fit: cover;
+          //         object-position: center;
+          //       }
+          //     }
+          //   }
+          // }
         }
 
         .guided-tour-step-image {
+          flex-grow: 1;
+          flex-shrink: 1;
+          overflow: hidden;
+
           img {
             width: 100%;
-            height: auto;
+            height: 100%;
             border-radius: 4px 4px 0 0;
+            object-fit: cover;
+            object-position: center;
           }
         }
 
         .guided-tour-step-content-wrapper {
-          margin: 1.5rem 2rem;
+          margin: 1.5em 2.5em;
         }
 
         .guided-tour-step-title {
-          font-size: 1.3rem;
-          font-weight: bold;
-          margin-bottom: 1rem;
+          font-size: 1.4em;
+          // font-weight: bold;
+          margin-bottom: .8em;
         }
 
         .guided-tour-step-content {
+          flex-shrink: 0;
 
           b,
           strong {
             font-weight: bold;
           }
 
-          i, em {
+          i,
+          em {
             font-style: italic;
           }
 
           a {
             cursor: pointer;
             text-decoration: underline;
+            color: $accentColor;
           }
 
           mark {
@@ -222,7 +244,11 @@ button {
           ul,
           ol,
           blockquote {
-            margin: 1rem 0;
+            margin: 1em 0;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
           }
 
           blockquote {
@@ -232,10 +258,34 @@ button {
 
           ul,
           ol {
-            padding-left: 1.5rem;
+            padding-left: 1.5em;
 
             li {
-              margin: .3rem 0;
+              margin: .3em 0;
+            }
+          }
+        }
+
+        .guided-tour-step-actions {
+          display: flex;
+          column-gap: .5em;
+          margin-top: 1.5em;
+          justify-content: end;
+
+          .button {
+            color: $accentColor;
+            padding: 0.2em 0.5em;
+
+            &.primary {
+              background: $accentColor;
+              padding: 0.5em 1em;
+              color: #fff;
+              border-radius: 4px;
+
+              &:hover,
+              &:focus {
+                filter: brightness(120%);
+              }
             }
           }
         }
@@ -262,26 +312,26 @@ button {
           position: absolute;
           top: 0;
           right: 0;
-          width: 32px;
-          height: 32px;
+          width: 2em;
+          height: 2em;
           color: $button-close;
         }
 
         .guided-tour-step-button-prev,
         .guided-tour-step-button-next,
         .guided-tour-step-button-complete {
-          width: 48px;
-          height: 48px;
+          width: 3em;
+          height: 3em;
           // border: 2px solid currentColor;
           background: $background;
           border-radius: 50%;
-          margin-top: -24px;
+          margin-top: -1.5em;
           position: absolute;
         }
 
         .guided-tour-step-button-prev {
           color: $button-prev;
-          // box-shadow: -5px 0 1rem 0 rgba(0, 0, 0, 0.4);
+          // box-shadow: -5px 0 1em 0 rgba(0, 0, 0, 0.4);
           left: 0;
           transform: translateX(-50%);
           top: 50%;
@@ -289,7 +339,7 @@ button {
 
         .guided-tour-step-button-next {
           color: $button-next;
-          // box-shadow: 5px 0 1rem 0 rgba(0, 0, 0, 0.4);
+          // box-shadow: 5px 0 1em 0 rgba(0, 0, 0, 0.4);
           right: 0;
           transform: translateX(50%);
           top: 50%;
@@ -297,13 +347,16 @@ button {
 
         .guided-tour-step-button-complete {
           color: $button-complete;
-          // box-shadow: 5px 0 1rem 0 rgba(0, 0, 0, 0.4);
+          // box-shadow: 5px 0 1em 0 rgba(0, 0, 0, 0.4);
           right: 0;
           transform: translateX(50%);
           top: 50%;
         }
 
-        .guided-tour-step-footer {}
+        .guided-tour-step-footer {
+          flex-shrink: 0;
+          flex-grow: 0;
+        }
 
         .guided-tour-step-bullets {
           text-align: center;
@@ -311,7 +364,7 @@ button {
 
           ul {
             list-style: none;
-            margin: 0 1rem 1rem;
+            margin: 0 1em 1em;
 
             li {
               display: inline-block;
@@ -332,6 +385,32 @@ button {
 
                 &.current {
                   background-color: $bullet-current;
+                }
+              }
+            }
+          }
+        }
+
+        @media screen and (min-width: 760px) {
+          &.step-layout-horizontal {
+            .guided-tour-step-content-container {
+              flex-direction: row;
+              height: 100%;
+
+              .guided-tour-step-content-wrapper {
+                flex: 1 1 auto;
+              }
+
+              .guided-tour-step-image {
+                width: 50%;
+                margin-bottom: calc((1em + 24px) * -1);
+                flex: 0 0 auto;
+
+                img {
+                  border-radius: 4px 0 0 4px;
+                  height: 100%;
+                  object-fit: cover;
+                  object-position: center;
                 }
               }
             }
