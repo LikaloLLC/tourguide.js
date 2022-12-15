@@ -9,6 +9,11 @@ import {
   getScrollCoordinates,
   getMaxZIndex,
 } from "./utils";
+import {
+  setAutoColors
+} from "./utils/color";
+import ActionHandler from "./handler";
+import ContentDecorator from "./decorator";
 
 import Style from "../scss/style.scss";
 
@@ -16,6 +21,35 @@ const StepsSource = {
   DOM: 0,
   JSON: 1,
   REMOTE: 2,
+};
+
+const defaultKeyNavOptions = {
+  next: "ArrowRight",
+  prev: "ArrowLeft",
+  first: "Home",
+  last: "End",
+  complete: null,
+  stop: "Escape",
+};
+
+const defaultStyle = {
+  fontFamily: 'sans-serif',
+  fontSize: "11pt",
+  tooltipWidth: "40vw",
+
+  overlayColor: "rgba(0, 0, 0, 0.5)",
+  textColor: "#333",
+  accentColor: "#0d6efd",
+
+  focusColor: "auto",
+  bulletColor: "auto",
+  bulletVisitedColor: "auto",
+  bulletCurrentColor: "auto",
+  stepButtonCloseColor: "auto",
+  stepButtonPrevColor: "auto",
+  stepButtonNextColor: "auto",
+  stepButtonCompleteColor: "auto",
+  backgroundColor: "#fff",
 };
 
 function isEventAttrbutesMatched(event, keyOption, type = "keyup") {
@@ -66,32 +100,6 @@ export default class Tour {
     return this._options;
   }
   constructor(options = {}) {
-    const defaultKeyNavOptions = {
-      next: "ArrowRight",
-      prev: "ArrowLeft",
-      first: "Home",
-      last: "End",
-      complete: null,
-      stop: "Escape",
-    };
-
-    const defaultColors = {
-      fontFamily: '"Open Sans", Arimo, "Droid Sans", Helvetica, Arial, sans-serif',
-      fontSize: "12pt",
-      tooltipWidth: "40vw",
-      overlay: "rgba(0, 0, 0, 0.5)",
-      background: "#fff",
-      textColor: "#333",
-
-      focusColor: "#0d6efd",
-      bullet: "#7f8b92",
-      bulletVisited: "#ccc",
-      bulletCurrent: "#0d6efd",
-      stepButtonClose: "#6b7280",
-      stepButtonPrev: "#6b7280",
-      stepButtonNext: "#0d6efd",
-      stepButtonComplete: "#0d6efd",
-    };
 
     this._options = Object.assign(
       {
@@ -112,8 +120,10 @@ export default class Tour {
             "Content-Type": "application/json",
           },
         },
-        align: "top", // top, bottom, center
+        // align: "top", // top, bottom, center
         keyboardNavigation: defaultKeyNavOptions,
+        actionHandlers: [],
+        contentDecorators: [],
         onStart: () => { },
         onStop: () => { },
         onComplete: () => { },
@@ -122,7 +132,10 @@ export default class Tour {
       },
       options,
       {
-        colors: Object.assign(defaultColors, options.colors || {}),
+        style: setAutoColors(
+          defaultStyle,
+          options.colors || options.style
+        )
       }
     );
     this._overlay = null;
@@ -137,14 +150,14 @@ export default class Tour {
       Array.isArray(this._options.steps)
     ) {
       this._stepsSrc = StepsSource.JSON;
-      this._steps = this._options.steps.map((o) => new Step(o, this));
+      this._steps = this._options.steps.map((o, index) => new Step({...o, step: o.step || index}, this));
       this._ready = true;
     } else if (typeof this._options.src === "string") {
       this._stepsSrc = StepsSource.REMOTE;
       fetch(new Request(this._options.src, this._options.request)).then(
         (response) =>
           response.json().then((data) => {
-            this._steps = data.map((o) => new Step(o, this));
+            this._steps = data.map((o, index) => new Step({...o, step: o.step || index}, this));
             this._ready = true;
           })
       );
@@ -184,7 +197,7 @@ export default class Tour {
     u(this._shadowRoot).append(style);
     const colors = u(
       `<style>${colorObjToStyleVarString(
-        this._options.colors,
+        this._options.style,
         "--tourguide"
       )}</style>`
     );
@@ -222,6 +235,13 @@ export default class Tour {
     ) {
       this.complete();
     }
+  }
+  _decorateText(text, step) {
+    let _text = text;
+    this._options.contentDecorators.forEach(decorator => {
+      if(decorator.test(_text)) _text = decorator.render(_text, step, this);
+    });
+    return _text;
   }
   init() {
     this.reset();
@@ -278,39 +298,26 @@ export default class Tour {
       }, 50);
     }
   }
-  // action(event, action) {
-  //   if (this._active) {
-  //     if (Array.isArray(action.act)) {
-  //       for(let a of action.act) {
-  //         const _action = {
-  //           ...action,
-  //           act: a
-  //         };
-  //         this.action(event, _action);
-  //       }
-  //     } else {
-  //       const { currentstep } = this;
-  //       switch (true) {
-  //         case (typeof action.act === "function"):
-  //           action.act(event, currentstep.toJSON(), this, action);
-  //         break;
-  //         case (typeof action.act === "number"): this.go(action.act, "action"); break;
-  //         case (action.act === "next"): this.next(); break;
-  //         case (action.act === "previous"): this.previous(); break;
-  //         case (action.act === "stop"): this.stop(); break;
-  //         case (action.act === "complete"): this.complete(); break;
-  //         case (action.act === "propagate"):{
-  //           currentstep.target[action.event]();
-  //         } break;
-  //       }
-  //       if (
-  //         typeof this._options.onAction === "function"
-  //       ) {
-  //         this._options.onAction(event, currentstep.toJSON(), action);
-  //       }
-  //     }
-  //   }
-  // }
+  action(event, action) {
+    if (this._active) {
+      switch (action.action) {
+        case "next": this.next(); break;
+        case "previous": this.previous(); break;
+        case "stop": this.stop(); break;
+        case "complete": this.complete(); break;
+        default: {
+          const handler = this._options.actionHandlers
+            .find(handler => handler.name === action.action)
+          if (handler) handler.onAction(event, action, this);
+        }
+      }
+      if (
+        typeof this._options.onAction === "function"
+      ) {
+        this._options.onAction(event, action, this);
+      }
+    }
+  }
   next() {
     if (this._active) {
       this.go(this.nextstep, "next");
@@ -360,3 +367,5 @@ export default class Tour {
     }
   }
 }
+Tour.ActionHandler = ActionHandler;
+Tour.ContentDecorator = ContentDecorator;
