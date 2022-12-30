@@ -19,7 +19,7 @@
     "homepage": "https://github.com/ccoenraets/es6-tutorial#readme",
     "devDependencies": {
         "http-server": "^14.1.1",
-        "mocha": "^6.1.4"
+        "mocha": "^10.2.0"
     },
     "dependencies": {
         "chai": "^4.2.0",
