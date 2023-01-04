@@ -7,6 +7,7 @@ import {
   isTargetValid,
   getViewportRect,
   setStyle,
+  assert,
   // getStyle,
   // parseNumber,
 } from "../utils";
@@ -14,21 +15,56 @@ import {
   computePosition,
   offset,
   arrow,
-  shift,
+  // shift,
   flip,
-  // autoPlacement
+  // detectOverflow
+  autoPlacement
 } from '@floating-ui/dom';
 import snarkdown from "snarkdown";
 
-function positionTooltip(target, tooltipEl, arrowEl) {
+const keepinview = ({ padding = 0 }) => ({
+  name: "keepinview",
+  fn({ x, y, rects, middlewareData, platform }) {
+    const documentDimentions = platform.getDimensions(document.body);
+    const _x = clamp(x, padding, documentDimentions.width - rects.floating.width - padding);
+    const _y = clamp(y, padding, documentDimentions.height - rects.floating.height - padding);
+    const dx = x - _x;
+    const dy = y - _y;
+    const { arrow } = middlewareData;
+    if (arrow) {
+      if (arrow.x && dx) arrow.x += dx;
+      if (arrow.y && dy) arrow.y += dy;
+    }
+    return { x: _x, y: _y };
+  }
+});
+
+function positionTooltip(target, tooltipEl, arrowEl, context) {
+  //context._options.root
   computePosition(
     target, tooltipEl, {
-    placement: 'bottom-start',
+    // placement: 'bottom-start',
     middleware: [
-      flip(), shift(), offset(8), arrow({
-      element: arrowEl,
-      padding: 8
-    })],
+      // flip(),
+      autoPlacement({
+        alignment: 'bottom-start',
+      }),
+      offset((props) => {
+        const side = props.placement.split("-")[0];
+        switch (side) {
+          case "top":
+            return 32;
+          case "left":
+          case "right":
+            return 24;
+          default: return 6;
+        }
+      }), arrow({
+        element: arrowEl,
+        padding: 8
+      }), keepinview({
+        padding: 24
+      })],
   }
   ).then(({ x, y, middlewareData, placement }) => {
     setStyle(tooltipEl, {
@@ -62,6 +98,9 @@ export default class Step {
         <div id="tooltip-title-${this.index}" role="heading" class="guided-tour-step-title">${this.context._decorateText(this.title, this)}</div>
         <div class="guided-tour-step-content">${this.context._decorateText(this.content, this)}</div>
       </div>`);
+      content.find('a').on('click', e => {
+        this.context.action(e, { action: "link" });
+      });
       if (Array.isArray(this.actions) && this.actions.length > 0) {
         const actions = u(`<div class="guided-tour-step-actions">
           ${this.actions
@@ -82,9 +121,8 @@ export default class Step {
       const tooltipinner = u(`<div class="guided-tour-step-tooltip-inner${this.layout === "horizontal" ? " step-layout-horizontal" : ""}"></div>`);
       const container = u(`<div class="guided-tour-step-content-container"></div>`);
       container.append(image).append(content);
-
+      const arrow = this.arrow = u(`<div class="guided-tour-arrow"></div>`);
       if (this.navigation) {
-        const arrow = this.arrow = u(`<div class="guided-tour-arrow"></div>`);//u("<div aria-hidden=\"true\" data-popper-arrow class=\"guided-tour-arrow\"><div aria-hidden=\"true\" class=\"guided-tour-arrow-inner\"></div></div>");
         const footer = u(`<div class="guided-tour-step-footer">
                   <button class="guided-tour-step-button guided-tour-step-button-close" title="End tour">
                       <svg class="guided-tour-icon" viewBox="0 0 20 20" width="16" height="16"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#tour-icon-close"></use></svg>
@@ -113,10 +151,10 @@ export default class Step {
         footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
         footer.find(".guided-tour-step-bullets button").on("click", (e) => this.context.go(parseInt(u(e.target).data("index"))));
         tooltipinner.append(arrow).append(container).append(footer);
-      } else tooltipinner.append(container);
+      } else tooltipinner.append(arrow).append(container);
       tooltip.append(tooltipinner);
       this.container = u(`<div role="dialog" aria-labelleby="tooltip-title-${this.index}" class="guided-tour-step${this.first ? " guided-tour-step-first" : ""}${this.last ? " guided-tour-step-last" : ""}"></div>`);
-      if (isTargetValid(this.target)) {
+      if (this.overlay && isTargetValid(this.target)) {
         const highlight = this.highlight = u("<div class=\"guided-tour-step-highlight\"></div>");
         this.container.append(highlight).append(tooltip);
       } else this.container.append(tooltip);
@@ -146,19 +184,22 @@ export default class Step {
 
     let data;
     if (!(step instanceof HTMLElement)) {
-      if (!(step.hasOwnProperty("title") && step.hasOwnProperty("content") && step.hasOwnProperty("step"))) {
-        throw new Error(
-          "invalid step parameter:\n" +
-          JSON.stringify(step, null, 2) + "\n" +
-          "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach"
-        );
-      }
       data = step;
       this._selector = step.selector;
     } else {
       this.target = step;
       data = getDataContents(u(step).data("tour"));
     }
+
+    assert(!(
+      data.hasOwnProperty("title")
+      && data.hasOwnProperty("content")
+    ),
+      "invalid step parameter:\n" +
+      JSON.stringify(data, null, 2) + "\n" +
+      "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach"
+    )
+
     this.index = parseInt(data.step);
     this.title = data.title;
     this.content = snarkdown(data.content);
@@ -211,7 +252,7 @@ export default class Step {
     };
 
     if (isTargetValid(this.target)) {
-      if (this.highlight) {
+      if (this.overlay && this.highlight) {
         const targetRect = getBoundingClientRect(this.target, this.context._options.root);
         highlightStyle.top = targetRect.top - this.context.options.padding;
         highlightStyle.left = targetRect.left - this.context.options.padding;
@@ -219,9 +260,9 @@ export default class Step {
         highlightStyle.height = targetRect.height + this.context.options.padding * 2;
         setStyle(highlight, highlightStyle);
       }
-      positionTooltip(this.target, tooltip.first(), this.arrow.first());
+      positionTooltip(this.target, tooltip.first(), this.arrow.first(), this.context);
     } else {
-      if (this.highlight) setStyle(highlight, highlightStyle);
+      if (this.overlay && this.highlight) setStyle(highlight, highlightStyle);
 
       const tootipStyle = {};
       const tooltipRect = getBoundingClientRect(tooltip, this.context._options.root);

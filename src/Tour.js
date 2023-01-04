@@ -34,7 +34,7 @@ const defaultKeyNavOptions = {
 
 const defaultStyle = {
   fontFamily: 'sans-serif',
-  fontSize: "11pt",
+  fontSize: "14px",
   tooltipWidth: "40vw",
 
   overlayColor: "rgba(0, 0, 0, 0.5)",

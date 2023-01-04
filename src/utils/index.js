@@ -1,4 +1,5 @@
 import u from "umbrellajs";
+export * from "./assert";
 
 export function clamp(number, min, max) {
   min = isNaN(min) ? number : min;
