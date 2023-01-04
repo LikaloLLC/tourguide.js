@@ -120,6 +120,7 @@ button {
 
       @media screen and (max-width: 760px) {
         max-width: 85vw;
+        width: max-content!important;
         // max-width: unset;
         // min-width: unset;
         // width: calc(100% - 64px);
@@ -137,7 +138,12 @@ button {
 
         .guided-tour-arrow {
           position: absolute;
-          background: transparent;
+          width: 1em;
+          height: 1em;
+          background: $background;
+          z-index: -1;
+          transform: rotate(45deg);
+          pointer-events: none;
         }
 
         .guided-tour-step-content-container {
@@ -274,11 +280,11 @@ button {
 
           .button {
             color: $accentColor;
-            padding: 0.2em 0.5em;
+            padding: 0.5em 1em;
 
             &.primary {
               background: $accentColor;
-              padding: 0.5em 1em;
+              padding: 0.5em 1.5em;
               color: #fff;
               border-radius: 4px;
 
@@ -426,64 +432,101 @@ button {
         }
       }
 
-      &.guided-tour-arrow-top {
-        .guided-tour-step-tooltip-inner {
-          .guided-tour-arrow {
-            top: 0;
-            margin-top: -18px;
+      // &.guided-tour-arrow-top {
+      //   .guided-tour-step-tooltip-inner {
+      //     .guided-tour-arrow {
+      //       top: 0;
+      //       margin-top: -18px;
 
-            .guided-tour-arrow-inner {
-              width: 18px;
-              height: 18px;
-              position: relative;
-              overflow: hidden;
-              background: transparent;
+      //       .guided-tour-arrow-inner {
+      //         width: 18px;
+      //         height: 18px;
+      //         position: relative;
+      //         overflow: hidden;
+      //         background: transparent;
 
-              &::after {
-                content: "";
-                position: absolute;
-                width: 12px;
-                height: 12px;
-                background: $background;
-                transform: rotate(225deg);
-                top: 13px;
-                left: 4px;
-                box-shadow: 1px 1px 6px -3px #000;
-              }
-            }
-          }
-        }
-      }
+      //         &::after {
+      //           content: "";
+      //           position: absolute;
+      //           width: 12px;
+      //           height: 12px;
+      //           background: $background;
+      //           transform: rotate(225deg);
+      //           top: 13px;
+      //           left: 4px;
+      //           box-shadow: 1px 1px 6px -3px #000;
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
 
-      &.guided-tour-arrow-bottom {
-        .guided-tour-step-tooltip-inner {
-          .guided-tour-arrow {
-            margin-bottom: -18px;
-            bottom: 0;
+      // &.guided-tour-arrow-bottom {
+      //   .guided-tour-step-tooltip-inner {
+      //     .guided-tour-arrow {
+      //       margin-bottom: -18px;
+      //       bottom: 0;
 
-            .guided-tour-arrow-inner {
-              width: 18px;
-              height: 18px;
-              position: relative;
-              overflow: hidden;
-              background: transparent;
+      //       .guided-tour-arrow-inner {
+      //         width: 18px;
+      //         height: 18px;
+      //         position: relative;
+      //         overflow: hidden;
+      //         background: transparent;
 
-              &::after {
-                content: "";
-                position: absolute;
-                width: 12px;
-                height: 12px;
-                background: $background;
-                transform: rotate(45deg);
-                top: -6px;
-                left: 4px;
-                box-shadow: 1px 1px 6px -3px #000;
-              }
-            }
-          }
-        }
-      }
+      //         &::after {
+      //           content: "";
+      //           position: absolute;
+      //           width: 12px;
+      //           height: 12px;
+      //           background: $background;
+      //           transform: rotate(45deg);
+      //           top: -6px;
+      //           left: 4px;
+      //           box-shadow: 1px 1px 6px -3px #000;
+      //         }
+      //       }
+      //     }
+      //   }
+      // }
     }
+
+    // .guided-tour-arrow-none {
+    //   [data-popper-arrow] {
+    //     display: none;
+    //   }
+    // }
+
+    // [data-popper-arrow]:before {
+    //   content: '';
+    //   width: 10px;
+    //   height: 10px;
+    //   position: absolute;
+    //   z-index: -1;
+    //   -webkit-transform: rotate(45deg);
+    //   -moz-transform: rotate(45deg);
+    //   -ms-transform: rotate(45deg);
+    //   transform: rotate(45deg);
+    //   background: #fff;
+    //   top: 0;
+    //   left: 0;
+    // }
+
+    // [data-popper-placement^='right'] [data-popper-arrow] {
+    //   left: -4px;
+    // }
+
+    // [data-popper-placement^='left'] [data-popper-arrow] {
+    //   right: -4px;
+    // }
+
+    // [data-popper-placement^='top'] [data-popper-arrow] {
+    //   bottom: 4px;
+    // }
+
+    // [data-popper-placement^='bottom'] [data-popper-arrow] {
+    //   top: -4px;
+    // }
   }
 }
 

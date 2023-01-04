@@ -1,4 +1,5 @@
 import u from "umbrellajs";
+export * from "./assert";
 
 export function clamp(number, min, max) {
   min = isNaN(min) ? number : min;
@@ -115,65 +116,8 @@ export function getStyle(element, css3Prop) {
   return "";
 }
 
-const allowedProperties = [
-  "top",
-  "left",
-  "right",
-  "bottom",
-  "width",
-  "height",
-  "maxWidth",
-  "minWidth",
-  "transform",
-];
-/**
- * convert the color object to the sets of css variables.
- * @important all style properties will merge with current styles!
- * @param {Element | string} element target element or selector
- * @param {Object<string, string | number>} styleObj style object. allowed keys are:\
- *  "top" | "left" | "right" | "bottom" | "width" | "height" | "maxWidth" | "minWidth" | "transform"
- */
 export function setStyle(element, styleObj) {
-  if (!Object.prototype.toString.call(styleObj) === "[object Object]") return;
-
-  const style = u(element).first().style;
-
-  Object.entries(styleObj)
-    .filter(([key, val]) => allowedProperties.includes(key) && (typeof val === "number" || typeof val === "string"))
-    .forEach(([key, val]) => {
-      const value = typeof val === "number" ? `${val.toFixed(1)}px` : val;
-      switch (key) {
-        case "top":
-          style.top = value;
-          break;
-        case "left":
-          style.left = value;
-          break;
-        case "right":
-          style.right = value;
-          break;
-        case "bottom":
-          style.bottom = value;
-          break;
-        case "width":
-          style.width = value;
-          break;
-        case "height":
-          style.height = value;
-          break;
-        case "maxWidth":
-          style.maxWidth = value;
-          break;
-        case "minWidth":
-          style.minWidth = value;
-          break;
-        case "transform":
-          style.transform = value;
-          break;
-        default:
-          break;
-      }
-    });
+  Object.assign(u(element).first().style, styleObj);
 }
 
 /**
