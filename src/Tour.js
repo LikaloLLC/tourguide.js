@@ -120,7 +120,6 @@ export default class Tour {
             "Content-Type": "application/json",
           },
         },
-        // align: "top", // top, bottom, center
         keyboardNavigation: defaultKeyNavOptions,
         actionHandlers: [],
         contentDecorators: [],
