@@ -116,8 +116,8 @@ export default class Step {
         content.append(actions);
       }
       const tooltip = this.tooltip = u("<div role=\"document\" class=\"guided-tour-step-tooltip\"></div>");
-      if (this.width) setStyle(tooltip, { width: this.width });
-      if (this.height) setStyle(tooltip, { height: this.height });
+      if (this.width) setStyle(tooltip, { width: this.width + "px", maxWidth: this.width + "px" });
+      if (this.height) setStyle(tooltip, { height: this.height  + "px", maxHeight: this.height  + "px" });
       const tooltipinner = u(`<div class="guided-tour-step-tooltip-inner${this.layout === "horizontal" ? " step-layout-horizontal" : ""}"></div>`);
       const container = u(`<div class="guided-tour-step-content-container"></div>`);
       container.append(image).append(content);
