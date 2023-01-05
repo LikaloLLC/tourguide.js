@@ -428,7 +428,7 @@ var scrollIntoView = function(target, settings, callback){
 };
 
 function assert(assertion, message) {
-  if (!assertion) throw "Docsie Inapp: ".concat(message);
+  if (!assertion) throw "TourguideJS: ".concat(message);
   return true;
 }
 
@@ -730,7 +730,8 @@ var Step = /*#__PURE__*/function () {
       this.target = step;
       data = getDataContents(u$2(step).data("tour"));
     }
-    assert(!(data.hasOwnProperty("title") && data.hasOwnProperty("content")), "invalid step parameter:\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
+    assert(data.hasOwnProperty("title"), "missing required step parameter: title\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
+    assert(data.hasOwnProperty("content"), "missing required step parameter: content\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
     this.index = parseInt(data.step);
     this.title = data.title;
     this.content = t(data.content);
@@ -1221,7 +1222,6 @@ var Tour = /*#__PURE__*/function () {
           "Content-Type": "application/json"
         }
       },
-      // align: "top", // top, bottom, center
       keyboardNavigation: defaultKeyNavOptions,
       actionHandlers: [],
       contentDecorators: [],
