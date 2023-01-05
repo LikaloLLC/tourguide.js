@@ -191,14 +191,20 @@ export default class Step {
       data = getDataContents(u(step).data("tour"));
     }
 
-    assert(!(
+    assert((
       data.hasOwnProperty("title")
-      && data.hasOwnProperty("content")
     ),
-      "invalid step parameter:\n" +
+      "missing required step parameter: title\n" +
       JSON.stringify(data, null, 2) + "\n" +
       "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach"
-    )
+    );
+    assert((
+      data.hasOwnProperty("content")
+    ),
+      "missing required step parameter: content\n" +
+      JSON.stringify(data, null, 2) + "\n" +
+      "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach"
+    );
 
     this.index = parseInt(data.step);
     this.title = data.title;
