@@ -4,9 +4,15 @@
 
 >  A **tour guide** is a  person who provides assistance, information on cultural, historical and  contemporary heritage to people on organized [tours](https://en.wikipedia.org/wiki/Tourism)  and individual clients at educational establishments, religious and  historical sites, museums, and at venues of other significant interest,  attractions sites. [[https://en.wikipedia.org/wiki/Tour_guide](https://en.wikipedia.org/wiki/Tour_guide)]
 
+## Examples
+
 ### Fiddle with It
 
 Want to see how it works right away? [Try on JSFiddle](https://jsfiddle.net/eugenetrue/q465gb7L/) 
+
+### React
+
+You can look at some react examples here: [React examples](examples/example_reactjs).
 
 ## Install Tourguide.js
 
