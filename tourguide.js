@@ -857,10 +857,10 @@ var Tourguide = (function () {
         if (isTargetValid(this.target)) {
           if (this.overlay && this.highlight) {
             var targetRect = getBoundingClientRect(this.target, this.context._options.root);
-            highlightStyle.top = targetRect.top - this.context.options.padding;
-            highlightStyle.left = targetRect.left - this.context.options.padding;
-            highlightStyle.width = targetRect.width + this.context.options.padding * 2;
-            highlightStyle.height = targetRect.height + this.context.options.padding * 2;
+            highlightStyle.top = "".concat(targetRect.top - this.context.options.padding, "px");
+            highlightStyle.left = "".concat(targetRect.left - this.context.options.padding, "px");
+            highlightStyle.width = "".concat(targetRect.width + this.context.options.padding * 2, "px");
+            highlightStyle.height = "".concat(targetRect.height + this.context.options.padding * 2, "px");
             setStyle(highlight, highlightStyle);
           }
           positionTooltip(this.target, tooltip.first(), this.arrow.first(), this.context);
