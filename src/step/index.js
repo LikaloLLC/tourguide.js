@@ -260,10 +260,10 @@ export default class Step {
     if (isTargetValid(this.target)) {
       if (this.overlay && this.highlight) {
         const targetRect = getBoundingClientRect(this.target, this.context._options.root);
-        highlightStyle.top = targetRect.top - this.context.options.padding;
-        highlightStyle.left = targetRect.left - this.context.options.padding;
-        highlightStyle.width = targetRect.width + this.context.options.padding * 2;
-        highlightStyle.height = targetRect.height + this.context.options.padding * 2;
+        highlightStyle.top = `${targetRect.top - this.context.options.padding}px`;
+        highlightStyle.left = `${targetRect.left - this.context.options.padding}px`;
+        highlightStyle.width = `${targetRect.width + this.context.options.padding * 2}px`;
+        highlightStyle.height = `${targetRect.height + this.context.options.padding * 2}px`;
         setStyle(highlight, highlightStyle);
       }
       positionTooltip(this.target, tooltip.first(), this.arrow.first(), this.context);
