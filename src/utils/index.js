@@ -117,6 +117,11 @@ export function getStyle(element, css3Prop) {
 }
 
 export function setStyle(element, styleObj) {
+  Object.keys(styleObj).forEach((key) => {
+    if (typeof styleObj[key] === "number") {
+      styleObj[key] = Math.floor(styleObj[key]) + "px";
+    }
+  });
   Object.assign(u(element).first().style, styleObj);
 }
 
