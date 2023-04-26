@@ -3,9 +3,7 @@ import scrollIntoView from "scroll-into-view";
 import {
   clamp,
   getDataContents,
-  getBoundingClientRect,
   isTargetValid,
-  getViewportRect,
   setStyle,
   assert,
   // getStyle,
@@ -16,10 +14,10 @@ import {
   offset,
   arrow,
   // shift,
-  flip,
+  // flip,
   // detectOverflow
   autoPlacement
-} from '@floating-ui/dom';
+} from "@floating-ui/dom";
 import snarkdown from "snarkdown";
 
 const keepinview = ({ padding = 0 }) => ({
@@ -39,33 +37,95 @@ const keepinview = ({ padding = 0 }) => ({
   }
 });
 
-function positionTooltip(target, tooltipEl, arrowEl, context) {
+const positionInView = ({ placement }) => ({
+  name: "positionInView",
+  fn({ x, y, rects, platform }) {
+    let _x = x, _y = y;
+    const documentDimentions = platform.getDimensions(document.body);
+    const [align_y, align_x] = placement.split("-");
+    switch (align_x) {
+    case "start": _x = 0; break;
+    case "center": _x = (documentDimentions.width / 2) - (rects.floating.width / 2); break;
+    case "end": _x = documentDimentions.width - rects.floating.width; break;
+    }
+    switch (align_y) {
+    case "top": _y = 0; break;
+    case "middle": _y = (documentDimentions.height / 2) - (rects.floating.height / 2); break;
+    case "bottom": _y = documentDimentions.height - rects.floating.height; break;
+    }
+    return ({ x: _x, y: _y });
+  }
+});
+
+const highlight = (options) => ({
+  name: "highlight",
+  options,
+  fn(state) {
+    const { element, padding = 0 } = options || {};
+    const { rects } = state;
+    if (!isTargetValid(element)) {
+      return {};
+    }
+    let data = {
+      top: 0,
+      left: 0,
+      width: 0,
+      height: 0
+    };
+    data.top = `${rects.reference.y - padding}px`;
+    data.left = `${rects.reference.x - padding}px`;
+    data.width = `${rects.reference.width + padding * 2}px`;
+    data.height = `${rects.reference.height + padding * 2}px`;
+    setStyle(element, data);
+    return ({
+      data
+    });
+  }
+});
+
+function offsetAssist(props) {
+  const side = props.placement.split("-")[0];
+  switch (side) {
+  case "top":
+    return 32;
+  case "left":
+  case "right":
+    return 24;
+  default: return 6;
+  }
+}
+
+function positionTooltip(target, tooltipEl, arrowEl, highlightEl, step) {
   //context._options.root
   computePosition(
-    target, tooltipEl, {
-    // placement: 'bottom-start',
-    middleware: [
-      // flip(),
-      autoPlacement({
-        alignment: 'bottom-start',
-      }),
-      offset((props) => {
-        const side = props.placement.split("-")[0];
-        switch (side) {
-          case "top":
-            return 32;
-          case "left":
-          case "right":
-            return 24;
-          default: return 6;
-        }
-      }), arrow({
-        element: arrowEl,
-        padding: 8
-      }), keepinview({
-        padding: 24
-      })],
-  }
+    isTargetValid(target)
+      ? target
+      : document.body,
+    tooltipEl,
+    {
+      // placement: 'bottom-start',
+      middleware: [
+        // flip(),
+        target
+          ? autoPlacement({
+            alignment: step.alignment || "bottom-start",
+          })
+          : positionInView({
+            placement: step.placement || "center-middle"
+          }),
+        offset(offsetAssist),
+        highlight({
+          element: highlightEl,
+          padding: step.context.options.padding
+        }),
+        arrow({
+          element: arrowEl,
+          padding: 8
+        }),
+        keepinview({
+          padding: 24
+        })],
+    }
   ).then(({ x, y, middlewareData, placement }) => {
     setStyle(tooltipEl, {
       left: `${x}px`,
@@ -80,8 +140,8 @@ function positionTooltip(target, tooltipEl, arrowEl, context) {
         left: "right"
       }[side];
       setStyle(arrowEl, {
-        left: middlewareData.arrow.x != null ? `${middlewareData.arrow.x}px` : '',
-        top: middlewareData.arrow.y != null ? `${middlewareData.arrow.y}px` : '',
+        left: middlewareData.arrow.x != null ? `${middlewareData.arrow.x}px` : "",
+        top: middlewareData.arrow.y != null ? `${middlewareData.arrow.y}px` : "",
         right: "",
         bottom: "",
         [staticSide]: `${-arrowEl.offsetWidth / 2}px`,
@@ -98,17 +158,17 @@ export default class Step {
         <div id="tooltip-title-${this.index}" role="heading" class="guided-tour-step-title">${this.context._decorateText(this.title, this)}</div>
         <div class="guided-tour-step-content">${this.context._decorateText(this.content, this)}</div>
       </div>`);
-      content.find('a').on('click', e => {
+      content.find("a").on("click", e => {
         this.context.action(e, { action: "link" });
       });
       if (Array.isArray(this.actions) && this.actions.length > 0) {
         const actions = u(`<div class="guided-tour-step-actions">
           ${this.actions
-            .map((action, index) => `<${action.href ? "a" : "button"} id="${action.id}" ${action.href ? `href="${action.href}"` : ""} ${action.target ? `target="${action.target}"` : ""} class="button${action.primary ? " primary" : ""}" data-index="${index}">${action.label}</${action.href ? "a" : "button"}>`)
-            .join("")
-          }
+    .map((action, index) => `<${action.href ? "a" : "button"} id="${action.id}" ${action.href ? `href="${action.href}"` : ""} ${action.target ? `target="${action.target}"` : ""} class="button${action.primary ? " primary" : ""}" data-index="${index}">${action.label}</${action.href ? "a" : "button"}>`)
+    .join("")
+}
         </div>`);
-        actions.find('a, button').on('click', e => {
+        actions.find("a, button").on("click", e => {
           const action = this.actions[parseInt(e.target.dataset.index)];
           if (action.action) e.preventDefault();
           this.context.action(e, action);
@@ -117,11 +177,11 @@ export default class Step {
       }
       const tooltip = this.tooltip = u("<div role=\"document\" class=\"guided-tour-step-tooltip\"></div>");
       if (this.width) setStyle(tooltip, { width: this.width + "px", maxWidth: this.width + "px" });
-      if (this.height) setStyle(tooltip, { height: this.height  + "px", maxHeight: this.height  + "px" });
+      if (this.height) setStyle(tooltip, { height: this.height + "px", maxHeight: this.height + "px" });
       const tooltipinner = u(`<div class="guided-tour-step-tooltip-inner${this.layout === "horizontal" ? " step-layout-horizontal" : ""}"></div>`);
-      const container = u(`<div class="guided-tour-step-content-container"></div>`);
+      const container = u("<div class=\"guided-tour-step-content-container\"></div>");
       container.append(image).append(content);
-      const arrow = this.arrow = u(`<div class="guided-tour-arrow"></div>`);
+      const arrow = this.arrow = u("<div class=\"guided-tour-arrow\"></div>");
       if (this.navigation) {
         const footer = u(`<div class="guided-tour-step-footer">
                   <button class="guided-tour-step-button guided-tour-step-button-close" title="End tour">
@@ -194,14 +254,14 @@ export default class Step {
     assert((
       data.hasOwnProperty("title")
     ),
-      "missing required step parameter: title\n" +
+    "missing required step parameter: title\n" +
       JSON.stringify(data, null, 2) + "\n" +
       "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach"
     );
     assert((
       data.hasOwnProperty("content")
     ),
-      "missing required step parameter: content\n" +
+    "missing required step parameter: content\n" +
       JSON.stringify(data, null, 2) + "\n" +
       "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach"
     );
@@ -213,7 +273,8 @@ export default class Step {
     this.width = data.width;
     this.height = data.height;
     this.layout = data.layout || "vertical";
-    this.placement = data.placement || "bottom";
+    this.alignment = data.alignment || context.options.alignment || "bottom-start";
+    this.placement = data.placement || context.options.placement || "middle-center";
     this.overlay = data.overlay !== false;
     this.navigation = data.navigation !== false;
     if (data.image &&
@@ -247,39 +308,45 @@ export default class Step {
     this.el.remove();
   }
   position() {
-    const view = getViewportRect(this.context._options.root);
+    // const view = getViewportRect(this.context._options.root);
     const tooltip = this.tooltip;
-    const highlight = this.highlight;
-    let highlightStyle = {
-      top: 0,
-      left: 0,
-      width: 0,
-      height: 0
-    };
+    // const highlight = this.highlight;
+    // let highlightStyle = {
+    //   top: 0,
+    //   left: 0,
+    //   width: 0,
+    //   height: 0
+    // };
 
-    if (isTargetValid(this.target)) {
-      if (this.overlay && this.highlight) {
-        const targetRect = getBoundingClientRect(this.target, this.context._options.root);
-        highlightStyle.top = `${targetRect.top - this.context.options.padding}px`;
-        highlightStyle.left = `${targetRect.left - this.context.options.padding}px`;
-        highlightStyle.width = `${targetRect.width + this.context.options.padding * 2}px`;
-        highlightStyle.height = `${targetRect.height + this.context.options.padding * 2}px`;
-        setStyle(highlight, highlightStyle);
-      }
-      positionTooltip(this.target, tooltip.first(), this.arrow.first(), this.context);
-    } else {
-      if (this.overlay && this.highlight) setStyle(highlight, highlightStyle);
+    // if (isTargetValid(this.target)) {
+    //   if (this.overlay && this.highlight) {
+    //     const targetRect = getBoundingClientRect(this.target, this.context._options.root);
+    //     highlightStyle.top = `${targetRect.top - this.context.options.padding}px`;
+    //     highlightStyle.left = `${targetRect.left - this.context.options.padding}px`;
+    //     highlightStyle.width = `${targetRect.width + this.context.options.padding * 2}px`;
+    //     highlightStyle.height = `${targetRect.height + this.context.options.padding * 2}px`;
+    //     setStyle(highlight, highlightStyle);
+    //   }
+    //   positionTooltip(this.target, tooltip.first(), this.arrow.first(), this.context);
+    // } else {
+    //   if (this.overlay && this.highlight) setStyle(highlight, highlightStyle);
 
-      const tootipStyle = {};
-      const tooltipRect = getBoundingClientRect(tooltip, this.context._options.root);
-      tootipStyle.top = view.height / 2 + view.scrollY - view.rootTop - (tooltipRect.height / 2);
-      tootipStyle.left = view.width / 2 + view.scrollX - view.rootLeft - (tooltipRect.width / 2);
-      tootipStyle.bottom = "unset";
-      tootipStyle.right = "unset";
-      tooltip.addClass("guided-tour-arrow-none");
-      setStyle(tooltip, tootipStyle);
+    //   const tootipStyle = {};
+    //   const tooltipRect = getBoundingClientRect(tooltip, this.context._options.root);
+    //   tootipStyle.top = view.height / 2 + view.scrollY - view.rootTop - (tooltipRect.height / 2);
+    //   tootipStyle.left = view.width / 2 + view.scrollX - view.rootLeft - (tooltipRect.width / 2);
+    //   tootipStyle.bottom = "unset";
+    //   tootipStyle.right = "unset";
+    //   tooltip.addClass("guided-tour-arrow-none");
+    //   setStyle(tooltip, tootipStyle);
+    //   if (this.overlay) this.context._overlay.show();
+    // }
+    debugger;
+    if (!(isTargetValid(this.target) && this.overlay && this.highlight)) {
+      // tooltip.addClass("guided-tour-arrow-none");
       if (this.overlay) this.context._overlay.show();
     }
+    positionTooltip(this.target, this.tooltip.first(), this.arrow.first(), this.highlight, this);
   }
   cancel() {
     if (this._timerHandler) clearTimeout(this._timerHandler);

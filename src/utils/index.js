@@ -36,7 +36,7 @@ export function getDataContents(data = "", defaults = {}) {
 }
 
 export function isTargetValid(target) {
-  return target && target.offsetParent !== null;
+  return target && !!(target.offsetWidth || target.offsetHeight || target.getClientRects().length);
 }
 
 /**

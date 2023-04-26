@@ -1,0 +1,22 @@
+[
+  {
+    "image": "https://cdn.docsie.io/boo_YBxyfTrjZMXeoOVqz/0df8e9d7-5a26-4d7c-3c95-36c520fd3768image.png",
+    "title": "Lets take a moment and look around Docsie book editing",
+    "content": "Click <kbd>&gt;</kbd> button to advance to the next step of this tour.<br/>To stop this tour at any time click <kbd>×</kbd> button in the top-right corner.",
+    "width": "380px",
+    "selector": null
+  },
+  {
+    "image": "https://cdn.docsie.io/boo_YBxyfTrjZMXeoOVqz/0df8e9d7-5a26-4d7c-3c95-36c520fd3768image.png",
+    "title": "Lets take a moment and look around Docsie book editing",
+    "content": "Click <kbd>&gt;</kbd> button to advance to the next step of this tour.<br/>To stop this tour at any time click <kbd>×</kbd> button in the top-right corner.",
+    "width": "380px",
+    "selector": null
+  },
+  {
+    "image": null,
+    "title": "onBlur",
+    "content": "A function which sends the input's <dfn>onBlur</dfn> event to the library. It should be assigned to the input's <dfn>onBlur</dfn> prop.",
+    "selector": ""
+  }
+]

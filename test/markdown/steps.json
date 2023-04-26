@@ -3,10 +3,11 @@
     "image": "https://cdn.docsie.io/workspace_x276s7jrJhnLKVh3n/doc_eIWkWMNchrMYpUSGw/file_zL84IvnQjMxj3wAvR/6f7ee74d-48c0-e460-4e51-b0fae3a839a3castlebytheriver2.png",
     "width": "320px",
     "title": "Introducing timelines",
-    "placement": "bottom-right",
+    "placement": "bottom-end",
     "content": "**{username}**, we have a new way to view project progress and track status. [Learn more](https://help.docsie.io)",
     "overlay": false,
     "navigation": false,
+    "hidden": true,
     "actions": [
       {
         "id": "got_it",
@@ -22,14 +23,19 @@
     ]
   },
   {
+    "type": "navigate",
+    "hidden": true,
+    "target": "http://127.0.0.1:8081/test/markdown/?test=test"
+  },
+  {
     "selector": "body>div:first-of-type>div>p:first-of-type>button",
     "title": "Testing actions",
     "content": "**Click** the {fontsize,16,button} to see the {fontsize,20,result}"
   },
   {
-    "selector": "h2",
+    "type": "videoplayer",
+    "selector": "h2zzzz",
     "video": "http://techslides.com/demos/sample-videos/small.webm",
-    "image": "https://cdn.docsie.io/workspace_x276s7jrJhnLKVh3n/doc_eIWkWMNchrMYpUSGw/file_zL84IvnQjMxj3wAvR/6f7ee74d-48c0-e460-4e51-b0fae3a839a3castlebytheriver2.png",
     "width": "320px",
     "title": "Paragraphs & Emphasis",
     "content": "<p>I really like using Markdown.<br>\nAnd the next line.<br>\n<strong>This</strong> is bold text.<br>\n<em>This</em> is italic text.<br>\n<strong><em>This</em></strong> is important text.</p>"
@@ -40,8 +46,14 @@
     "content": "> Dorothy followed her through many of the beautiful rooms in her castle.\n> \n> The Witch bade her clean the pots and kettles and sweep the floor and keep the fire fed with wood.\n 1. First item\n2. Second item\n3. Third item\n4. Fourth item"
   },
   {
+    "type": "navigate",
+    "hidden": true,
+    "target": "http://127.0.0.1:8081/test/markdown/More"
+  },
+  {
     "title": "NOT a markdown",
-    "content": "This in <b>NOT</b> a <mark>markdown</mark> string!"
+    "content": "This in <b>NOT</b> a <mark>markdown</mark> string!",
+    "selector": "body>div:first-of-type>main>div:nth-of-type(3)>div:nth-of-type(7)>button"
   },
   {
     "title": "Markdown with checkmarks",
@@ -57,6 +69,11 @@
         "action": "custom"
       }
     ]
+  },
+  {
+    "type": "action",
+    "selector": "#dropdownMenuButton1",
+    "title": "Click this button to see the dropdown menu!"
   },
   {
     "selector": "body>div:first-of-type>div>div>ul>li:first-of-type>a",

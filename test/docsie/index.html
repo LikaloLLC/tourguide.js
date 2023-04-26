@@ -1,0 +1,1237 @@
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="googlebot" content="noindex, nofollow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tourguide.js</title>
+    <link href="https://appcdn2.docsie.io/js/manager/stable/css/manager.css" rel="stylesheet">
+</head>
+
+<body class="pure docsie docsie-blue" id="layout">
+    <div id="container">
+        <div id="library" data-component="library" class="docsie-g" data-docsie-tag="library">
+            <div class="library-shelves docsie-border-right docsie-border-2x docsie-bg-gray-light"
+                style="position: sticky; user-select: auto; top: 0px; width: 230px; height: 100vh; max-width: 320px; min-width: 180px; box-sizing: border-box; flex-shrink: 0;">
+                <nav class="docsie-menu docsie-txt-small" data-docsie-tag="navigation">
+                    <ul class="docsie-menu-list library-shelves-actions" style="padding-top: 6px;">
+                        <li class="docsie-menu-item  docsie-form no-space" data-component="librarytoolbarsort">
+                            <div class="h-space">
+                                <div class="select-search css-b62m3t-container"><span id="react-select-2-live-region"
+                                        class="css-7pg0cj-a11yText"></span><span aria-live="polite" aria-atomic="false"
+                                        aria-relevant="additions text" class="css-7pg0cj-a11yText"></span>
+                                    <div class=" css-1s2u09g-control">
+                                        <div class=" css-1d8n9bt">
+                                            <div class=" css-tcq528-singleValue">
+                                                <div class="docsie-g undefined">
+                                                    <div
+                                                        class="docsie-g docsie-g-row docsie-g-nowrap docsie-g-align-center">
+                                                        <img class="docsie-icon docsie-rounded"
+                                                            src="https://cdn.docsie.io/workspaces/workspace_sba7NmMcDDhdoadg4/logo.png"
+                                                            width="16" height="16"
+                                                            style="flex-shrink: 0; margin-right: 5px;"><span
+                                                            class="docsie-g docsie-g-col"
+                                                            style="pointer-events: none;"><span
+                                                                class="docsie-ellipsis">ImportTest5</span></span></div>
+                                                </div>
+                                            </div>
+                                            <div class=" css-ackcql" data-value=""><input class="" autocapitalize="none"
+                                                    autocomplete="off" autocorrect="off" id="react-select-2-input"
+                                                    spellcheck="false" tabindex="0" type="text" aria-autocomplete="list"
+                                                    aria-expanded="false" aria-haspopup="true" role="combobox" value=""
+                                                    style="color: inherit; background: 0px center; opacity: 1; width: 100%; grid-area: 1 / 2 / auto / auto; font: inherit; min-width: 2px; border: 0px; margin: 0px; outline: 0px; padding: 0px;">
+                                            </div>
+                                        </div>
+                                        <div class=" css-1wy0on6"><span class=" css-1okebmr-indicatorSeparator"></span>
+                                            <div class=" css-tlfecz-indicatorContainer" aria-hidden="true"><svg
+                                                    height="20" width="20" viewBox="0 0 20 20" aria-hidden="true"
+                                                    focusable="false" class="css-8mmkcg">
+                                                    <path
+                                                        d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z">
+                                                    </path>
+                                                </svg></div>
+                                        </div>
+                                    </div><input name="libraryWorkspaceSelectorInput" type="hidden"
+                                        value="workspace_sba7NmMcDDhdoadg4">
+                                </div>
+                            </div>
+                        </li>
+                        <li class="docsie-menu-separator docsie-txt-small"></li>
+                        <li class="docsie-menu-item "><a data-component="routedlink"
+                                class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                href="#/home"><span class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                        class="docsie-u docsie-g"><strong class="menu-link-label"><svg
+                                                class="icon icon--home " viewBox="0 0 20 20" width="16" height="16">
+                                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-home">
+                                                </use>
+                                            </svg>&nbsp;&nbsp;Workspace home</strong></span></span></a></li>
+                        <li class="docsie-menu-item "><a data-component="routedlink"
+                                class="docsie-menu-link docsie-menu-wrap docsie-ellipsis " href="#/notifications"><span
+                                    class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                        class="docsie-u docsie-g"><strong class="menu-link-label"><svg
+                                                class="icon icon--notification-feed " viewBox="0 0 20 20" width="16"
+                                                height="16">
+                                                <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                    xlink:href="#icon-notification-feed"></use>
+                                            </svg>&nbsp;&nbsp;Notification feed</strong></span></span></a></li>
+                        <li class="docsie-menu-item"><button data-component="menutrigger"
+                                class="docsie-button docsie-button-link docsie-menu-link docsie-txt-left docsie-button-fill "
+                                type="button"><span><strong class="menu-link-label"><svg class="icon icon--more "
+                                            viewBox="0 0 20 20" width="16" height="16">
+                                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-more">
+                                            </use>
+                                        </svg>&nbsp;&nbsp;More</strong></span></button></li>
+                        <li
+                            class="docsie-form no-space h-box docsie-g docsie-u-1 docsie-g-row docsie-g-nowrap docsie-g-align-center">
+                            <div class="docsie-input-1 docsie-txt-small css-b62m3t-container"><span
+                                    id="react-select-3-live-region" class="css-7pg0cj-a11yText"></span><span
+                                    aria-live="polite" aria-atomic="false" aria-relevant="additions text"
+                                    class="css-7pg0cj-a11yText"></span>
+                                <div class="menu-filter__control css-1s2u09g-control">
+                                    <div
+                                        class="menu-filter__value-container menu-filter__value-container--is-multi css-1d8n9bt">
+                                        <div class="menu-filter__placeholder css-14el2xx-placeholder"
+                                            id="react-select-3-placeholder">Filter shelves...</div>
+                                        <div class="menu-filter__input-container css-ackcql" data-value=""><input
+                                                class="menu-filter__input" autocapitalize="none" autocomplete="off"
+                                                autocorrect="off" id="react-select-3-input" spellcheck="false"
+                                                tabindex="0" type="text" aria-autocomplete="list" aria-expanded="false"
+                                                aria-haspopup="true" role="combobox"
+                                                aria-describedby="react-select-3-placeholder" value=""
+                                                style="color: inherit; background: 0px center; opacity: 1; width: 100%; grid-area: 1 / 2 / auto / auto; font: inherit; min-width: 2px; border: 0px; margin: 0px; outline: 0px; padding: 0px;">
+                                        </div>
+                                    </div>
+                                    <div class="menu-filter__indicators css-1wy0on6"><span
+                                            class="menu-filter__indicator-separator css-1okebmr-indicatorSeparator"></span>
+                                        <div class="menu-filter__indicator menu-filter__dropdown-indicator css-tlfecz-indicatorContainer"
+                                            aria-hidden="true"><svg height="20" width="20" viewBox="0 0 20 20"
+                                                aria-hidden="true" focusable="false" class="css-8mmkcg">
+                                                <path
+                                                    d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z">
+                                                </path>
+                                            </svg></div>
+                                    </div>
+                                </div>
+                                <div><input name="tags" type="hidden" value=""></div>
+                            </div>&nbsp;&nbsp;<div class="docsie-button-group v-space"><button
+                                    class="docsie-button docsie-button-small  docsie-button-secondary docsie-button-icon"
+                                    aria-label="Show recent shelves"><svg class="icon icon--clock " viewBox="0 0 20 20"
+                                        width="10" height="10">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-clock"></use>
+                                    </svg></button><button
+                                    class="docsie-button docsie-button-small  docsie-button-secondary docsie-button-icon"
+                                    aria-label="Show starred shelves"><svg class="icon icon--star-fill "
+                                        viewBox="0 0 20 20" width="10" height="10">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-star-fill">
+                                        </use>
+                                    </svg></button></div>
+                        </li>
+                        <li class="docsie-menu-item"><a data-component="routedlink"
+                                class="docsie-menu-link docsie-menu-wrap docsie-ellipsis "
+                                href="#/book/boo_eqvdgTfmk6Hpq0PRh/"><span
+                                    class="menu-link-label">ImportTest5</span><small class="docsie-txt-muted">Landing
+                                    page</small><span class="docsie-txt-muted" style="float: right;"><svg
+                                        aria-label="Published as a web portal"
+                                        class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20" width="8"
+                                        height="8">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                            xlink:href="#icon-cloud-published"></use>
+                                    </svg></span></a></li>
+                    </ul>
+                    <div class="library-shelves-container docsie-overflow-y">
+                        <ul class="docsie-menu-list">
+                            <li class="docsie-menu-heading heading-small"><svg class="icon icon--library "
+                                    viewBox="0 0 20 20" width="12" height="12">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-library"></use>
+                                </svg>&nbsp;Shelves (13)</li>
+                            <li class="docsie-menu-item "><a data-component="routedlink"
+                                    class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                    href="#/doc_AUMpdQgoHX3iH66X4"><span
+                                        class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                            class="docsie-relative" style="margin: 0px 0.5em 0px 0px;"><span
+                                                class="docsie-avatar  " aria-label="Support"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                                    height="24">
+                                                    <mask id="87bcb15c-284e-0eaf-4b38-f35fe4c2b072">
+                                                        <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                    </mask>
+                                                    <circle cx="10" cy="10" r="8.5" fill="#fff"
+                                                        class="avatar-background"></circle>
+                                                    <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                        stroke-width="1" class="avatar-border"></circle><text x="10"
+                                                        y="13" class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                        font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                        word-spacing="0" fill="#39464e"
+                                                        style="line-height: 1.25; text-align: center;">
+                                                        <tspan>Su</tspan>
+                                                    </text>
+                                                </svg></span><span class="docsie-txt-muted"
+                                                style="position: absolute; bottom: -5px; right: -5px;"><svg
+                                                    aria-label="Published as a web portal"
+                                                    class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20"
+                                                    width="8" height="8">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                        xlink:href="#icon-cloud-published"></use>
+                                                </svg></span></span><span class="docsie-u docsie-g"><strong
+                                                class="menu-link-label">Support</strong></span></span></a></li>
+                            <li class="docsie-menu-item "><a data-component="routedlink"
+                                    class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                    href="#/doc_MepU7Du7wdTbMA37l"><span
+                                        class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                            class="docsie-relative" style="margin: 0px 0.5em 0px 0px;"><span
+                                                class="docsie-avatar  " aria-label="Datasheets"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                                    height="24">
+                                                    <mask id="f7a91ffb-e670-299d-3f23-e88456efb7b6">
+                                                        <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                    </mask>
+                                                    <circle cx="10" cy="10" r="8.5" fill="#fff"
+                                                        class="avatar-background"></circle>
+                                                    <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                        stroke-width="1" class="avatar-border"></circle><text x="10"
+                                                        y="13" class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                        font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                        word-spacing="0" fill="#39464e"
+                                                        style="line-height: 1.25; text-align: center;">
+                                                        <tspan>Da</tspan>
+                                                    </text>
+                                                </svg></span><span class="docsie-txt-muted"
+                                                style="position: absolute; bottom: -5px; right: -5px;"><svg
+                                                    aria-label="Published as a web portal"
+                                                    class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20"
+                                                    width="8" height="8">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                        xlink:href="#icon-cloud-published"></use>
+                                                </svg></span></span><span class="docsie-u docsie-g"><strong
+                                                class="menu-link-label">Datasheets</strong></span></span></a></li>
+                            <li class="docsie-menu-item "><a data-component="routedlink"
+                                    class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                    href="#/doc_5xFaqTrKlwZ9sh1fF"><span
+                                        class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                            class="docsie-relative" style="margin: 0px 0.5em 0px 0px;"><span
+                                                class="docsie-avatar  " aria-label="Software &amp; Driver"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                                    height="24">
+                                                    <mask id="55ae7832-3cbb-e9fa-8703-189cc63784c8">
+                                                        <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                    </mask>
+                                                    <circle cx="10" cy="10" r="8.5" fill="#fff"
+                                                        class="avatar-background"></circle>
+                                                    <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                        stroke-width="1" class="avatar-border"></circle><text x="10"
+                                                        y="13" class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                        font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                        word-spacing="0" fill="#39464e"
+                                                        style="line-height: 1.25; text-align: center;">
+                                                        <tspan>So</tspan>
+                                                    </text>
+                                                </svg></span><span class="docsie-txt-muted"
+                                                style="position: absolute; bottom: -5px; right: -5px;"><svg
+                                                    aria-label="Published as a web portal"
+                                                    class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20"
+                                                    width="8" height="8">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                        xlink:href="#icon-cloud-published"></use>
+                                                </svg></span></span><span class="docsie-u docsie-g"><strong
+                                                class="menu-link-label">Software &amp; Driver</strong></span></span></a>
+                            </li>
+                            <li class="docsie-menu-item "><a data-component="routedlink"
+                                    class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                    href="#/doc_98bimwBQcL7YmQVnh"><span
+                                        class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                            class="docsie-relative" style="margin: 0px 0.5em 0px 0px;"><span
+                                                class="docsie-avatar  " aria-label="App Notes"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                                    height="24">
+                                                    <mask id="d10b8c27-37e4-727e-2900-ee43c6729bd7">
+                                                        <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                    </mask>
+                                                    <circle cx="10" cy="10" r="8.5" fill="#fff"
+                                                        class="avatar-background"></circle>
+                                                    <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                        stroke-width="1" class="avatar-border"></circle><text x="10"
+                                                        y="13" class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                        font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                        word-spacing="0" fill="#39464e"
+                                                        style="line-height: 1.25; text-align: center;">
+                                                        <tspan>Ap</tspan>
+                                                    </text>
+                                                </svg></span><span class="docsie-txt-muted"
+                                                style="position: absolute; bottom: -5px; right: -5px;"><svg
+                                                    aria-label="Published as a web portal"
+                                                    class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20"
+                                                    width="8" height="8">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                        xlink:href="#icon-cloud-published"></use>
+                                                </svg></span></span><span class="docsie-u docsie-g"><strong
+                                                class="menu-link-label">App Notes</strong></span></span></a></li>
+                            <li class="docsie-menu-item "><a data-component="routedlink"
+                                    class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                    href="#/doc_tsCSHnxyffuhBfPHF"><span
+                                        class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                            class="docsie-relative" style="margin: 0px 0.5em 0px 0px;"><span
+                                                class="docsie-avatar  " aria-label="Quickstart Tutorials"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                                    height="24">
+                                                    <mask id="1606a97b-4472-6f3c-6094-269150ae801d">
+                                                        <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                    </mask>
+                                                    <circle cx="10" cy="10" r="8.5" fill="#fff"
+                                                        class="avatar-background"></circle>
+                                                    <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                        stroke-width="1" class="avatar-border"></circle><text x="10"
+                                                        y="13" class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                        font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                        word-spacing="0" fill="#39464e"
+                                                        style="line-height: 1.25; text-align: center;">
+                                                        <tspan>Qu</tspan>
+                                                    </text>
+                                                </svg></span><span class="docsie-txt-muted"
+                                                style="position: absolute; bottom: -5px; right: -5px;"><svg
+                                                    aria-label="Published as a web portal"
+                                                    class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20"
+                                                    width="8" height="8">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                        xlink:href="#icon-cloud-published"></use>
+                                                </svg></span></span><span class="docsie-u docsie-g"><strong
+                                                class="menu-link-label">Quickstart Tutorials</strong></span></span></a>
+                            </li>
+                            <li class="docsie-menu-item "><a data-component="routedlink"
+                                    class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                    href="#/doc_c0tgw2carMZ2TYXd6"><span
+                                        class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                            class="docsie-relative" style="margin: 0px 0.5em 0px 0px;"><span
+                                                class="docsie-avatar  " aria-label="FAQ"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                                    height="24">
+                                                    <mask id="f3c86b41-2ec0-ab24-8c22-5b023e100fa3">
+                                                        <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                    </mask>
+                                                    <circle cx="10" cy="10" r="8.5" fill="#fff"
+                                                        class="avatar-background"></circle>
+                                                    <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                        stroke-width="1" class="avatar-border"></circle><text x="10"
+                                                        y="13" class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                        font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                        word-spacing="0" fill="#39464e"
+                                                        style="line-height: 1.25; text-align: center;">
+                                                        <tspan>FA</tspan>
+                                                    </text>
+                                                </svg></span><span class="docsie-txt-muted"
+                                                style="position: absolute; bottom: -5px; right: -5px;"><svg
+                                                    aria-label="Published as a web portal"
+                                                    class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20"
+                                                    width="8" height="8">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                        xlink:href="#icon-cloud-published"></use>
+                                                </svg></span></span><span class="docsie-u docsie-g"><strong
+                                                class="menu-link-label">FAQ</strong></span></span></a></li>
+                            <li class="docsie-menu-item "><a data-component="routedlink"
+                                    class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                    href="#/doc_C4gMUdz1SQXfTZWCT"><span
+                                        class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                            class="docsie-relative" style="margin: 0px 0.5em 0px 0px;"><span
+                                                class="docsie-avatar  " aria-label="U3"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                                    height="24">
+                                                    <mask id="39421dbe-c52b-ae83-7290-e3eb28712e0e">
+                                                        <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                    </mask>
+                                                    <circle cx="10" cy="10" r="8.5" fill="#fff"
+                                                        class="avatar-background"></circle>
+                                                    <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                        stroke-width="1" class="avatar-border"></circle><text x="10"
+                                                        y="13" class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                        font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                        word-spacing="0" fill="#39464e"
+                                                        style="line-height: 1.25; text-align: center;">
+                                                        <tspan>U3</tspan>
+                                                    </text>
+                                                </svg></span><span class="docsie-txt-muted"
+                                                style="position: absolute; bottom: -5px; right: -5px;"><svg
+                                                    aria-label="Published as a web portal"
+                                                    class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20"
+                                                    width="8" height="8">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                        xlink:href="#icon-cloud-published"></use>
+                                                </svg></span></span><span class="docsie-u docsie-g"><strong
+                                                class="menu-link-label">U3</strong></span></span></a></li>
+                            <li class="docsie-menu-item "><a data-component="routedlink"
+                                    class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                    href="#/doc_qaynMNdMDgCEJWD1b"><span
+                                        class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                            class="docsie-relative" style="margin: 0px 0.5em 0px 0px;"><span
+                                                class="docsie-avatar  " aria-label="Firmware"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                                    height="24">
+                                                    <mask id="23402956-3541-a957-0f21-c545cd58c885">
+                                                        <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                    </mask>
+                                                    <circle cx="10" cy="10" r="8.5" fill="#fff"
+                                                        class="avatar-background"></circle>
+                                                    <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                        stroke-width="1" class="avatar-border"></circle><text x="10"
+                                                        y="13" class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                        font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                        word-spacing="0" fill="#39464e"
+                                                        style="line-height: 1.25; text-align: center;">
+                                                        <tspan>Fi</tspan>
+                                                    </text>
+                                                </svg></span><span class="docsie-txt-muted"
+                                                style="position: absolute; bottom: -5px; right: -5px;"><svg
+                                                    aria-label="Published as a web portal"
+                                                    class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20"
+                                                    width="8" height="8">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                        xlink:href="#icon-cloud-published"></use>
+                                                </svg></span></span><span class="docsie-u docsie-g"><strong
+                                                class="menu-link-label">Firmware</strong></span></span></a></li>
+                            <li class="docsie-menu-item "><a data-component="routedlink"
+                                    class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                    href="#/doc_RUYfMDL0laMm08xZR"><span
+                                        class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                            class="docsie-relative" style="margin: 0px 0.5em 0px 0px;"><span
+                                                class="docsie-avatar  " aria-label="U6"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                                    height="24">
+                                                    <mask id="e68f3768-d647-329b-9bbc-0a6551cda33d">
+                                                        <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                    </mask>
+                                                    <circle cx="10" cy="10" r="8.5" fill="#fff"
+                                                        class="avatar-background"></circle>
+                                                    <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                        stroke-width="1" class="avatar-border"></circle><text x="10"
+                                                        y="13" class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                        font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                        word-spacing="0" fill="#39464e"
+                                                        style="line-height: 1.25; text-align: center;">
+                                                        <tspan>U6</tspan>
+                                                    </text>
+                                                </svg></span><span class="docsie-txt-muted"
+                                                style="position: absolute; bottom: -5px; right: -5px;"><svg
+                                                    aria-label="Published as a web portal"
+                                                    class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20"
+                                                    width="8" height="8">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                        xlink:href="#icon-cloud-published"></use>
+                                                </svg></span></span><span class="docsie-u docsie-g"><strong
+                                                class="menu-link-label">U6</strong></span></span></a></li>
+                            <li class="docsie-menu-item "><a data-component="routedlink"
+                                    class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                    href="#/doc_EHL3vDce1qS7S8n5T"><span
+                                        class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                            class="docsie-relative" style="margin: 0px 0.5em 0px 0px;"><span
+                                                class="docsie-avatar  " aria-label="UE9"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                                    height="24">
+                                                    <mask id="b9037395-31b4-4734-f451-ec0baee98514">
+                                                        <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                    </mask>
+                                                    <circle cx="10" cy="10" r="8.5" fill="#fff"
+                                                        class="avatar-background"></circle>
+                                                    <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                        stroke-width="1" class="avatar-border"></circle><text x="10"
+                                                        y="13" class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                        font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                        word-spacing="0" fill="#39464e"
+                                                        style="line-height: 1.25; text-align: center;">
+                                                        <tspan>UE</tspan>
+                                                    </text>
+                                                </svg></span><span class="docsie-txt-muted"
+                                                style="position: absolute; bottom: -5px; right: -5px;"><svg
+                                                    aria-label="Published as a web portal"
+                                                    class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20"
+                                                    width="8" height="8">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                        xlink:href="#icon-cloud-published"></use>
+                                                </svg></span></span><span class="docsie-u docsie-g"><strong
+                                                class="menu-link-label">UE9</strong></span></span></a></li>
+                            <li class="docsie-menu-item "><a data-component="routedlink"
+                                    class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                    href="#/doc_HhP1nz9lXZcxISFuB"><span
+                                        class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                            class="docsie-relative" style="margin: 0px 0.5em 0px 0px;"><span
+                                                class="docsie-avatar  " aria-label="T4"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                                    height="24">
+                                                    <mask id="cd892763-e3e8-08f0-cd77-f51314326a6e">
+                                                        <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                    </mask>
+                                                    <circle cx="10" cy="10" r="8.5" fill="#fff"
+                                                        class="avatar-background"></circle>
+                                                    <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                        stroke-width="1" class="avatar-border"></circle><text x="10"
+                                                        y="13" class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                        font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                        word-spacing="0" fill="#39464e"
+                                                        style="line-height: 1.25; text-align: center;">
+                                                        <tspan>T4</tspan>
+                                                    </text>
+                                                </svg></span><span class="docsie-txt-muted"
+                                                style="position: absolute; bottom: -5px; right: -5px;"><svg
+                                                    aria-label="Published as a web portal"
+                                                    class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20"
+                                                    width="8" height="8">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                        xlink:href="#icon-cloud-published"></use>
+                                                </svg></span></span><span class="docsie-u docsie-g"><strong
+                                                class="menu-link-label">T4</strong></span></span></a></li>
+                            <li class="docsie-menu-item "><a data-component="routedlink"
+                                    class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                    href="#/doc_mR9TfZZkEtHJfrtd2"><span
+                                        class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                            class="docsie-relative" style="margin: 0px 0.5em 0px 0px;"><span
+                                                class="docsie-avatar  " aria-label="T7"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                                    height="24">
+                                                    <mask id="c31882f5-3380-b36a-df4a-d04cc1a913ba">
+                                                        <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                    </mask>
+                                                    <circle cx="10" cy="10" r="8.5" fill="#fff"
+                                                        class="avatar-background"></circle>
+                                                    <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                        stroke-width="1" class="avatar-border"></circle><text x="10"
+                                                        y="13" class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                        font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                        word-spacing="0" fill="#39464e"
+                                                        style="line-height: 1.25; text-align: center;">
+                                                        <tspan>T7</tspan>
+                                                    </text>
+                                                </svg></span><span class="docsie-txt-muted"
+                                                style="position: absolute; bottom: -5px; right: -5px;"><svg
+                                                    aria-label="Published as a web portal"
+                                                    class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20"
+                                                    width="8" height="8">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                        xlink:href="#icon-cloud-published"></use>
+                                                </svg></span></span><span class="docsie-u docsie-g"><strong
+                                                class="menu-link-label">T7</strong></span></span></a></li>
+                            <li class="docsie-menu-item "><a data-component="routedlink"
+                                    class="docsie-menu-link docsie-menu-wrap docsie-ellipsis docsie-link-active"
+                                    href="#/doc_0VNUHq7bjKqj71vLV"><span
+                                        class="docsie-g docsie-g-align-center docsie-g-nowrap"><span
+                                            class="docsie-relative" style="margin: 0px 0.5em 0px 0px;"><span
+                                                class="docsie-avatar  " aria-label="About"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                                    height="24">
+                                                    <mask id="4d19b216-c3f6-2687-87c4-772cbe0abb7d">
+                                                        <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                    </mask>
+                                                    <circle cx="10" cy="10" r="8.5" fill="#fff"
+                                                        class="avatar-background"></circle>
+                                                    <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                        stroke-width="1" class="avatar-border"></circle><text x="10"
+                                                        y="13" class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                        font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                        word-spacing="0" fill="#39464e"
+                                                        style="line-height: 1.25; text-align: center;">
+                                                        <tspan>Ab</tspan>
+                                                    </text>
+                                                </svg></span><span class="docsie-txt-muted"
+                                                style="position: absolute; bottom: -5px; right: -5px;"><svg
+                                                    aria-label="Published as a web portal"
+                                                    class="icon icon--cloud-published icon-badge " viewBox="0 0 20 20"
+                                                    width="8" height="8">
+                                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                        xlink:href="#icon-cloud-published"></use>
+                                                </svg></span></span><span class="docsie-u docsie-g"><strong
+                                                class="menu-link-label">About</strong></span></span></a></li>
+                        </ul>
+                    </div>
+                    <div class="box docsie-menu-footer docsie-button-group docsie-txt-center docsie-sticky docsie-bg-gray-light"
+                        style="bottom: 0px;"><button
+                            class="docsie-button docsie-u-1-4  docsie-button-secondary docsie-button-icon"
+                            aria-label="Organize"><svg class="icon icon--order " viewBox="0 0 20 20" width="20"
+                                height="20">
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-order"></use>
+                            </svg></button><button class="docsie-button docsie-u-3-4  docsie-button-secondary"><span
+                                class="hide-xs">Add Shelf</span><span class="h-box box-1-2"></span><svg
+                                class="icon icon--plus " viewBox="0 0 20 20" width="20" height="20">
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-plus"></use>
+                            </svg></button></div>
+                </nav>
+                <div>
+                    <div class="editor-resize-handle editor-resize-handle-right editor-resize-handle-align-right"
+                        style="position: absolute; user-select: none; width: 10px; height: 100%; top: 0px; cursor: col-resize; right: -5px;">
+                    </div>
+                </div>
+            </div>
+            <div class="libary-books docsie-u">
+                <header id="header" data-component="header"
+                    class="docsie-bg-white docsie-txt-white docsie-border-bottom docsie-border-2x">
+                    <nav class="docsie-menu docsie-menu-horizontal editor-menu" data-component="headertoolbar"
+                        style="height: 100%;">
+                        <ul class="docsie-menu-list docsie-menu-scroll menu-flex menu-spacer undefined"
+                            data-component="headertoolbaractions" style="align-items: center;">&nbsp;&nbsp;<li
+                                class="docsie-menu-item  h-space docsie-form" data-component="librarytoolbarsearch">
+                                <button class="docsie-input docsie-search-input"><svg
+                                        class="icon icon--search docsie-search-input__icon" viewBox="0 0 20 20"
+                                        width="18" height="18">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-search"></use>
+                                    </svg><span class="docsie-search-input__placeholder docsie-txt-muted">&nbsp;Search
+                                        workspace</span><kbd class="docsie-search-input__keyboard">/</kbd></button></li>
+                            <span class="menu-spacer"></span><button class="docsie-button   docsie-button-ghost"><span
+                                    class="hide-xs">Release</span><span class="h-box box-1-2"></span><svg
+                                    class="icon icon--cloud-upload " viewBox="0 0 20 20" width="20" height="20">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cloud-upload">
+                                    </use>
+                                </svg></button><span
+                                class="docsie-g docsie-g-row docsie-g-align-center collaborators"><button
+                                    data-component="menutrigger"
+                                    class="docsie-button docsie-button-ghost docsie-g docsie-g-row docsie-g-align-center "
+                                    type="button"><span class="docsie-g docsie-g-row collaborators-list"><span
+                                            class="docsie-avatar docsie-avatar-active "
+                                            aria-label="eugene@docsie.io (eugene@docsie.io)"><svg
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="32"
+                                                height="32">
+                                                <mask id="b2b9615d-4319-18a7-2fef-ea800b407f5f">
+                                                    <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                </mask>
+                                                <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                                </circle>
+                                                <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                    stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                    class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                    font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                    word-spacing="0" fill="#39464e"
+                                                    style="line-height: 1.25; text-align: center;">
+                                                    <tspan>eu</tspan>
+                                                </text>
+                                                <image href="https://appcdn2.docsie.io/images/avatars/tile007.png"
+                                                    width="20" height="20"
+                                                    mask="url(#b2b9615d-4319-18a7-2fef-ea800b407f5f)"></image>
+                                            </svg></span></span><span class="h-box box-1-2"></span><span
+                                        class="hide-xs"><span>of 7</span></span></button></span>&nbsp;&nbsp;</ul>
+                        <ul class="docsie-menu-list" data-component="headertoolbarmore">
+                            <li class="docsie-menu-item  " data-component="headertoolbaraction"><button
+                                    data-component="menutrigger"
+                                    class="docsie-button docsie-button-ghost  docsie-button-icon" type="button"
+                                    aria-label="Notifications" disabled=""><svg class="icon icon--bell "
+                                        viewBox="0 0 20 20" width="20" height="20">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-bell"></use>
+                                    </svg></button></li>
+                            <li class="docsie-menu-item  " data-component="headertoolbaraction"><button
+                                    id="docsie-inapp-help-trigger"
+                                    class="docsie-button   docsie-button-ghost docsie-button-icon"
+                                    aria-label="Help &amp; support"><svg class="icon icon--question "
+                                        viewBox="0 0 20 20" width="20" height="20">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-question">
+                                        </use>
+                                    </svg></button></li>&nbsp;<li class="docsie-menu-item  "
+                                data-component="headertoolbaraction"><button data-component="menutrigger"
+                                    class="docsie-button docsie-button-ghost  docsie-button-icon" type="button"
+                                    aria-label="More options"><svg class="icon icon--more " viewBox="0 0 20 20"
+                                        width="20" height="20">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-more"></use>
+                                    </svg></button></li>&nbsp;
+                        </ul>
+                    </nav>
+                    <div role="progress" data-component="progressbar" class="header-progress-bar ">
+                        <div class="progress" style="width: 100%;"></div>
+                    </div>
+                </header>
+                <section class="l-box shelf" data-component="libraryshelf">
+                    <div class="shelf-heading docsie-g docsie-g-row docsie-g-nowrap">
+                        <div class="h-space"><img width="48" height="48"
+                                src="https://cdn.docsie.io/workspaces/workspace_sba7NmMcDDhdoadg4/logo.png"
+                                class="docsie-rounded"></div>
+                        <div class="docsie-u">
+                            <h1 class="no-space docsie-txt-larger"><span
+                                    class="docsie-inline-block docsie-ellipsis docsie-txt-larger docsie-txt-clickable"
+                                    style="white-space: nowrap; max-width: 30vw;">ImportTest5 workspace</span></h1>
+                            <div class="docsie-u docsie-u-lg-2-3 docsie-txt-small docsie-txt-muted v-space space-1-2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space">
+                        <div class="docsie-g docsie-g-row space-children"><button class="docsie-button  " id="tourbutton"><svg
+                                    class="icon icon--folder " viewBox="0 0 20 20" width="20" height="20">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-folder"></use>
+                                </svg><span class="h-box box-1-2"></span><span class="hide-xs">Start tour</span></button><button class="docsie-button  "><svg
+                                    class="icon icon--templates " viewBox="0 0 20 20" width="20" height="20">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-templates"></use>
+                                </svg><span class="h-box box-1-2"></span><span class="hide-xs">Manage workspace
+                                    templates</span></button><button class="docsie-button  "><svg
+                                    class="icon icon--world " viewBox="0 0 20 20" width="20" height="20">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-world"></use>
+                                </svg><span class="h-box box-1-2"></span><span class="hide-xs">Check deployment
+                                    analytics</span></button></div>
+                    </div>
+                    <div class="docsie-g">
+                        <div class="docsie-u-1 docsie-u-xl-1-5 docsie-u-lg-1-4 docsie-u-md-1-2 docsie-txt-small" style="height: 2600px;">
+                            <div class="v-l-space">
+                                <div class="space">
+                                    <h3><svg class="icon icon--task " viewBox="0 0 20 20" width="20" height="20">
+                                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-task">
+                                            </use>
+                                        </svg> Your current tasks</h3>
+                                </div><strong class="docsie-block docsie-txt-center">No tasks assigned</strong>
+                            </div>
+                        </div>
+                        <div class="docsie-u-1 docsie-u-xl-1-4 docsie-u-lg-1-3 docsie-u-md-1-2 docsie-txt-small">
+                            <div class="v-l-space">
+                                <div class="space">
+                                    <h3><svg class="icon icon--commenting " viewBox="0 0 20 20" width="20" height="20">
+                                            <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                xlink:href="#icon-commenting"></use>
+                                        </svg> Recent mentions</h3>
+                                </div><strong class="docsie-block docsie-txt-center">No mentions yet</strong>
+                            </div>
+                        </div>
+                        <div class="docsie-u-1 docsie-u-xl-1-3 docsie-u-lg-2-5 docsie-u-md-1-2 docsie-txt-small">
+                            <div class="l-space">
+                                <h3><svg class="icon icon--notification-feed " viewBox="0 0 20 20" width="20"
+                                        height="20">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                            xlink:href="#icon-notification-feed"></use>
+                                    </svg> What's happening in this workspace</h3>
+                            </div>
+                            <div class="l-space">
+                                <div class="box box-1-2 docsie-border-bottom docsie-g docsie-g-row docsie-g-nowrap">
+                                    <div class="h-space space-1-2 docsie-txt-white"><span class="docsie-avatar  "
+                                            aria-label="oren@labjack.com (oren@labjack.com)"><svg
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="28"
+                                                height="28">
+                                                <mask id="8af4fb1b-1268-c0ad-ca14-90f9761a1256">
+                                                    <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                </mask>
+                                                <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                                </circle>
+                                                <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                    stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                    class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                    font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                    word-spacing="0" fill="#39464e"
+                                                    style="line-height: 1.25; text-align: center;">
+                                                    <tspan>or</tspan>
+                                                </text>
+                                                <image
+                                                    href="https://lh3.googleusercontent.com/a/AATXAJxSOmXE0mqc0FWQ0pzAuo1WNfa36I7a6ymvc_d1=s96-c"
+                                                    width="20" height="20"
+                                                    mask="url(#8af4fb1b-1268-c0ad-ca14-90f9761a1256)"></image>
+                                            </svg></span></div>
+                                    <div class="docsie-u">
+                                        <div class="docsie-txt-small docsie-txt-muted">Apr 25, 22, 01:25 PM</div>
+                                        <div><strong class="docsie-comment-owner ">Oren Schmidt</strong>
+                                            <strong>invited</strong> <a href="#/"><span
+                                                    class="break-word">ImportTest5</span></a> <span>Support@labjack.com
+                                                to workspace ImportTest5</span></div>
+                                    </div>
+                                </div>
+                                <div class="box box-1-2 docsie-border-bottom docsie-g docsie-g-row docsie-g-nowrap">
+                                    <div class="h-space space-1-2 docsie-txt-white"><span class="docsie-avatar  "
+                                            aria-label="eugene.trounev@gmail.com (eugene.trounev@gmail.com)"><svg
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="28"
+                                                height="28">
+                                                <mask id="2f0f58ef-309a-4d6e-f695-91e0174f80da">
+                                                    <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                </mask>
+                                                <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                                </circle>
+                                                <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                    stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                    class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                    font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                    word-spacing="0" fill="#39464e"
+                                                    style="line-height: 1.25; text-align: center;">
+                                                    <tspan>eu</tspan>
+                                                </text>
+                                                <image
+                                                    href="https://cdn.docsie.io/user_profiles/69/logo_logo_JO8HMzRNPeev4G4k36dYoMWJ25Oa1pQo9qDyR2dOsnqox.png"
+                                                    width="20" height="20"
+                                                    mask="url(#2f0f58ef-309a-4d6e-f695-91e0174f80da)"></image>
+                                            </svg></span></div>
+                                    <div class="docsie-u">
+                                        <div class="docsie-txt-small docsie-txt-muted">Apr 21, 22, 01:10 AM</div>
+                                        <div><strong class="docsie-comment-owner ">EugeneT</strong>
+                                            <strong>updated</strong> <a
+                                                href="#https://portals.docsie.io/labjack/importtest5/deployment_wrWpL22KWQNHAqFU3"><span
+                                                    class="break-word"></span></a> <span> deployment of workspace
+                                                ImportTest5 in the workspace ImportTest5</span></div>
+                                    </div>
+                                </div>
+                                <div class="box box-1-2 docsie-border-bottom docsie-g docsie-g-row docsie-g-nowrap">
+                                    <div class="h-space space-1-2 docsie-txt-white"><span class="docsie-avatar  "
+                                            aria-label="eugene.trounev@gmail.com (eugene.trounev@gmail.com)"><svg
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="28"
+                                                height="28">
+                                                <mask id="74ba7b38-4806-3ba4-6bd2-e3ebf974dc10">
+                                                    <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                </mask>
+                                                <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                                </circle>
+                                                <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                    stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                    class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                    font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                    word-spacing="0" fill="#39464e"
+                                                    style="line-height: 1.25; text-align: center;">
+                                                    <tspan>eu</tspan>
+                                                </text>
+                                                <image
+                                                    href="https://cdn.docsie.io/user_profiles/69/logo_logo_JO8HMzRNPeev4G4k36dYoMWJ25Oa1pQo9qDyR2dOsnqox.png"
+                                                    width="20" height="20"
+                                                    mask="url(#74ba7b38-4806-3ba4-6bd2-e3ebf974dc10)"></image>
+                                            </svg></span></div>
+                                    <div class="docsie-u">
+                                        <div class="docsie-txt-small docsie-txt-muted">Apr 21, 22, 01:10 AM</div>
+                                        <div><strong class="docsie-comment-owner ">EugeneT</strong>
+                                            <strong>updated</strong> <a
+                                                href="#https://portals.docsie.io/labjack/importtest5/deployment_wrWpL22KWQNHAqFU3"><span
+                                                    class="break-word"></span></a> <span> deployment of workspace
+                                                ImportTest5 in the workspace ImportTest5</span></div>
+                                    </div>
+                                </div>
+                                <div class="box box-1-2 docsie-border-bottom docsie-g docsie-g-row docsie-g-nowrap">
+                                    <div class="h-space space-1-2 docsie-txt-white"><span class="docsie-avatar  "
+                                            aria-label="eugene.trounev@gmail.com (eugene.trounev@gmail.com)"><svg
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="28"
+                                                height="28">
+                                                <mask id="eda73970-fe3e-7c91-b9bd-fabab5fa25b5">
+                                                    <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                </mask>
+                                                <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                                </circle>
+                                                <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                    stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                    class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                    font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                    word-spacing="0" fill="#39464e"
+                                                    style="line-height: 1.25; text-align: center;">
+                                                    <tspan>eu</tspan>
+                                                </text>
+                                                <image
+                                                    href="https://cdn.docsie.io/user_profiles/69/logo_logo_JO8HMzRNPeev4G4k36dYoMWJ25Oa1pQo9qDyR2dOsnqox.png"
+                                                    width="20" height="20"
+                                                    mask="url(#eda73970-fe3e-7c91-b9bd-fabab5fa25b5)"></image>
+                                            </svg></span></div>
+                                    <div class="docsie-u">
+                                        <div class="docsie-txt-small docsie-txt-muted">Apr 21, 22, 01:10 AM</div>
+                                        <div><strong class="docsie-comment-owner ">EugeneT</strong>
+                                            <strong>updated</strong> <a href="#/doc_0VNUHq7bjKqj71vLV/"><span
+                                                    class="break-word">FAQ</span></a> <span>on the shelf About</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box box-1-2 docsie-border-bottom docsie-g docsie-g-row docsie-g-nowrap">
+                                    <div class="h-space space-1-2 docsie-txt-white"><span class="docsie-avatar  "
+                                            aria-label="eugene.trounev@gmail.com (eugene.trounev@gmail.com)"><svg
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="28"
+                                                height="28">
+                                                <mask id="054f9e19-44ed-6a69-c44a-715ac4b07699">
+                                                    <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                </mask>
+                                                <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                                </circle>
+                                                <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                    stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                    class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                    font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                    word-spacing="0" fill="#39464e"
+                                                    style="line-height: 1.25; text-align: center;">
+                                                    <tspan>eu</tspan>
+                                                </text>
+                                                <image
+                                                    href="https://cdn.docsie.io/user_profiles/69/logo_logo_JO8HMzRNPeev4G4k36dYoMWJ25Oa1pQo9qDyR2dOsnqox.png"
+                                                    width="20" height="20"
+                                                    mask="url(#054f9e19-44ed-6a69-c44a-715ac4b07699)"></image>
+                                            </svg></span></div>
+                                    <div class="docsie-u">
+                                        <div class="docsie-txt-small docsie-txt-muted">Apr 21, 22, 01:10 AM</div>
+                                        <div><strong class="docsie-comment-owner ">EugeneT</strong>
+                                            <strong>updated</strong> <a href="#/doc_0VNUHq7bjKqj71vLV/"><span
+                                                    class="break-word">Home</span></a> <span>on the shelf About</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box box-1-2 docsie-border-bottom docsie-g docsie-g-row docsie-g-nowrap">
+                                    <div class="h-space space-1-2 docsie-txt-white"><span class="docsie-avatar  "
+                                            aria-label="eugene.trounev@gmail.com (eugene.trounev@gmail.com)"><svg
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="28"
+                                                height="28">
+                                                <mask id="77910e18-43ca-1b43-628c-4ae10b459a37">
+                                                    <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                </mask>
+                                                <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                                </circle>
+                                                <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                    stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                    class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                    font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                    word-spacing="0" fill="#39464e"
+                                                    style="line-height: 1.25; text-align: center;">
+                                                    <tspan>eu</tspan>
+                                                </text>
+                                                <image
+                                                    href="https://cdn.docsie.io/user_profiles/69/logo_logo_JO8HMzRNPeev4G4k36dYoMWJ25Oa1pQo9qDyR2dOsnqox.png"
+                                                    width="20" height="20"
+                                                    mask="url(#77910e18-43ca-1b43-628c-4ae10b459a37)"></image>
+                                            </svg></span></div>
+                                    <div class="docsie-u">
+                                        <div class="docsie-txt-small docsie-txt-muted">Apr 21, 22, 01:10 AM</div>
+                                        <div><strong class="docsie-comment-owner ">EugeneT</strong>
+                                            <strong>updated</strong> <a href="#/doc_mR9TfZZkEtHJfrtd2/"><span
+                                                    class="break-word">Home</span></a> <span>on the shelf T7</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box box-1-2 docsie-border-bottom docsie-g docsie-g-row docsie-g-nowrap">
+                                    <div class="h-space space-1-2 docsie-txt-white"><span class="docsie-avatar  "
+                                            aria-label="eugene.trounev@gmail.com (eugene.trounev@gmail.com)"><svg
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="28"
+                                                height="28">
+                                                <mask id="da63532f-b13f-63cb-f995-2885e1cf9bd2">
+                                                    <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                </mask>
+                                                <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                                </circle>
+                                                <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                    stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                    class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                    font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                    word-spacing="0" fill="#39464e"
+                                                    style="line-height: 1.25; text-align: center;">
+                                                    <tspan>eu</tspan>
+                                                </text>
+                                                <image
+                                                    href="https://cdn.docsie.io/user_profiles/69/logo_logo_JO8HMzRNPeev4G4k36dYoMWJ25Oa1pQo9qDyR2dOsnqox.png"
+                                                    width="20" height="20"
+                                                    mask="url(#da63532f-b13f-63cb-f995-2885e1cf9bd2)"></image>
+                                            </svg></span></div>
+                                    <div class="docsie-u">
+                                        <div class="docsie-txt-small docsie-txt-muted">Apr 21, 22, 01:10 AM</div>
+                                        <div><strong class="docsie-comment-owner ">EugeneT</strong>
+                                            <strong>updated</strong> <a href="#/doc_RUYfMDL0laMm08xZR/"><span
+                                                    class="break-word">Home</span></a> <span>on the shelf U6</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box box-1-2 docsie-border-bottom docsie-g docsie-g-row docsie-g-nowrap">
+                                    <div class="h-space space-1-2 docsie-txt-white"><span class="docsie-avatar  "
+                                            aria-label="eugene.trounev@gmail.com (eugene.trounev@gmail.com)"><svg
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="28"
+                                                height="28">
+                                                <mask id="4004959e-dad3-b39a-f7d7-d0af74694e11">
+                                                    <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                </mask>
+                                                <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                                </circle>
+                                                <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                    stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                    class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                    font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                    word-spacing="0" fill="#39464e"
+                                                    style="line-height: 1.25; text-align: center;">
+                                                    <tspan>eu</tspan>
+                                                </text>
+                                                <image
+                                                    href="https://cdn.docsie.io/user_profiles/69/logo_logo_JO8HMzRNPeev4G4k36dYoMWJ25Oa1pQo9qDyR2dOsnqox.png"
+                                                    width="20" height="20"
+                                                    mask="url(#4004959e-dad3-b39a-f7d7-d0af74694e11)"></image>
+                                            </svg></span></div>
+                                    <div class="docsie-u">
+                                        <div class="docsie-txt-small docsie-txt-muted">Apr 21, 22, 01:10 AM</div>
+                                        <div><strong class="docsie-comment-owner ">EugeneT</strong>
+                                            <strong>updated</strong> <a href="#/doc_EHL3vDce1qS7S8n5T/"><span
+                                                    class="break-word">Home</span></a> <span>on the shelf UE9</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box box-1-2 docsie-border-bottom docsie-g docsie-g-row docsie-g-nowrap">
+                                    <div class="h-space space-1-2 docsie-txt-white"><span class="docsie-avatar  "
+                                            aria-label="eugene.trounev@gmail.com (eugene.trounev@gmail.com)"><svg
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="28"
+                                                height="28">
+                                                <mask id="cf38d4c3-8498-99f4-ff6d-52c8d6e4222d">
+                                                    <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                </mask>
+                                                <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                                </circle>
+                                                <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                    stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                    class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                    font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                    word-spacing="0" fill="#39464e"
+                                                    style="line-height: 1.25; text-align: center;">
+                                                    <tspan>eu</tspan>
+                                                </text>
+                                                <image
+                                                    href="https://cdn.docsie.io/user_profiles/69/logo_logo_JO8HMzRNPeev4G4k36dYoMWJ25Oa1pQo9qDyR2dOsnqox.png"
+                                                    width="20" height="20"
+                                                    mask="url(#cf38d4c3-8498-99f4-ff6d-52c8d6e4222d)"></image>
+                                            </svg></span></div>
+                                    <div class="docsie-u">
+                                        <div class="docsie-txt-small docsie-txt-muted">Apr 21, 22, 01:10 AM</div>
+                                        <div><strong class="docsie-comment-owner ">EugeneT</strong>
+                                            <strong>updated</strong> <a href="#/doc_qaynMNdMDgCEJWD1b/"><span
+                                                    class="break-word">U3 Firmware</span></a> <span>on the shelf
+                                                Firmware</span></div>
+                                    </div>
+                                </div>
+                                <div class="box box-1-2 docsie-border-bottom docsie-g docsie-g-row docsie-g-nowrap">
+                                    <div class="h-space space-1-2 docsie-txt-white"><span class="docsie-avatar  "
+                                            aria-label="eugene.trounev@gmail.com (eugene.trounev@gmail.com)"><svg
+                                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="28"
+                                                height="28">
+                                                <mask id="2fa4bd9a-76c9-98c4-c409-03a08c3680b5">
+                                                    <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                                </mask>
+                                                <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                                </circle>
+                                                <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                    stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                    class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                    font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                    word-spacing="0" fill="#39464e"
+                                                    style="line-height: 1.25; text-align: center;">
+                                                    <tspan>eu</tspan>
+                                                </text>
+                                                <image
+                                                    href="https://cdn.docsie.io/user_profiles/69/logo_logo_JO8HMzRNPeev4G4k36dYoMWJ25Oa1pQo9qDyR2dOsnqox.png"
+                                                    width="20" height="20"
+                                                    mask="url(#2fa4bd9a-76c9-98c4-c409-03a08c3680b5)"></image>
+                                            </svg></span></div>
+                                    <div class="docsie-u">
+                                        <div class="docsie-txt-small docsie-txt-muted">Apr 21, 22, 01:10 AM</div>
+                                        <div><strong class="docsie-comment-owner ">EugeneT</strong>
+                                            <strong>updated</strong> <a href="#/doc_qaynMNdMDgCEJWD1b/"><span
+                                                    class="break-word">Digit Firmware (Discontinued)</span></a> <span>on
+                                                the shelf Firmware</span></div>
+                                    </div>
+                                </div>
+                                <div class="space"><a data-component="routedlink" class="undefined "
+                                        href="#/notifications">See all notifications</a></div>
+                            </div>
+                        </div>
+                        <div class="docsie-u-1 docsie-u-xl-1-5 docsie-u-lg-1-4 docsie-u-md-1-2 docsie-txt-small">
+                            <div class="space">
+                                <h3><svg class="icon icon--users " viewBox="0 0 20 20" width="20" height="20">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-users"></use>
+                                    </svg> Workspace users</h3>
+                            </div>
+                            <div class="space">
+                                <div
+                                    class="docsie-g docsie-g-row docsie-g-align-center docsie-border-bottom v-box box-1-2">
+                                    <span class="docsie-avatar  " aria-label="Oren Schmidt"><svg
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                            height="24">
+                                            <mask id="f27e8fd7-0635-addc-7c48-4d3c9be8512d">
+                                                <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                            </mask>
+                                            <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                            </circle>
+                                            <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                word-spacing="0" fill="#39464e"
+                                                style="line-height: 1.25; text-align: center;">
+                                                <tspan>Or</tspan>
+                                            </text>
+                                            <image
+                                                href="https://lh3.googleusercontent.com/a/AATXAJxSOmXE0mqc0FWQ0pzAuo1WNfa36I7a6ymvc_d1=s96-c"
+                                                width="20" height="20"
+                                                mask="url(#f27e8fd7-0635-addc-7c48-4d3c9be8512d)"></image>
+                                        </svg></span><span class="h-space docsie-u">Oren Schmidt</span><span
+                                        class="h-space docsie-txt-muted">(owner)</span></div>
+                                <div
+                                    class="docsie-g docsie-g-row docsie-g-align-center docsie-border-bottom v-box box-1-2">
+                                    <span class="docsie-avatar  " aria-label="nick@docsie.io"><svg
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                            height="24">
+                                            <mask id="283c514c-1f6d-4b79-223f-51712d2c1775">
+                                                <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                            </mask>
+                                            <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                            </circle>
+                                            <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                word-spacing="0" fill="#39464e"
+                                                style="line-height: 1.25; text-align: center;">
+                                                <tspan>ni</tspan>
+                                            </text>
+                                            <image
+                                                href="https://cdn.docsie.io/user_profiles/6132/logo_logo_IPI82O9hlMHjJgKtkuxrK3ODzQxyeREG3KPnL355qBLSw.png"
+                                                width="20" height="20"
+                                                mask="url(#283c514c-1f6d-4b79-223f-51712d2c1775)"></image>
+                                        </svg></span><span class="h-space docsie-u">nick@docsie.io</span><span
+                                        class="h-space docsie-txt-muted">(admin)</span></div>
+                                <div
+                                    class="docsie-g docsie-g-row docsie-g-align-center docsie-border-bottom v-box box-1-2">
+                                    <span class="docsie-avatar  " aria-label="eugene@docsie.io"><svg
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                            height="24">
+                                            <mask id="f84d505f-5ea3-c136-4218-c056b62214b1">
+                                                <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                            </mask>
+                                            <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                            </circle>
+                                            <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                word-spacing="0" fill="#39464e"
+                                                style="line-height: 1.25; text-align: center;">
+                                                <tspan>eu</tspan>
+                                            </text>
+                                            <image href="https://appcdn2.docsie.io/images/avatars/tile007.png"
+                                                width="20" height="20"
+                                                mask="url(#f84d505f-5ea3-c136-4218-c056b62214b1)"></image>
+                                        </svg></span><span class="h-space docsie-u">eugene@docsie.io</span><span
+                                        class="h-space docsie-txt-muted">(admin)</span></div>
+                                <div
+                                    class="docsie-g docsie-g-row docsie-g-align-center docsie-border-bottom v-box box-1-2">
+                                    <span class="docsie-avatar  " aria-label="eugene"><svg
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                            height="24">
+                                            <mask id="3bdb372f-3e3c-bf5b-0c96-4bbca28c133e">
+                                                <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                            </mask>
+                                            <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                            </circle>
+                                            <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                word-spacing="0" fill="#39464e"
+                                                style="line-height: 1.25; text-align: center;">
+                                                <tspan>eu</tspan>
+                                            </text>
+                                            <image
+                                                href="https://cdn.docsie.io/user_profiles/2173/logo_logo_acFb97epFccvuclgZ4JXesMe6WVWcp2BBSISBW8SCDapY.png"
+                                                width="20" height="20"
+                                                mask="url(#3bdb372f-3e3c-bf5b-0c96-4bbca28c133e)"></image>
+                                        </svg></span><span class="h-space docsie-u">eugene</span><span
+                                        class="h-space docsie-txt-muted">(admin)</span></div>
+                                <div
+                                    class="docsie-g docsie-g-row docsie-g-align-center docsie-border-bottom v-box box-1-2">
+                                    <span class="docsie-avatar  " aria-label="Philippe Trounev"><svg
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                            height="24">
+                                            <mask id="084903d0-f308-ec73-e4ef-6a53fb366acc">
+                                                <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                            </mask>
+                                            <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                            </circle>
+                                            <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                word-spacing="0" fill="#39464e"
+                                                style="line-height: 1.25; text-align: center;">
+                                                <tspan>Ph</tspan>
+                                            </text>
+                                            <image
+                                                href="https://cdn.docsie.io/user_profiles/13/logo_logo_Xu0L3QeY1aSEyiRKAvKfQqVtNTDVuLWTfwqbaKys7cdhE.png"
+                                                width="20" height="20"
+                                                mask="url(#084903d0-f308-ec73-e4ef-6a53fb366acc)"></image>
+                                        </svg></span><span class="h-space docsie-u">Philippe Trounev</span><span
+                                        class="h-space docsie-txt-muted">(admin)</span></div>
+                                <div
+                                    class="docsie-g docsie-g-row docsie-g-align-center docsie-border-bottom v-box box-1-2">
+                                    <span class="docsie-avatar  " aria-label="EugeneT"><svg
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                            height="24">
+                                            <mask id="24c8f6d1-dc05-6e81-9a2e-0d6cb0462c2e">
+                                                <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                            </mask>
+                                            <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                            </circle>
+                                            <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                word-spacing="0" fill="#39464e"
+                                                style="line-height: 1.25; text-align: center;">
+                                                <tspan>Eu</tspan>
+                                            </text>
+                                            <image
+                                                href="https://cdn.docsie.io/user_profiles/69/logo_logo_JO8HMzRNPeev4G4k36dYoMWJ25Oa1pQo9qDyR2dOsnqox.png"
+                                                width="20" height="20"
+                                                mask="url(#24c8f6d1-dc05-6e81-9a2e-0d6cb0462c2e)"></image>
+                                        </svg></span><span class="h-space docsie-u">EugeneT</span><span
+                                        class="h-space docsie-txt-muted">(admin)</span></div>
+                                <div
+                                    class="docsie-g docsie-g-row docsie-g-align-center docsie-border-bottom v-box box-1-2">
+                                    <span class="docsie-avatar  " aria-label="Support@labjack.com"><svg
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="24"
+                                            height="24">
+                                            <mask id="1b33589a-9f0e-e115-d189-d1e554fb6611">
+                                                <circle cx="10" cy="10" r="7.5" fill="#fff"></circle>
+                                            </mask>
+                                            <circle cx="10" cy="10" r="8.5" fill="#fff" class="avatar-background">
+                                            </circle>
+                                            <circle cx="10" cy="10" r="9" fill="none" stroke="currentColor"
+                                                stroke-width="1" class="avatar-border"></circle><text x="10" y="13"
+                                                class="avatar-icon" font-family="Open Sans" font-size="9"
+                                                font-weight="700" letter-spacing="0" text-anchor="middle"
+                                                word-spacing="0" fill="#39464e"
+                                                style="line-height: 1.25; text-align: center;">
+                                                <tspan>Su</tspan>
+                                            </text>
+                                            <image href="https://appcdn2.docsie.io/images/avatars/tile006.png"
+                                                width="20" height="20"
+                                                mask="url(#1b33589a-9f0e-e115-d189-d1e554fb6611)"></image>
+                                        </svg></span><span class="h-space docsie-u">Support@labjack.com</span><span
+                                        class="h-space docsie-txt-muted">(viewer)</span></div>
+                                <div class="space"><a data-component="routedlink" class="undefined "
+                                        href="#/account/workspace/users">Manage users</a></div>
+                            </div>
+                        </div>
+                        <div class="docsie-u-1 docsie-u-xl-1-3 docsie-u-md-1 docsie-txt-small">
+                            <div class="l-space">
+                                <h3><svg class="icon icon--world " viewBox="0 0 20 20" width="20" height="20">
+                                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-world"></use>
+                                    </svg> Published portals</h3>
+                            </div>
+                            <div class="l-space">
+                                <div class="box box-1-2 docsie-border-bottom">
+                                    <div><strong>ImportTest5</strong></div>
+                                    <div class="docsie-txt-small docsie-u docsie-ellipsis"><a
+                                            href="https://portals.docsie.io/labjack/importtest5/deployment_wrWpL22KWQNHAqFU3"
+                                            target="_blank">https://portals.docsie.io/labjack/importtest5/deployment_wrWpL22KWQNHAqFU3</a>
+                                    </div>
+                                    <div class="docsie-txt-small docsie-txt-muted">Deployed on Apr 20, 22</div>
+                                </div>
+                                <div class="space"><a data-component="routedlink" class="undefined "
+                                        href="#/account/workspace/deployments">Manage deployments</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <aside class="docsie-notification-container">
+            <ul></ul>
+        </aside>
+    </div>
+
+    <script type="text/javascript" src="../../tourguide.js"></script>
+    <script type="text/javascript">
+        fetch(new Request("https://appcdn2.docsie.io/images/icons.svg"), {
+        headers: {
+          "Content-Type": "text/plain",
+        },
+      }).then((response) => response.text()).then((assets) => {
+    const asset = document.createElement("div");
+    asset.style.display = "none";			
+      asset.innerHTML = assets;
+      document.body.append(asset);
+    });
+      /*
+       * Initialize Tourguide.js
+       */
+      var tourguide = new Tourguide({ src: "./steps.json" });
+      function startTour() {
+        tourguide.start();
+      }
+      // Attach the touruide start evene to the button press
+      var tourbutton = document.getElementById("tourbutton");
+      tourbutton.addEventListener("click", startTour);
+    </script>
+</body>
+
+</html>
