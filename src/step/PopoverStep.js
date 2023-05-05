@@ -8,36 +8,38 @@ import {
 } from "../utils";
 
 export default class PopoverBaseStep extends BaseStep {
+  get _image() {
+    return this.context._u(`<figure class="guided-tour-step-image">${this.image ? `<img src="${this.image}" />` : ""}</figure>`);
+  }
+  get _content() {
+    const content = this.context._u(`<div class="guided-tour-step-content-wrapper">
+    <div id="tooltip-title-${this.index}" role="heading" class="guided-tour-step-title">${this.title}</div>
+    <div class="guided-tour-step-content">${this.content}</div>
+  </div>`);
+    if (Array.isArray(this.actions) && this.actions.length > 0) {
+      const actions = this.context._u(`<div class="guided-tour-step-actions">
+        ${this.actions
+          .map((action, index) => `<${action.href ? "a" : "button"} id="${action.id}" ${action.href ? `href="${action.href}"` : ""} ${action.target ? `target="${action.target}"` : ""} class="button${action.primary ? " primary" : ""}" data-index="${index}">${action.label}</${action.href ? "a" : "button"}>`)
+          .join("")
+        }
+      </div>`);
+      actions.find("a, button").on("click", e => {
+        const action = this.actions[parseInt(e.target.dataset.index)];
+        if (action.action) e.preventDefault();
+        this.context.action(e, action);
+      });
+      content.append(actions);
+    }
+    return content;
+  }
   get el() {
     if (!this.container) {
-      const image = this.context._u(`<figure class="guided-tour-step-image">${this.image ? `<img src="${this.image}" />` : ""}</figure>`);
-      const content = this.context._u(`<div class="guided-tour-step-content-wrapper">
-          <div id="tooltip-title-${this.index}" role="heading" class="guided-tour-step-title">${this.context._decorateText(this.title, this)}</div>
-          <div class="guided-tour-step-content">${this.context._decorateText(this.content, this)}</div>
-        </div>`);
-      content.find("a").on("click", e => {
-        this.context.action(e, { action: "link" });
-      });
-      if (Array.isArray(this.actions) && this.actions.length > 0) {
-        const actions = this.context._u(`<div class="guided-tour-step-actions">
-            ${this.actions
-    .map((action, index) => `<${action.href ? "a" : "button"} id="${action.id}" ${action.href ? `href="${action.href}"` : ""} ${action.target ? `target="${action.target}"` : ""} class="button${action.primary ? " primary" : ""}" data-index="${index}">${action.label}</${action.href ? "a" : "button"}>`)
-    .join("")
-}
-          </div>`);
-        actions.find("a, button").on("click", e => {
-          const action = this.actions[parseInt(e.target.dataset.index)];
-          if (action.action) e.preventDefault();
-          this.context.action(e, action);
-        });
-        content.append(actions);
-      }
       const tooltip = this.tooltip = this.context._u("<div role=\"document\" class=\"guided-tour-step-tooltip\"></div>");
       if (this.width) setStyle(tooltip, { width: this.width, maxWidth: this.width });
       if (this.height) setStyle(tooltip, { height: this.height, maxHeight: this.height });
       const tooltipinner = this.context._u(`<div class="guided-tour-step-tooltip-inner${this.layout === "horizontal" ? " step-layout-horizontal" : ""}"></div>`);
       const container = this.context._u("<div class=\"guided-tour-step-content-container\"></div>");
-      container.append(image).append(content);
+      container.append(this._image).append(this._content);
       const arrow = this.arrow = this.context._u("<div class=\"guided-tour-arrow\"></div>");
       if (this.navigation) {
         const footer = this.context._u(`<div class="guided-tour-step-footer">
@@ -86,32 +88,18 @@ export default class PopoverBaseStep extends BaseStep {
   }
   constructor(data, context) {
     super(data, context);
+    this._validate(data);
     this._target = null;
-    this._timerHandler = null;
     this._scrollCancel = null;
     this._selector = data.selector;
-    assert((
-      data.hasOwnProperty("title")
-    ),
-    "missing required step parameter: title\n" +
-            JSON.stringify(data, null, 2) + "\n" +
-            "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach"
-    );
-    assert((
-      data.hasOwnProperty("content")
-    ),
-    "missing required step parameter: content\n" +
-            JSON.stringify(data, null, 2) + "\n" +
-            "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach"
-    );
     this.layout = data.layout || PopoverBaseStep.defaults.layout;
     this.alignment = data.alignment || context.options.alignment || PopoverBaseStep.defaults.alignment;
     this.placement = data.placement || context.options.placement || PopoverBaseStep.defaults.placement;
     this.overlay = data.overlay !== false;
     this.navigation = data.navigation !== false;
     if (data.image &&
-            context.options.preloadimages &&
-            !(/^data:/i.test(data.image))) {
+      context.options.preloadimages &&
+      !(/^data:/i.test(data.image))) {
       const preload = new Image();
       preload.onerror = () => {
         console.error(new Error(`Invalid image URL: ${data.image}`));
@@ -129,17 +117,32 @@ export default class PopoverBaseStep extends BaseStep {
       }
     }
   }
+  _validate(data) {
+    assert((
+      data.hasOwnProperty("title")
+    ),
+      "missing required step parameter: title\n" +
+      JSON.stringify(data, null, 2) + "\n" +
+      "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach"
+    );
+    assert((
+      data.hasOwnProperty("content")
+    ),
+      "missing required step parameter: content\n" +
+      JSON.stringify(data, null, 2) + "\n" +
+      "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach"
+    );
+  }
   _cancel() {
-    if (this._timerHandler) clearTimeout(this._timerHandler);
     if (this._scrollCancel) this._scrollCancel();
   }
   _position() {
     this.context._positionTooltip(
-        this.target,
-        this.tooltip.first(),
-        this.arrow.first(),
-        this.highlight && this.highlight.first(),
-        this);
+      this.target,
+      this.tooltip.first(),
+      this.arrow.first(),
+      this.highlight && this.highlight.first(),
+      this);
   }
   attach(parent) {
     this.context._u(parent).append(this.el);
@@ -147,16 +150,19 @@ export default class PopoverBaseStep extends BaseStep {
   show() {
     this._cancel();
     if (!this.active) {
-      const show = () => {
-        this.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
-        this._position();
-        this.active = true;
+      const onShow= () => {
+        setStyle(this.container, {
+          opacity: "1"
+        });
         this.container.find(".guided-tour-step-tooltip, button.primary, .guided-tour-step-button-complete, .guided-tour-step-button-next").last().focus({
           preventScroll: true
         });
       };
-      const animationspeed = clamp(this.context.options.animationspeed, 120, 1000);
-      if (isTargetValid(this.target)) {
+      this.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
+      this._position();
+      this.active = true;
+      if(isTargetValid(this.target)) {
+        const animationspeed = clamp(this.context.options.animationspeed, 120, 1000);
         this._scrollCancel = scrollIntoView(this.target, {
           time: animationspeed,
           cancellable: false,
@@ -164,9 +170,8 @@ export default class PopoverBaseStep extends BaseStep {
             top: 0.5,
             left: 0.5
           }
-        });
-      }
-      this._timerHandler = setTimeout(show, animationspeed * 3);
+        }, onShow);
+      } else onShow();
       return true;
     }
     return false;
@@ -174,6 +179,9 @@ export default class PopoverBaseStep extends BaseStep {
   hide() {
     this._cancel();
     if (this.active) {
+      setStyle(this.container, {
+        opacity: "0"
+      });
       this.el.removeClass("active");
       this.active = false;
       return true;
@@ -186,8 +194,8 @@ export default class PopoverBaseStep extends BaseStep {
   }
 }
 PopoverBaseStep.defaults = {
-    layout:"vertical",
-    alignment: "bottom-start",
-    placement: "middle-center",
+  layout: "vertical",
+  alignment: "bottom-start",
+  placement: "middle-center",
 };
 PopoverBaseStep.type = "default";

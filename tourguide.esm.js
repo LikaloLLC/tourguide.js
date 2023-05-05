@@ -159,6 +159,29 @@ function _createSuper(Derived) {
     return _possibleConstructorReturn(this, result);
   };
 }
+function _superPropBase(object, property) {
+  while (!Object.prototype.hasOwnProperty.call(object, property)) {
+    object = _getPrototypeOf(object);
+    if (object === null) break;
+  }
+  return object;
+}
+function _get() {
+  if (typeof Reflect !== "undefined" && Reflect.get) {
+    _get = Reflect.get.bind();
+  } else {
+    _get = function _get(target, property, receiver) {
+      var base = _superPropBase(target, property);
+      if (!base) return;
+      var desc = Object.getOwnPropertyDescriptor(base, property);
+      if (desc.get) {
+        return desc.get.call(arguments.length < 3 ? target : receiver);
+      }
+      return desc.value;
+    };
+  }
+  return _get.apply(this, arguments);
+}
 function _slicedToArray(arr, i) {
   return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
@@ -440,70 +463,63 @@ function t$1(t){return t.split("-")[0]}function e$1(t){return t.split("-")[1]}fu
 
 function n$1(t){var e;return (null==(e=t.ownerDocument)?void 0:e.defaultView)||window}function o(t){return n$1(t).getComputedStyle(t)}function i(t){return f(t)?(t.nodeName||"").toLowerCase():""}let r$1;function l(){if(r$1)return r$1;const t=navigator.userAgentData;return t&&Array.isArray(t.brands)?(r$1=t.brands.map((t=>t.brand+"/"+t.version)).join(" "),r$1):navigator.userAgent}function c(t){return t instanceof n$1(t).HTMLElement}function s(t){return t instanceof n$1(t).Element}function f(t){return t instanceof n$1(t).Node}function u(t){if("undefined"==typeof ShadowRoot)return !1;return t instanceof n$1(t).ShadowRoot||t instanceof ShadowRoot}function a(t){const{overflow:e,overflowX:n,overflowY:i,display:r}=o(t);return /auto|scroll|overlay|hidden/.test(e+i+n)&&!["inline","contents"].includes(r)}function d(t){return ["table","td","th"].includes(i(t))}function h(t){const e=/firefox/i.test(l()),n=o(t),i=n.backdropFilter||n.WebkitBackdropFilter;return "none"!==n.transform||"none"!==n.perspective||!!i&&"none"!==i||e&&"filter"===n.willChange||e&&!!n.filter&&"none"!==n.filter||["transform","perspective"].some((t=>n.willChange.includes(t)))||["paint","layout","strict","content"].some((t=>{const e=n.contain;return null!=e&&e.includes(t)}))}function g(){return !/^((?!chrome|android).)*safari/i.test(l())}function m(t){return ["html","body","#document"].includes(i(t))}const p={x:1,y:1};function y(t){const e=!s(t)&&t.contextElement?t.contextElement:s(t)?t:null;if(!e)return p;const n=e.getBoundingClientRect(),i=o(e);let r=n.width/parseFloat(i.width),l=n.height/parseFloat(i.height);return r&&Number.isFinite(r)||(r=1),l&&Number.isFinite(l)||(l=1),{x:r,y:l}}function w(t,e,o,i){var r,l,c,f;void 0===e&&(e=!1),void 0===o&&(o=!1);const u=t.getBoundingClientRect();let a=p;e&&(i?s(i)&&(a=y(i)):a=y(t));const d=s(t)?n$1(t):window,h=!g()&&o,m=(u.left+(h&&null!=(r=null==(l=d.visualViewport)?void 0:l.offsetLeft)?r:0))/a.x,w=(u.top+(h&&null!=(c=null==(f=d.visualViewport)?void 0:f.offsetTop)?c:0))/a.y,x=u.width/a.x,v=u.height/a.y;return {width:x,height:v,top:w,right:m+x,bottom:w+v,left:m,x:m,y:w}}function x(t){return ((f(t)?t.ownerDocument:t.document)||window.document).documentElement}function v(t){return s(t)?{scrollLeft:t.scrollLeft,scrollTop:t.scrollTop}:{scrollLeft:t.pageXOffset,scrollTop:t.pageYOffset}}function b(t){return w(x(t)).left+v(t).scrollLeft}function L(t,e,n){const o=c(e),r=x(e),l=w(t,!0,"fixed"===n,e);let s={scrollLeft:0,scrollTop:0};const f={x:0,y:0};if(o||!o&&"fixed"!==n)if(("body"!==i(e)||a(r))&&(s=v(e)),c(e)){const t=w(e,!0);f.x=t.x+e.clientLeft,f.y=t.y+e.clientTop;}else r&&(f.x=b(r));return {x:l.left+s.scrollLeft-f.x,y:l.top+s.scrollTop-f.y,width:l.width,height:l.height}}function E(t){if("html"===i(t))return t;const e=t.assignedSlot||t.parentNode||(u(t)?t.host:null)||x(t);return u(e)?e.host:e}function R(t){return c(t)&&"fixed"!==o(t).position?t.offsetParent:null}function T(t){const e=n$1(t);let r=R(t);for(;r&&d(r)&&"static"===o(r).position;)r=R(r);return r&&("html"===i(r)||"body"===i(r)&&"static"===o(r).position&&!h(r))?e:r||function(t){let e=E(t);for(;c(e)&&!m(e);){if(h(e))return e;e=E(e);}return null}(t)||e}const W=Math.min,C=Math.max;function D(t){const e=E(t);return m(e)?t.ownerDocument.body:c(e)&&a(e)?e:D(e)}function F(t,e){var o;void 0===e&&(e=[]);const i=D(t),r=i===(null==(o=t.ownerDocument)?void 0:o.body),l=n$1(i);return r?e.concat(l,l.visualViewport||[],a(i)?i:[]):e.concat(i,F(i))}function A(e,i,r){return "viewport"===i?l$1(function(t,e){const o=n$1(t),i=x(t),r=o.visualViewport;let l=i.clientWidth,c=i.clientHeight,s=0,f=0;if(r){l=r.width,c=r.height;const t=g();(t||!t&&"fixed"===e)&&(s=r.offsetLeft,f=r.offsetTop);}return {width:l,height:c,x:s,y:f}}(e,r)):s(i)?function(t,e){const n=w(t,!0,"fixed"===e),o=n.top+t.clientTop,i=n.left+t.clientLeft,r=c(t)?y(t):{x:1,y:1},l=t.clientWidth*r.x,s=t.clientHeight*r.y,f=i*r.x,u=o*r.y;return {top:u,left:f,right:f+l,bottom:u+s,x:f,y:u,width:l,height:s}}(i,r):l$1(function(t){var e;const n=x(t),i=v(t),r=null==(e=t.ownerDocument)?void 0:e.body,l=C(n.scrollWidth,n.clientWidth,r?r.scrollWidth:0,r?r.clientWidth:0),c=C(n.scrollHeight,n.clientHeight,r?r.scrollHeight:0,r?r.clientHeight:0);let s=-i.scrollLeft+b(t);const f=-i.scrollTop;return "rtl"===o(r||n).direction&&(s+=C(n.clientWidth,r?r.clientWidth:0)-l),{width:l,height:c,x:s,y:f}}(x(e)))}const H={getClippingRect:function(t){let{element:e,boundary:n,rootBoundary:r,strategy:l}=t;const c="clippingAncestors"===n?function(t,e){const n=e.get(t);if(n)return n;let r=F(t).filter((t=>s(t)&&"body"!==i(t))),l=null;const c="fixed"===o(t).position;let f=c?E(t):t;for(;s(f)&&!m(f);){const t=o(f),e=h(f);(c?e||l:e||"static"!==t.position||!l||!["absolute","fixed"].includes(l.position))?l=t:r=r.filter((t=>t!==f)),f=E(f);}return e.set(t,r),r}(e,this._c):[].concat(n),f=[...c,r],u=f[0],a=f.reduce(((t,n)=>{const o=A(e,n,l);return t.top=C(o.top,t.top),t.right=W(o.right,t.right),t.bottom=W(o.bottom,t.bottom),t.left=C(o.left,t.left),t}),A(e,u,l));return {width:a.right-a.left,height:a.bottom-a.top,x:a.left,y:a.top}},convertOffsetParentRelativeRectToViewportRelativeRect:function(t){let{rect:e,offsetParent:n,strategy:o}=t;const r=c(n),l=x(n);if(n===l)return e;let s={scrollLeft:0,scrollTop:0},f={x:1,y:1};const u={x:0,y:0};if((r||!r&&"fixed"!==o)&&(("body"!==i(n)||a(l))&&(s=v(n)),c(n))){const t=w(n);f=y(n),u.x=t.x+n.clientLeft,u.y=t.y+n.clientTop;}return {width:e.width*f.x,height:e.height*f.y,x:e.x*f.x-s.scrollLeft*f.x+u.x,y:e.y*f.y-s.scrollTop*f.y+u.y}},isElement:s,getDimensions:function(t){if(c(t))return {width:t.offsetWidth,height:t.offsetHeight};const e=w(t);return {width:e.width,height:e.height}},getOffsetParent:T,getDocumentElement:x,getScale:y,async getElementRects(t){let{reference:e,floating:n,strategy:o}=t;const i=this.getOffsetParent||T,r=this.getDimensions;return {reference:L(e,await i(n),o),floating:{x:0,y:0,...await r(n)}}},getClientRects:t=>Array.from(t.getClientRects()),isRTL:t=>"rtl"===o(t).direction};const O=(t,n,o)=>{const i=new Map,r={platform:H,...o},l={...r.platform,_c:i};return o$1(t,n,{...r,platform:l})};
 
-var keepinview = function keepinview(_ref) {
-  var _ref$padding = _ref.padding,
-    padding = _ref$padding === void 0 ? 0 : _ref$padding;
-  return {
-    name: "keepinview",
-    fn: function fn(_ref2) {
-      var x = _ref2.x,
-        y = _ref2.y,
-        rects = _ref2.rects,
-        middlewareData = _ref2.middlewareData,
-        platform = _ref2.platform;
-      var documentDimentions = platform.getDimensions(window);
-      var _x = clamp(x, padding, documentDimentions.width - rects.floating.width - padding);
-      var _y = clamp(y, padding, documentDimentions.height - rects.floating.height - padding);
-      var dx = x - _x;
-      var dy = y - _y;
-      var arrow = middlewareData.arrow;
-      if (arrow) {
-        if (arrow.x && dx) arrow.x += dx;
-        if (arrow.y && dy) arrow.y += dy;
-      }
-      return {
-        x: _x,
-        y: _y
-      };
-    }
-  };
+var viewFinder = {
+  getBoundingClientRect: function getBoundingClientRect() {
+    var top = window.scrollY;
+    var left = window.scrollX;
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+    var bottom = top + height;
+    var right = left + width;
+    return {
+      x: left,
+      y: top,
+      left: left,
+      top: top,
+      bottom: bottom,
+      right: right,
+      width: width,
+      height: height
+    };
+  }
 };
 var positionInView = function positionInView(_ref3) {
-  var placement = _ref3.placement;
+  var placement = _ref3.placement,
+    _ref3$padding = _ref3.padding,
+    padding = _ref3$padding === void 0 ? 0 : _ref3$padding;
   return {
     name: "positionInView",
     fn: function fn(_ref4) {
       var x = _ref4.x,
         y = _ref4.y,
-        rects = _ref4.rects,
-        platform = _ref4.platform;
+        rects = _ref4.rects;
       var _x = x,
         _y = y;
-      var documentDimentions = platform.getDimensions(window);
+      var viewDimentions = viewFinder.getBoundingClientRect();
       var _placement$split = placement.split("-"),
         _placement$split2 = _slicedToArray(_placement$split, 2),
         align_y = _placement$split2[0],
         align_x = _placement$split2[1];
       switch (align_x) {
         case "start":
-          _x = 0;
+          _x = viewDimentions.left + padding;
           break;
         case "center":
-          _x = documentDimentions.width / 2 - rects.floating.width / 2;
+          _x = viewDimentions.left + viewDimentions.width / 2 - rects.floating.width / 2;
           break;
         case "end":
-          _x = documentDimentions.width - rects.floating.width;
+          _x = viewDimentions.right - rects.floating.width - padding;
           break;
       }
       switch (align_y) {
         case "top":
-          _y = 0;
+          _y = viewDimentions.top + padding;
           break;
         case "middle":
-          _y = documentDimentions.height / 2 - rects.floating.height / 2;
+          _y = viewDimentions.top + viewDimentions.height / 2 - rects.floating.height / 2;
           break;
         case "bottom":
-          _y = documentDimentions.height - rects.floating.height;
+          _y = viewDimentions.bottom - rects.floating.height - padding;
           break;
       }
       return {
@@ -558,14 +574,15 @@ function offsetAssist(props) {
       return 6;
   }
 }
-function positionTooltip(target, tooltipEl, arrowEl, highlightEl, step) {
+function positionTooltip(target, tooltipEl, arrowEl, highlightEl, step, context) {
   var isValidTarget = isTargetValid(target);
-  O(isValidTarget ? target : window, tooltipEl, {
+  O(isValidTarget ? target : viewFinder, tooltipEl, {
     // placement: 'bottom-start',
     middleware: [
     // flip(),
     isValidTarget ? v$1({
-      alignment: step.alignment || "bottom-start"
+      alignment: step.alignment || "bottom-start",
+      padding: 24
     }) : positionInView({
       placement: step.placement || "center-middle"
     }), T$1(offsetAssist), highlight({
@@ -575,9 +592,11 @@ function positionTooltip(target, tooltipEl, arrowEl, highlightEl, step) {
     }), m$1({
       element: arrowEl,
       padding: 8
-    }), keepinview({
-      padding: 24
-    })]
+    })
+    // keepinview({
+    //   padding: 24
+    // })
+    ]
   }).then(function (_ref6) {
     var x = _ref6.x,
       y = _ref6.y,
@@ -999,12 +1018,10 @@ var PopoverBaseStep = /*#__PURE__*/function (_BaseStep) {
     var _this;
     _classCallCheck(this, PopoverBaseStep);
     _this = _super.call(this, data, context);
+    _this._validate(data);
     _this._target = null;
-    _this._timerHandler = null;
     _this._scrollCancel = null;
     _this._selector = data.selector;
-    assert(data.hasOwnProperty("title"), "missing required step parameter: title\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
-    assert(data.hasOwnProperty("content"), "missing required step parameter: content\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
     _this.layout = data.layout || PopoverBaseStep.defaults.layout;
     _this.alignment = data.alignment || context.options.alignment || PopoverBaseStep.defaults.alignment;
     _this.placement = data.placement || context.options.placement || PopoverBaseStep.defaults.placement;
@@ -1029,28 +1046,33 @@ var PopoverBaseStep = /*#__PURE__*/function (_BaseStep) {
     return _this;
   }
   _createClass(PopoverBaseStep, [{
-    key: "el",
+    key: "_image",
+    get: function get() {
+      return this.context._u("<figure class=\"guided-tour-step-image\">".concat(this.image ? "<img src=\"".concat(this.image, "\" />") : "", "</figure>"));
+    }
+  }, {
+    key: "_content",
     get: function get() {
       var _this2 = this;
-      if (!this.container) {
-        var image = this.context._u("<figure class=\"guided-tour-step-image\">".concat(this.image ? "<img src=\"".concat(this.image, "\" />") : "", "</figure>"));
-        var content = this.context._u("<div class=\"guided-tour-step-content-wrapper\">\n          <div id=\"tooltip-title-".concat(this.index, "\" role=\"heading\" class=\"guided-tour-step-title\">").concat(this.context._decorateText(this.title, this), "</div>\n          <div class=\"guided-tour-step-content\">").concat(this.context._decorateText(this.content, this), "</div>\n        </div>"));
-        content.find("a").on("click", function (e) {
-          _this2.context.action(e, {
-            action: "link"
-          });
+      var content = this.context._u("<div class=\"guided-tour-step-content-wrapper\">\n    <div id=\"tooltip-title-".concat(this.index, "\" role=\"heading\" class=\"guided-tour-step-title\">").concat(this.title, "</div>\n    <div class=\"guided-tour-step-content\">").concat(this.content, "</div>\n  </div>"));
+      if (Array.isArray(this.actions) && this.actions.length > 0) {
+        var actions = this.context._u("<div class=\"guided-tour-step-actions\">\n        ".concat(this.actions.map(function (action, index) {
+          return "<".concat(action.href ? "a" : "button", " id=\"").concat(action.id, "\" ").concat(action.href ? "href=\"".concat(action.href, "\"") : "", " ").concat(action.target ? "target=\"".concat(action.target, "\"") : "", " class=\"button").concat(action.primary ? " primary" : "", "\" data-index=\"").concat(index, "\">").concat(action.label, "</").concat(action.href ? "a" : "button", ">");
+        }).join(""), "\n      </div>"));
+        actions.find("a, button").on("click", function (e) {
+          var action = _this2.actions[parseInt(e.target.dataset.index)];
+          if (action.action) e.preventDefault();
+          _this2.context.action(e, action);
         });
-        if (Array.isArray(this.actions) && this.actions.length > 0) {
-          var actions = this.context._u("<div class=\"guided-tour-step-actions\">\n            ".concat(this.actions.map(function (action, index) {
-            return "<".concat(action.href ? "a" : "button", " id=\"").concat(action.id, "\" ").concat(action.href ? "href=\"".concat(action.href, "\"") : "", " ").concat(action.target ? "target=\"".concat(action.target, "\"") : "", " class=\"button").concat(action.primary ? " primary" : "", "\" data-index=\"").concat(index, "\">").concat(action.label, "</").concat(action.href ? "a" : "button", ">");
-          }).join(""), "\n          </div>"));
-          actions.find("a, button").on("click", function (e) {
-            var action = _this2.actions[parseInt(e.target.dataset.index)];
-            if (action.action) e.preventDefault();
-            _this2.context.action(e, action);
-          });
-          content.append(actions);
-        }
+        content.append(actions);
+      }
+      return content;
+    }
+  }, {
+    key: "el",
+    get: function get() {
+      var _this3 = this;
+      if (!this.container) {
         var tooltip = this.tooltip = this.context._u("<div role=\"document\" class=\"guided-tour-step-tooltip\"></div>");
         if (this.width) setStyle(tooltip, {
           width: this.width,
@@ -1062,18 +1084,18 @@ var PopoverBaseStep = /*#__PURE__*/function (_BaseStep) {
         });
         var tooltipinner = this.context._u("<div class=\"guided-tour-step-tooltip-inner".concat(this.layout === "horizontal" ? " step-layout-horizontal" : "", "\"></div>"));
         var container = this.context._u("<div class=\"guided-tour-step-content-container\"></div>");
-        container.append(image).append(content);
+        container.append(this._image).append(this._content);
         var arrow = this.arrow = this.context._u("<div class=\"guided-tour-arrow\"></div>");
         if (this.navigation) {
           var footer = this.context._u("<div class=\"guided-tour-step-footer\">\n                    <button class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                    </button>\n                    ".concat(!this.first ? "<button class=\"guided-tour-step-button guided-tour-step-button-prev\" title=\"Prev step\">\n                      <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                        <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-prev\"></use>\n                      </svg>\n                    </button>" : "", "\n                    ").concat(this.last ? "<button class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                      <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                        <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use>\n                      </svg>\n                    </button>" : "<button class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                      <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                        <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use>\n                      </svg>\n                    </button>", "\n                    ").concat(this.context.steps.length > 1 ? "<div class=\"guided-tour-step-bullets\">\n                        <ul>".concat(this.context.steps.map(function (step, i) {
-            return "<li><button title=\"Go to step ".concat(i + 1, "\" data-index=\"").concat(step.index, "\" class=\"").concat(step.index < _this2.index ? "complete" : step.index == _this2.index ? "current" : "", "\"></button></li>");
+            return "<li><button title=\"Go to step ".concat(i + 1, "\" data-index=\"").concat(step.index, "\" class=\"").concat(step.index < _this3.index ? "complete" : step.index == _this3.index ? "current" : "", "\"></button></li>");
           }).join(""), "</ul>\n                    </div>") : "", "\n                </div>"));
           footer.find(".guided-tour-step-button-prev").on("click", this.context.previous);
           footer.find(".guided-tour-step-button-next").on("click", this.context.next);
           footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
           footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
           footer.find(".guided-tour-step-bullets button").on("click", function (e) {
-            return _this2.context.go(parseInt(_this2.context._u(e.target).data("index")));
+            return _this3.context.go(parseInt(_this3.context._u(e.target).data("index")));
           });
           tooltipinner.append(arrow).append(container).append(footer);
         } else tooltipinner.append(arrow).append(container);
@@ -1095,9 +1117,14 @@ var PopoverBaseStep = /*#__PURE__*/function (_BaseStep) {
       this._target = target;
     }
   }, {
+    key: "_validate",
+    value: function _validate(data) {
+      assert(data.hasOwnProperty("title"), "missing required step parameter: title\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
+      assert(data.hasOwnProperty("content"), "missing required step parameter: content\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
+    }
+  }, {
     key: "_cancel",
     value: function _cancel() {
-      if (this._timerHandler) clearTimeout(this._timerHandler);
       if (this._scrollCancel) this._scrollCancel();
     }
   }, {
@@ -1113,19 +1140,22 @@ var PopoverBaseStep = /*#__PURE__*/function (_BaseStep) {
   }, {
     key: "show",
     value: function show() {
-      var _this3 = this;
+      var _this4 = this;
       this._cancel();
       if (!this.active) {
-        var show = function show() {
-          _this3.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
-          _this3._position();
-          _this3.active = true;
-          _this3.container.find(".guided-tour-step-tooltip, button.primary, .guided-tour-step-button-complete, .guided-tour-step-button-next").last().focus({
+        var onShow = function onShow() {
+          setStyle(_this4.container, {
+            opacity: "1"
+          });
+          _this4.container.find(".guided-tour-step-tooltip, button.primary, .guided-tour-step-button-complete, .guided-tour-step-button-next").last().focus({
             preventScroll: true
           });
         };
-        var animationspeed = clamp(this.context.options.animationspeed, 120, 1000);
+        this.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
+        this._position();
+        this.active = true;
         if (isTargetValid(this.target)) {
+          var animationspeed = clamp(this.context.options.animationspeed, 120, 1000);
           this._scrollCancel = scrollIntoView(this.target, {
             time: animationspeed,
             cancellable: false,
@@ -1133,9 +1163,8 @@ var PopoverBaseStep = /*#__PURE__*/function (_BaseStep) {
               top: 0.5,
               left: 0.5
             }
-          });
-        }
-        this._timerHandler = setTimeout(show, animationspeed * 3);
+          }, onShow);
+        } else onShow();
         return true;
       }
       return false;
@@ -1145,6 +1174,9 @@ var PopoverBaseStep = /*#__PURE__*/function (_BaseStep) {
     value: function hide() {
       this._cancel();
       if (this.active) {
+        setStyle(this.container, {
+          opacity: "0"
+        });
         this.el.removeClass("active");
         this.active = false;
         return true;
@@ -1167,178 +1199,48 @@ PopoverBaseStep.defaults = {
 };
 PopoverBaseStep.type = "default";
 
-var VideoPlayer = /*#__PURE__*/function (_BaseStep) {
-  _inherits(VideoPlayer, _BaseStep);
+var VideoPlayer = /*#__PURE__*/function (_PopoverBaseStep) {
+  _inherits(VideoPlayer, _PopoverBaseStep);
   var _super = _createSuper(VideoPlayer);
   function VideoPlayer(data, context) {
     var _this;
     _classCallCheck(this, VideoPlayer);
     _this = _super.call(this, data, context);
-    _this._target = null;
-    _this._timerHandler = null;
-    _this._scrollCancel = null;
-    _this._selector = data.selector;
-    assert(data.hasOwnProperty("title"), "missing required step parameter: title\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
-    assert(data.hasOwnProperty("content"), "missing required step parameter: content\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
     _this.alignment = data.alignment || context.options.alignment || VideoPlayer.defaults.alignment;
     _this.placement = data.placement || context.options.placement || VideoPlayer.defaults.placement;
     _this.autoplay = typeof data.autoplay === "boolean" ? data.autoplay : VideoPlayer.defaults.autoplay;
-    _this.overlay = data.overlay !== false;
-    _this.navigation = data.navigation !== false;
-    if (data.image && context.options.preloadimages && !/^data:/i.test(data.image)) {
-      var preload = new Image();
-      preload.onerror = function () {
-        console.error(new Error("Invalid image URL: ".concat(data.image)));
-        _this.image = null;
-      };
-      preload.src = _this.image;
-    }
-    _this.actions = [];
-    if (data.actions) {
-      if (!Array.isArray(data.actions)) {
-        console.error(new Error("actions must be array but got ".concat(_typeof(data.actions))));
-      } else {
-        _this.actions = data.actions;
-      }
-    }
     return _this;
   }
   _createClass(VideoPlayer, [{
-    key: "el",
+    key: "_image",
     get: function get() {
-      var _this2 = this;
-      if (!this.container) {
-        var image = this.context._u("<figure class=\"guided-tour-step-image\">".concat(this.video ? "<video width=\"100%\" height=\"auto\" controls><source src=\"".concat(this.video, "\"></video>") : "", "</figure>"));
-        var content = this.context._u("<div class=\"guided-tour-step-content-wrapper\">\n              <div id=\"tooltip-title-".concat(this.index, "\" role=\"heading\" class=\"guided-tour-step-title\">").concat(this.context._decorateText(this.title, this), "</div>\n              <div class=\"guided-tour-step-content\">").concat(this.context._decorateText(this.content, this), "</div>\n            </div>"));
-        content.find("a").on("click", function (e) {
-          _this2.context.action(e, {
-            action: "link"
-          });
-        });
-        if (Array.isArray(this.actions) && this.actions.length > 0) {
-          var actions = this.context._u("<div class=\"guided-tour-step-actions\">\n                ".concat(this.actions.map(function (action, index) {
-            return "<".concat(action.href ? "a" : "button", " id=\"").concat(action.id, "\" ").concat(action.href ? "href=\"".concat(action.href, "\"") : "", " ").concat(action.target ? "target=\"".concat(action.target, "\"") : "", " class=\"button").concat(action.primary ? " primary" : "", "\" data-index=\"").concat(index, "\">").concat(action.label, "</").concat(action.href ? "a" : "button", ">");
-          }).join(""), "\n              </div>"));
-          actions.find("a, button").on("click", function (e) {
-            var action = _this2.actions[parseInt(e.target.dataset.index)];
-            if (action.action) e.preventDefault();
-            _this2.context.action(e, action);
-          });
-          content.append(actions);
-        }
-        var tooltip = this.tooltip = this.context._u("<div role=\"document\" class=\"guided-tour-step-tooltip\"></div>");
-        if (this.width) setStyle(tooltip, {
-          width: this.width,
-          maxWidth: this.width
-        });
-        if (this.height) setStyle(tooltip, {
-          height: this.height,
-          maxHeight: this.height
-        });
-        var tooltipinner = this.context._u("<div class=\"guided-tour-step-tooltip-inner\"></div>");
-        var container = this.context._u("<div class=\"guided-tour-step-content-container\"></div>");
-        container.append(image).append(content);
-        var arrow = this.arrow = this.context._u("<div class=\"guided-tour-arrow\"></div>");
-        if (this.navigation) {
-          var footer = this.context._u("<div class=\"guided-tour-step-footer\">\n                        <button class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                            <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-close\"></use></svg>\n                        </button>\n                        ".concat(!this.first ? "<button class=\"guided-tour-step-button guided-tour-step-button-prev\" title=\"Prev step\">\n                          <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                            <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-prev\"></use>\n                          </svg>\n                        </button>" : "", "\n                        ").concat(this.last ? "<button class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                          <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                            <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-complete\"></use>\n                          </svg>\n                        </button>" : "<button class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                          <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                            <use xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#tour-icon-next\"></use>\n                          </svg>\n                        </button>", "\n                        ").concat(this.context.steps.length > 1 ? "<div class=\"guided-tour-step-bullets\">\n                            <ul>".concat(this.context.steps.map(function (step, i) {
-            return "<li><button title=\"Go to step ".concat(i + 1, "\" data-index=\"").concat(step.index, "\" class=\"").concat(step.index < _this2.index ? "complete" : step.index == _this2.index ? "current" : "", "\"></button></li>");
-          }).join(""), "</ul>\n                        </div>") : "", "\n                    </div>"));
-          footer.find(".guided-tour-step-button-prev").on("click", this.context.previous);
-          footer.find(".guided-tour-step-button-next").on("click", this.context.next);
-          footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
-          footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
-          footer.find(".guided-tour-step-bullets button").on("click", function (e) {
-            return _this2.context.go(parseInt(_this2.context._u(e.target).data("index")));
-          });
-          tooltipinner.append(arrow).append(container).append(footer);
-        } else tooltipinner.append(arrow).append(container);
-        tooltip.append(tooltipinner);
-        this.container = this.context._u("<div role=\"dialog\" aria-labelleby=\"tooltip-title-".concat(this.index, "\" class=\"guided-tour-step").concat(this.first ? " guided-tour-step-first" : "").concat(this.last ? " guided-tour-step-last" : "", "\"></div>"));
-        if (this.overlay) {
-          var highlight = this.highlight = this.context._u("<div class=\"guided-tour-step-highlight\"></div>");
-          this.container.append(highlight).append(tooltip);
-        } else this.container.append(tooltip);
-      }
-      return this.container;
+      return this.context._u("<figure class=\"guided-tour-step-image\">".concat(this.video ? "<video width=\"100%\" height=\"auto\" controls><source src=\"".concat(this.video, "\"></video>") : "", "</figure>"));
     }
   }, {
-    key: "target",
-    get: function get() {
-      return this._target || this._selector && this.context._u(this._selector).first();
-    },
-    set: function set(target) {
-      this._target = target;
-    }
-  }, {
-    key: "_cancel",
-    value: function _cancel() {
-      if (this._timerHandler) clearTimeout(this._timerHandler);
-      if (this._scrollCancel) this._scrollCancel();
-    }
-  }, {
-    key: "_position",
-    value: function _position() {
-      this.context._positionTooltip(this.target, this.tooltip.first(), this.arrow.first(), this.highlight && this.highlight.first(), this);
-    }
-  }, {
-    key: "attach",
-    value: function attach(parent) {
-      this.context._u(parent).append(this.el);
+    key: "_validate",
+    value: function _validate(data) {
+      assert(data.hasOwnProperty("title"), "missing required step parameter: title\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
+      assert(data.hasOwnProperty("content"), "missing required step parameter: content\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
+      assert(data.hasOwnProperty("video"), "missing required step parameter: video\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
     }
   }, {
     key: "show",
     value: function show() {
-      var _this3 = this;
-      this._cancel();
-      if (!this.active) {
-        var show = function show() {
-          _this3.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
-          _this3._position();
-          _this3.active = true;
-          if (_this3.autoplay) _this3.container.find(".guided-tour-step-image video").first().play();
-          _this3.container.find(".guided-tour-step-tooltip, button.primary, .guided-tour-step-button-complete, .guided-tour-step-button-next").last().focus({
-            preventScroll: true
-          });
-        };
-        var animationspeed = clamp(this.context.options.animationspeed, 120, 1000);
-        if (isTargetValid(this.target)) {
-          this._scrollCancel = scrollIntoView(this.target, {
-            time: animationspeed,
-            cancellable: false,
-            align: {
-              top: 0.5,
-              left: 0.5
-            }
-          });
-        }
-        this._timerHandler = setTimeout(show, animationspeed * 3);
-        return true;
-      }
-      return false;
+      var result = _get(_getPrototypeOf(VideoPlayer.prototype), "show", this).call(this);
+      if (result) this.container.find(".guided-tour-step-image video").first().play();
+      return result;
     }
   }, {
     key: "hide",
     value: function hide() {
-      this._cancel();
-      if (this.active) {
-        this.container.find(".guided-tour-step-image video").first().pause();
-        this.el.removeClass("active");
-        this.active = false;
-        return true;
-      }
-      return false;
-    }
-  }, {
-    key: "remove",
-    value: function remove() {
-      this.hide();
-      this.el.remove();
+      var result = _get(_getPrototypeOf(VideoPlayer.prototype), "hide", this).call(this);
+      if (result) this.container.find(".guided-tour-step-image video").first().pause();
+      return result;
     }
   }]);
   return VideoPlayer;
-}(BaseStep);
+}(PopoverBaseStep);
 VideoPlayer.defaults = {
-  layout: "vertical",
   alignment: "bottom-start",
   placement: "middle-center",
   autoplay: true
@@ -1366,19 +1268,13 @@ var NavigationStep = /*#__PURE__*/function (_BaseStep) {
 }(BaseStep);
 NavigationStep.type = "navigate";
 
-var ActionStep = /*#__PURE__*/function (_BaseStep) {
-  _inherits(ActionStep, _BaseStep);
+var ActionStep = /*#__PURE__*/function (_PopoverBaseStep) {
+  _inherits(ActionStep, _PopoverBaseStep);
   var _super = _createSuper(ActionStep);
   function ActionStep(data, context) {
     var _this;
     _classCallCheck(this, ActionStep);
     _this = _super.call(this, data, context);
-    _this._target = null;
-    _this._timerHandler = null;
-    _this._scrollCancel = null;
-    _this._selector = data.selector;
-    assert(data.hasOwnProperty("selector"), "missing required step parameter: selector\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
-    assert(data.hasOwnProperty("title"), "missing required step parameter: title\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
     _this.alignment = data.alignment || context.options.alignment || ActionStep.defaults.alignment;
     _this._onAction = _this._onAction.bind(_assertThisInitialized(_this));
     return _this;
@@ -1402,23 +1298,10 @@ var ActionStep = /*#__PURE__*/function (_BaseStep) {
       return this.container;
     }
   }, {
-    key: "target",
-    get: function get() {
-      return this._target || this._selector && this.context._u(this._selector).first();
-    },
-    set: function set(target) {
-      this._target = target;
-    }
-  }, {
-    key: "_cancel",
-    value: function _cancel() {
-      if (this._timerHandler) clearTimeout(this._timerHandler);
-      if (this._scrollCancel) this._scrollCancel();
-    }
-  }, {
-    key: "_position",
-    value: function _position() {
-      this.context._positionTooltip(this.target, this.tooltip.first(), this.arrow.first(), this.highlight.first(), this);
+    key: "_validate",
+    value: function _validate(data) {
+      assert(data.hasOwnProperty("selector"), "missing required step parameter: selector\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
+      assert(data.hasOwnProperty("title"), "missing required step parameter: title\n" + JSON.stringify(data, null, 2) + "\n" + "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach");
     }
   }, {
     key: "_onAction",
@@ -1426,62 +1309,22 @@ var ActionStep = /*#__PURE__*/function (_BaseStep) {
       this.context.next();
     }
   }, {
-    key: "attach",
-    value: function attach(parent) {
-      this.context._u(parent).append(this.el);
-    }
-  }, {
     key: "show",
     value: function show() {
-      var _this2 = this;
-      this._cancel();
-      if (!this.active) {
-        var show = function show() {
-          _this2.el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
-          _this2._position();
-          _this2.active = true;
-          _this2.container.find(".guided-tour-step-tooltip, button.primary, .guided-tour-step-button-complete, .guided-tour-step-button-next").last().focus({
-            preventScroll: true
-          });
-          document.addEventListener("click", _this2._onAction);
-        };
-        var animationspeed = clamp(this.context.options.animationspeed, 120, 1000);
-        if (isTargetValid(this.target)) {
-          this._scrollCancel = scrollIntoView(this.target, {
-            time: animationspeed,
-            cancellable: false,
-            align: {
-              top: 0.5,
-              left: 0.5
-            }
-          });
-        }
-        this._timerHandler = setTimeout(show, animationspeed * 3);
-        return true;
-      }
-      return false;
+      var result = _get(_getPrototypeOf(ActionStep.prototype), "show", this).call(this);
+      if (result) document.addEventListener("click", this._onAction);
+      return result;
     }
   }, {
     key: "hide",
     value: function hide() {
-      this._cancel();
-      document.removeEventListener("click", this._onAction);
-      if (this.active) {
-        this.el.removeClass("active");
-        this.active = false;
-        return true;
-      }
-      return false;
-    }
-  }, {
-    key: "remove",
-    value: function remove() {
-      this.hide();
-      this.el.remove();
+      var result = _get(_getPrototypeOf(ActionStep.prototype), "hide", this).call(this);
+      if (result) document.removeEventListener("click", this._onAction);
+      return result;
     }
   }]);
   return ActionStep;
-}(BaseStep);
+}(PopoverBaseStep);
 ActionStep.defaults = {
   alignment: "bottom-start"
 };
@@ -1539,7 +1382,7 @@ SessionCacheManager.Key = "tourguide.js:Session:";
 
 var e={"":["<em>","</em>"],_:["<strong>","</strong>"],"*":["<strong>","</strong>"],"~":["<s>","</s>"],"\n":["<br />"]," ":["<br />"],"-":["<hr />"]};function n(e){return e.replace(RegExp("^"+(e.match(/^(\t| )+/)||"")[0],"gm"),"")}function r(e){return (e+"").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}function t(a,c){var o,l,g,s,p,u=/((?:^|\n+)(?:\n---+|\* \*(?: \*)+)\n)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|(  \n\n*|\n{2,}|__|\*\*|[_*]|~~)/gm,m=[],h="",i=c||{},d=0;function f(n){var r=e[n[1]||""],t=m[m.length-1]==n;return r?r[1]?(t?m.pop():m.push(n),r[0|t]):r[0]:n}function $(){for(var e="";m.length;)e+=f(m[m.length-1]);return e}for(a=a.replace(/^\[(.+?)\]:\s*(.+)$/gm,function(e,n,r){return i[n.toLowerCase()]=r,""}).replace(/^\n+|\n+$/g,"");g=u.exec(a);)l=a.substring(d,g.index),d=u.lastIndex,o=g[0],l.match(/[^\\](\\\\)*\\$/)||((p=g[3]||g[4])?o='<pre class="code '+(g[4]?"poetry":g[2].toLowerCase())+'"><code'+(g[2]?' class="language-'+g[2].toLowerCase()+'"':"")+">"+n(r(p).replace(/^\n+|\n+$/g,""))+"</code></pre>":(p=g[6])?(p.match(/\./)&&(g[5]=g[5].replace(/^\d+/gm,"")),s=t(n(g[5].replace(/^\s*[>*+.-]/gm,""))),">"==p?p="blockquote":(p=p.match(/\./)?"ol":"ul",s=s.replace(/^(.*)(\n|$)/gm,"<li>$1</li>")),o="<"+p+">"+s+"</"+p+">"):g[8]?o='<img src="'+r(g[8])+'" alt="'+r(g[7])+'">':g[10]?(h=h.replace("<a>",'<a href="'+r(g[11]||i[l.toLowerCase()])+'">'),o=$()+"</a>"):g[9]?o="<a>":g[12]||g[14]?o="<"+(p="h"+(g[14]?g[14].length:g[13]>"="?1:2))+">"+t(g[12]||g[15],i)+"</"+p+">":g[16]?o="<code>"+r(g[16])+"</code>":(g[17]||g[1])&&(o=f(g[17]||"--"))),h+=l,h+=o;return (h+a.substring(d)+$()).replace(/^\n+|\n+$/g,"")}
 
-var Style = ":host {\n  position: absolute;\n  overflow: visible;\n  top: 0;\n  left: 0;\n  width: 0;\n  height: 0;\n  box-sizing: border-box;\n  line-height: 1.4;\n  text-align: left;\n  text-rendering: optimizespeed;\n  font-family: var(--tourguide-font-family);\n  font-size: var(--tourguide-font-size);\n  color: var(--tourguide-text-color);\n  /* 1 */\n  -webkit-text-size-adjust: 100%;\n  /* 2 */\n  -moz-tab-size: 4;\n  /* 3 */\n  tab-size: 4;\n  /* 3 */\n}\n\n* {\n  margin: 0;\n  padding: 0;\n  background: none;\n  border: none;\n  border-width: 0;\n  border-style: none;\n  border-color: currentColor;\n  box-shadow: none;\n  color: inherit;\n  appearance: none;\n  font-size: inherit;\n  font-weight: inherit;\n  text-decoration: none;\n}\n\na,\nbutton {\n  cursor: pointer;\n}\na:hover, a:focus,\nbutton:hover,\nbutton:focus {\n  outline: 5px auto var(--tourguide-focus-color);\n}\n\n.guided-tour-step {\n  display: none;\n}\n.guided-tour-step.active {\n  display: block;\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  pointer-events: all;\n}\n.guided-tour-step.active .guided-tour-step-highlight {\n  position: absolute;\n  box-sizing: border-box;\n  border-radius: 4px;\n  box-shadow: 0 0 0 999em var(--tourguide-overlay-color);\n  z-index: 1;\n}\n.guided-tour-step.active .guided-tour-step-tooltip {\n  position: absolute;\n  margin: 16px 0;\n  z-index: 2;\n  background-color: var(--tourguide-background-color);\n  width: var(--tourguide-tooltip-width);\n  max-width: max-content;\n  border-radius: 5px;\n  box-sizing: border-box;\n  box-shadow: 0 0 2.5em -0.8em #000, 0 0 10px -5px #000, 0 0 3px -1px #000;\n  transition: opacity 150ms;\n}\n@media screen and (max-width: 760px) {\n  .guided-tour-step.active .guided-tour-step-tooltip {\n    max-width: 85vw;\n    width: max-content !important;\n  }\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner {\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-arrow {\n  position: absolute;\n  width: 1em;\n  height: 1em;\n  background: var(--tourguide-background-color);\n  z-index: -1;\n  transform: rotate(45deg);\n  pointer-events: none;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-container {\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  height: calc(100% - 2.6em);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-image {\n  flex-grow: 1;\n  flex-shrink: 1;\n  overflow: hidden;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-image img {\n  width: 100%;\n  height: 100%;\n  border-radius: 4px 4px 0 0;\n  object-fit: cover;\n  object-position: center;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-wrapper {\n  margin: 1.5em 2.5em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-title {\n  font-size: 1.4em;\n  margin-bottom: 0.8em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content {\n  flex-shrink: 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content b,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content strong {\n  font-weight: bold;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content i,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content em {\n  font-style: italic;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content a {\n  cursor: pointer;\n  text-decoration: underline;\n  color: var(--tourguide-accent-color);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content mark {\n  background: inherit;\n  text-shadow: 0px 2px 4px #ff0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content code,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content dfn {\n  padding: 1px 6px 1px 4px;\n  border-radius: 4px;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content code {\n  background-color: #f0f0f0;\n  color: #e83e8c;\n  font-family: monospace;\n  font-size: 87.5%;\n  word-break: break-word;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content dfn {\n  font-style: italic;\n  background-color: #ffc6e5;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content p,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote {\n  margin: 1em 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content p:last-child,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul:last-child,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol:last-child,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote:last-child {\n  margin-bottom: 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote {\n  padding-left: 1em;\n  border-left: 4px solid silver;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol {\n  padding-left: 1.5em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul li,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol li {\n  margin: 0.3em 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions {\n  display: flex;\n  column-gap: 0.5em;\n  margin-top: 1.5em;\n  justify-content: end;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button {\n  color: var(--tourguide-accent-color);\n  padding: 0.5em 1em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button.primary {\n  background: var(--tourguide-accent-color);\n  padding: 0.5em 1.5em;\n  color: #fff;\n  border-radius: 4px;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button.primary:hover, .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button.primary:focus {\n  filter: brightness(120%);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-icon {\n  display: inline-block;\n  overflow: hidden;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button {\n  flex-direction: column;\n  justify-content: center;\n  /* <-- actual veertical align */\n  display: inline-flex;\n  text-align: center;\n  cursor: pointer;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button .guided-tour-icon {\n  align-self: center;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-close {\n  position: absolute;\n  top: 0;\n  right: 0;\n  width: 2em;\n  height: 2em;\n  color: var(--tourguide-step-button-close-color);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-prev,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-next,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-complete {\n  width: 3em;\n  height: 3em;\n  background: var(--tourguide-background-color);\n  border-radius: 50%;\n  margin-top: -1.5em;\n  position: absolute;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-prev {\n  color: var(--tourguide-step-button-prev-color);\n  left: 0;\n  transform: translateX(-50%);\n  top: 50%;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-next {\n  color: var(--tourguide-step-button-next-color);\n  right: 0;\n  transform: translateX(50%);\n  top: 50%;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-complete {\n  color: var(--tourguide-step-button-complete-color);\n  right: 0;\n  transform: translateX(50%);\n  top: 50%;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-footer {\n  flex-shrink: 0;\n  flex-grow: 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets {\n  text-align: center;\n  line-height: 16px;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul {\n  list-style: none;\n  margin: 0 1em 1em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li {\n  display: inline-block;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button {\n  width: 8px;\n  height: 8px;\n  border-radius: 50%;\n  display: inline-block;\n  background-color: var(--tourguide-bullet-color);\n  border: 8px solid var(--tourguide-background-color);\n  box-sizing: content-box;\n  cursor: pointer;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button.complete {\n  background-color: var(--tourguide-bullet-visited-color);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button.current {\n  background-color: var(--tourguide-bullet-current-color);\n}\n@media screen and (min-width: 760px) {\n  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container {\n    flex-direction: row;\n    height: 100%;\n  }\n  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container .guided-tour-step-content-wrapper {\n    flex: 1 1 auto;\n  }\n  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container .guided-tour-step-image {\n    width: 50%;\n    margin-bottom: calc((1em + 24px) * -1);\n    flex: 0 0 auto;\n  }\n  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container .guided-tour-step-image img {\n    border-radius: 4px 0 0 4px;\n    height: 100%;\n    object-fit: cover;\n    object-position: center;\n  }\n}\n.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-arrow-none .guided-tour-step-tooltip-inner .guided-tour-arrow {\n  display: none;\n}\n\n.guided-tour-step.active .guided-tour-step-tooltip.action-tooltip {\n  margin: 0;\n}\n\n.guided-tour-step.active .guided-tour-step-highlight.action-target {\n  box-shadow: none;\n}\n\n.guided-tour-step-highlight.action-target {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  pointer-events: none;\n}\n.guided-tour-step-highlight.action-target .radar {\n  position: relative;\n}\n.guided-tour-step-highlight.action-target .radar .radar-dot:before {\n  top: -4px;\n  left: -4px;\n  z-index: 193;\n  width: 8px;\n  height: 8px;\n  border: 2px solid var(--tourguide-background-color);\n  border-radius: 50%;\n}\n.guided-tour-step-highlight.action-target .radar .radar-dot:after, .guided-tour-step-highlight.action-target .radar .radar-dot:before {\n  position: absolute;\n  background-color: var(--tourguide-accent-color);\n  content: \" \";\n}\n.guided-tour-step-highlight.action-target .radar .radar-dot:after {\n  z-index: 192;\n  width: 10px;\n  height: 10px;\n  border-radius: 50%;\n  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);\n  animation-name: ripple;\n  animation-duration: 1s;\n  animation-timing-function: ease;\n  animation-delay: 0s;\n  animation-iteration-count: infinite;\n}\n.guided-tour-step-highlight.action-target .radar .radar-circle:before {\n  border: 1px solid var(--tourguide-accent-color);\n  border-radius: 50%;\n}\n.guided-tour-step-highlight.action-target .radar .radar-circle:after, .guided-tour-step-highlight.action-target .radar .radar-circle:before {\n  position: absolute;\n  top: -20px;\n  left: -20px;\n  z-index: 192;\n  width: 40px;\n  height: 40px;\n  content: \" \";\n}\n.guided-tour-step-highlight.action-target .radar .radar-circle:after {\n  background-color: var(--tourguide-accent-color);\n  border-radius: 50%;\n  opacity: 0.3;\n}\n@keyframes ripple {\n  0% {\n    top: 0;\n    left: 0;\n    width: 0;\n    height: 0;\n    opacity: 0.75;\n  }\n  to {\n    top: -20px;\n    left: -20px;\n    width: 40px;\n    height: 40px;\n    opacity: 0;\n  }\n}\n\n.guided-tour-action-content-wrapper {\n  padding: 0.5em 1em;\n}\n.guided-tour-action-content-wrapper .guided-tour-action-title {\n  font-weight: 700;\n}";
+var Style = ":host {\n  position: absolute;\n  overflow: visible;\n  top: 0;\n  left: 0;\n  width: 0;\n  height: 0;\n  box-sizing: border-box;\n  line-height: 1.4;\n  text-align: left;\n  text-rendering: optimizespeed;\n  font-family: var(--tourguide-font-family);\n  font-size: var(--tourguide-font-size);\n  color: var(--tourguide-text-color);\n  /* 1 */\n  -webkit-text-size-adjust: 100%;\n  /* 2 */\n  -moz-tab-size: 4;\n  /* 3 */\n  tab-size: 4;\n  /* 3 */\n}\n\n* {\n  margin: 0;\n  padding: 0;\n  background: none;\n  border: none;\n  border-width: 0;\n  border-style: none;\n  border-color: currentColor;\n  box-shadow: none;\n  color: inherit;\n  appearance: none;\n  font-size: inherit;\n  font-weight: inherit;\n  text-decoration: none;\n}\n\na,\nbutton {\n  cursor: pointer;\n}\na:hover, a:focus,\nbutton:hover,\nbutton:focus {\n  outline: 5px auto var(--tourguide-focus-color);\n}\n\n.guided-tour-step {\n  display: none;\n  opacity: 0;\n}\n.guided-tour-step.active {\n  display: block;\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  pointer-events: all;\n  transition: opacity 150ms;\n}\n.guided-tour-step.active .guided-tour-step-highlight {\n  position: absolute;\n  box-sizing: border-box;\n  border-radius: 4px;\n  box-shadow: 0 0 0 999em var(--tourguide-overlay-color);\n  z-index: 1;\n}\n.guided-tour-step.active .guided-tour-step-tooltip {\n  position: absolute;\n  margin: 16px 0;\n  z-index: 2;\n  background-color: var(--tourguide-background-color);\n  width: var(--tourguide-tooltip-width);\n  max-width: max-content;\n  border-radius: 5px;\n  box-sizing: border-box;\n  box-shadow: 0 0 2.5em -0.8em #000, 0 0 10px -5px #000, 0 0 3px -1px #000;\n  transition: opacity 150ms;\n}\n@media screen and (max-width: 760px) {\n  .guided-tour-step.active .guided-tour-step-tooltip {\n    max-width: 85vw;\n    width: max-content !important;\n  }\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner {\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-arrow {\n  position: absolute;\n  width: 1em;\n  height: 1em;\n  background: var(--tourguide-background-color);\n  z-index: -1;\n  transform: rotate(45deg);\n  pointer-events: none;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-container {\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  height: calc(100% - 2.6em);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-image {\n  flex-grow: 1;\n  flex-shrink: 1;\n  overflow: hidden;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-image img {\n  width: 100%;\n  height: 100%;\n  border-radius: 4px 4px 0 0;\n  object-fit: cover;\n  object-position: center;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-wrapper {\n  margin: 1.5em 2.5em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-title {\n  font-size: 1.4em;\n  margin-bottom: 0.8em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content {\n  flex-shrink: 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content b,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content strong {\n  font-weight: bold;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content i,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content em {\n  font-style: italic;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content a {\n  cursor: pointer;\n  text-decoration: underline;\n  color: var(--tourguide-accent-color);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content mark {\n  background: inherit;\n  text-shadow: 0px 2px 4px #ff0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content code,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content dfn {\n  padding: 1px 6px 1px 4px;\n  border-radius: 4px;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content code {\n  background-color: #f0f0f0;\n  color: #e83e8c;\n  font-family: monospace;\n  font-size: 87.5%;\n  word-break: break-word;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content dfn {\n  font-style: italic;\n  background-color: #ffc6e5;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content p,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote {\n  margin: 1em 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content p:last-child,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul:last-child,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol:last-child,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote:last-child {\n  margin-bottom: 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote {\n  padding-left: 1em;\n  border-left: 4px solid silver;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol {\n  padding-left: 1.5em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul li,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol li {\n  margin: 0.3em 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions {\n  display: flex;\n  column-gap: 0.5em;\n  margin-top: 1.5em;\n  justify-content: end;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button {\n  color: var(--tourguide-accent-color);\n  padding: 0.5em 1em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button.primary {\n  background: var(--tourguide-accent-color);\n  padding: 0.5em 1.5em;\n  color: #fff;\n  border-radius: 4px;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button.primary:hover, .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button.primary:focus {\n  filter: brightness(120%);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-icon {\n  display: inline-block;\n  overflow: hidden;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button {\n  flex-direction: column;\n  justify-content: center;\n  /* <-- actual veertical align */\n  display: inline-flex;\n  text-align: center;\n  cursor: pointer;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button .guided-tour-icon {\n  align-self: center;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-close {\n  position: absolute;\n  top: 0;\n  right: 0;\n  width: 2em;\n  height: 2em;\n  color: var(--tourguide-step-button-close-color);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-prev,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-next,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-complete {\n  width: 3em;\n  height: 3em;\n  background: var(--tourguide-background-color);\n  border-radius: 50%;\n  margin-top: -1.5em;\n  position: absolute;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-prev {\n  color: var(--tourguide-step-button-prev-color);\n  left: 0;\n  transform: translateX(-50%);\n  top: 50%;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-next {\n  color: var(--tourguide-step-button-next-color);\n  right: 0;\n  transform: translateX(50%);\n  top: 50%;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-complete {\n  color: var(--tourguide-step-button-complete-color);\n  right: 0;\n  transform: translateX(50%);\n  top: 50%;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-footer {\n  flex-shrink: 0;\n  flex-grow: 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets {\n  text-align: center;\n  line-height: 16px;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul {\n  list-style: none;\n  margin: 0 1em 1em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li {\n  display: inline-block;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button {\n  width: 8px;\n  height: 8px;\n  border-radius: 50%;\n  display: inline-block;\n  background-color: var(--tourguide-bullet-color);\n  border: 8px solid var(--tourguide-background-color);\n  box-sizing: content-box;\n  cursor: pointer;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button.complete {\n  background-color: var(--tourguide-bullet-visited-color);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button.current {\n  background-color: var(--tourguide-bullet-current-color);\n}\n@media screen and (min-width: 760px) {\n  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container {\n    flex-direction: row;\n    height: 100%;\n  }\n  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container .guided-tour-step-content-wrapper {\n    flex: 1 1 auto;\n  }\n  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container .guided-tour-step-image {\n    width: 50%;\n    margin-bottom: calc((1em + 24px) * -1);\n    flex: 0 0 auto;\n  }\n  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container .guided-tour-step-image img {\n    border-radius: 4px 0 0 4px;\n    height: 100%;\n    object-fit: cover;\n    object-position: center;\n  }\n}\n.guided-tour-step.active .guided-tour-step-tooltip.guided-tour-arrow-none .guided-tour-step-tooltip-inner .guided-tour-arrow {\n  display: none;\n}\n\n.guided-tour-step.active .guided-tour-step-tooltip.action-tooltip {\n  margin: 0;\n}\n\n.guided-tour-step.active .guided-tour-step-highlight.action-target {\n  box-shadow: none;\n}\n\n.guided-tour-step-highlight.action-target {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  pointer-events: none;\n}\n.guided-tour-step-highlight.action-target .radar {\n  position: relative;\n}\n.guided-tour-step-highlight.action-target .radar .radar-dot:before {\n  top: -4px;\n  left: -4px;\n  z-index: 193;\n  width: 8px;\n  height: 8px;\n  border: 2px solid var(--tourguide-background-color);\n  border-radius: 50%;\n}\n.guided-tour-step-highlight.action-target .radar .radar-dot:after, .guided-tour-step-highlight.action-target .radar .radar-dot:before {\n  position: absolute;\n  background-color: var(--tourguide-accent-color);\n  content: \" \";\n}\n.guided-tour-step-highlight.action-target .radar .radar-dot:after {\n  z-index: 192;\n  width: 10px;\n  height: 10px;\n  border-radius: 50%;\n  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);\n  animation-name: ripple;\n  animation-duration: 1s;\n  animation-timing-function: ease;\n  animation-delay: 0s;\n  animation-iteration-count: infinite;\n}\n.guided-tour-step-highlight.action-target .radar .radar-circle:before {\n  border: 1px solid var(--tourguide-accent-color);\n  border-radius: 50%;\n}\n.guided-tour-step-highlight.action-target .radar .radar-circle:after, .guided-tour-step-highlight.action-target .radar .radar-circle:before {\n  position: absolute;\n  top: -20px;\n  left: -20px;\n  z-index: 192;\n  width: 40px;\n  height: 40px;\n  content: \" \";\n}\n.guided-tour-step-highlight.action-target .radar .radar-circle:after {\n  background-color: var(--tourguide-accent-color);\n  border-radius: 50%;\n  opacity: 0.3;\n}\n@keyframes ripple {\n  0% {\n    top: 0;\n    left: 0;\n    width: 0;\n    height: 0;\n    opacity: 0.75;\n  }\n  to {\n    top: -20px;\n    left: -20px;\n    width: 40px;\n    height: 40px;\n    opacity: 0;\n  }\n}\n\n.guided-tour-action-content-wrapper {\n  padding: 0.5em 1em;\n}\n.guided-tour-action-content-wrapper .guided-tour-action-title {\n  font-weight: 700;\n}";
 
 var NOOP = function NOOP() {};
 var StepsSource = {
@@ -1655,7 +1498,7 @@ var Tour = /*#__PURE__*/function () {
     this._stepsSrc = StepsSource.DOM;
     this._ready = false;
     this._initialposition = null;
-    this._containerElement = document.createElement("aside");
+    this._containerElement = document.createElement("div");
     this._containerElement.classList.add("__guided-tour-container");
     u$2(this._options.root).append(this._containerElement);
     this._shadowRoot = this._containerElement.attachShadow({

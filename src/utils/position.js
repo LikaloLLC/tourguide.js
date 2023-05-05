@@ -10,12 +10,33 @@ import {
   autoPlacement
 } from "@floating-ui/dom";
 
+const viewFinder = {
+  getBoundingClientRect: () => {
+    const top = window.scrollY;
+    const left = window.scrollX;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const bottom = top + height;
+    const right = left + width;
+    return {
+      x: left,
+      y: top,
+      left,
+      top,
+      bottom,
+      right,
+      width,
+      height
+    };
+  }
+};
+
 const keepinview = ({ padding = 0 }) => ({
   name: "keepinview",
-  fn({ x, y, rects, middlewareData, platform }) {
-    const documentDimentions = platform.getDimensions(window);
-    const _x = clamp(x, padding, documentDimentions.width - rects.floating.width - padding);
-    const _y = clamp(y, padding, documentDimentions.height - rects.floating.height - padding);
+  fn({ x, y, rects, middlewareData }) {
+    const viewDimentions = viewFinder.getBoundingClientRect();
+    const _x = clamp(x, viewDimentions.left + padding, viewDimentions.right - rects.floating.width - padding);
+    const _y = clamp(y, viewDimentions.top + padding, viewDimentions.bottom - rects.floating.height - padding);
     const dx = x - _x;
     const dy = y - _y;
     const { arrow } = middlewareData;
@@ -27,21 +48,21 @@ const keepinview = ({ padding = 0 }) => ({
   }
 });
 
-const positionInView = ({ placement }) => ({
+const positionInView = ({ placement, padding = 0 }) => ({
   name: "positionInView",
-  fn({ x, y, rects, platform }) {
+  fn({ x, y, rects }) {
     let _x = x, _y = y;
-    const documentDimentions = platform.getDimensions(window);
+    const viewDimentions = viewFinder.getBoundingClientRect();
     const [align_y, align_x] = placement.split("-");
     switch (align_x) {
-      case "start": _x = 0; break;
-      case "center": _x = (documentDimentions.width / 2) - (rects.floating.width / 2); break;
-      case "end": _x = documentDimentions.width - rects.floating.width; break;
+      case "start": _x = viewDimentions.left + padding; break;
+      case "center": _x = viewDimentions.left + (viewDimentions.width / 2) - (rects.floating.width / 2); break;
+      case "end": _x = viewDimentions.right - rects.floating.width - padding; break;
     }
     switch (align_y) {
-      case "top": _y = 0; break;
-      case "middle": _y = (documentDimentions.height / 2) - (rects.floating.height / 2); break;
-      case "bottom": _y = documentDimentions.height - rects.floating.height; break;
+      case "top": _y = viewDimentions.top + padding; break;
+      case "middle": _y = viewDimentions.top + (viewDimentions.height / 2) - (rects.floating.height / 2); break;
+      case "bottom": _y = viewDimentions.bottom - rects.floating.height - padding; break;
     }
     return ({ x: _x, y: _y });
   }
@@ -92,7 +113,7 @@ export function positionTooltip(target, tooltipEl, arrowEl, highlightEl, step, c
   computePosition(
     isValidTarget
       ? target
-      : context.,
+      : viewFinder,
     tooltipEl,
     {
       // placement: 'bottom-start',
@@ -101,6 +122,7 @@ export function positionTooltip(target, tooltipEl, arrowEl, highlightEl, step, c
         isValidTarget
           ? autoPlacement({
             alignment: step.alignment || "bottom-start",
+            padding: 24
           })
           : positionInView({
             placement: step.placement || "center-middle"
@@ -115,9 +137,10 @@ export function positionTooltip(target, tooltipEl, arrowEl, highlightEl, step, c
           element: arrowEl,
           padding: 8
         }),
-        keepinview({
-          padding: 24
-        })],
+        // keepinview({
+        //   padding: 24
+        // })
+      ],
     }
   ).then(({ x, y, middlewareData, placement }) => {
     setStyle(tooltipEl, {

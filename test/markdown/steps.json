@@ -71,6 +71,11 @@
     ]
   },
   {
+    "type": "navigate",
+    "hidden": true,
+    "target": "http://127.0.0.1:8081/test/markdown/"
+  },
+  {
     "type": "action",
     "selector": "#dropdownMenuButton1",
     "title": "Click this button to see the dropdown menu!"
