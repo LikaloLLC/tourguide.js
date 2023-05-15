@@ -1,0 +1,48 @@
+:host {
+    position: absolute;
+    overflow: visible;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    box-sizing: border-box;
+    line-height: 1.4;
+    text-align: left;
+    text-rendering: optimizespeed;
+    font-family: var(--tourguide-font-family);
+    font-size: var(--tourguide-font-size);
+    color: var(--tourguide-text-color);
+    /* 1 */
+    -webkit-text-size-adjust: 100%;
+    /* 2 */
+    -moz-tab-size: 4;
+    /* 3 */
+    tab-size: 4;
+    /* 3 */
+
+    * {
+        margin: 0;
+        padding: 0;
+        background: none;
+        border: none;
+        border-width: 0;
+        border-style: none;
+        border-color: currentColor;
+        box-shadow: none;
+        color: inherit;
+        appearance: none;
+        font-size: inherit;
+        font-weight: inherit;
+        text-decoration: none;
+    }
+
+    a,
+    button {
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+            outline: 5px auto var(--tourguide-focus-color);
+        }
+    }
+}

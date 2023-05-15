@@ -1,24 +1,28 @@
-import { clamp } from ".";
+import { TourStyle } from "../types";
+import { clamp } from "./clamp";
 
-export function hexToRGB(hex) {
+type RGB = [number, number, number];
+type HSL = RGB;
+
+export function hexToRGB(hex: string): RGB {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? [
-        parseInt(result[1], 16),
-        parseInt(result[2], 16),
-        parseInt(result[3], 16)
-    ] : null;
+    return [
+        parseInt(result?.[1] || "", 16),
+        parseInt(result?.[2] || "", 16),
+        parseInt(result?.[3] || "", 16)
+    ];
 }
 
-function componentToHex(c) {
+function componentToHex(c: number): string {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
 }
 
-export function rgbToHex(r, g, b) {
+export function rgbToHex(r: number, g: number, b: number): string {
     return "#" + componentToHex(Math.floor(r)) + componentToHex(Math.floor(g)) + componentToHex(Math.floor(b));
 }
 
-export function RGBToHSL(r, g, b) {
+export function RGBToHSL(r: number, g: number, b: number): HSL {
     r /= 255;
     g /= 255;
     b /= 255;
@@ -38,25 +42,25 @@ export function RGBToHSL(r, g, b) {
     ];
 }
 
-export function HSLToRGB(h, s, l) {
+export function HSLToRGB(h: number, s: number, l: number): RGB {
     s /= 100;
     l /= 100;
-    const k = n => (n + h / 30) % 12;
+    const k = (n: number) => (n + h / 30) % 12;
     const a = s * Math.min(l, 1 - l);
-    const f = n =>
+    const f = (n: number) =>
         l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
     return [255 * f(0), 255 * f(8), 255 * f(4)];
 }
 
-export function hexToHSL(hex) {
+export function hexToHSL(hex: string) {
     return RGBToHSL.apply(null, hexToRGB(hex));
 }
 
-export function HSLToHex(h, s, l) {
+export function HSLToHex(h: number, s: number, l: number): string {
     return rgbToHex.apply(null, HSLToRGB(h, s, l));
 }
 
-export function adjust(hex, h, s, l) {
+export function adjust(hex: string, h: number, s: number, l: number): string {
     const hsl = hexToHSL(hex);
     hsl[0] = clamp(hsl[0] * h, 0, 255);
     hsl[1] = clamp(hsl[1] * s, 0, 255);
@@ -64,8 +68,8 @@ export function adjust(hex, h, s, l) {
     return HSLToHex.apply(null, hsl);
 }
 
-export function setAutoColors(defaultStyle, optionsStyle) {
-    let style = Object.assign(defaultStyle, optionsStyle || {});
+export function setAutoColors(defaultStyle: TourStyle, optionsStyle: TourStyle) {
+    let style = Object.assign(defaultStyle, optionsStyle || {}) as any;
     const filter = /Color$/;
     const { accentColor } = style;
     Object.keys(style)
