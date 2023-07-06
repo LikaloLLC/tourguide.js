@@ -3,7 +3,7 @@ import { ContentDecorator } from "./ContentDecorator";
 
 export const MarkdownDecorator = new ContentDecorator(
     "",
-    (text, matches, step, context) => {
+    (text) => {
         return snarkdown(text);
     }
 );

@@ -6,10 +6,10 @@ export interface CacheManager {
 }
 
 export abstract class AbstractCacheManager implements CacheManager {
-    constructor(identifier: string = "") {
+    constructor(identifier = "") {
         this.identifier = identifier;
     }
-    identifier: string = "";
+    identifier = "";
     abstract get<T = any>(key: string): T;
     abstract set(key: string, value: any): void;
     abstract clear(key: string): void;

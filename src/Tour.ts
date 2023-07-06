@@ -3,17 +3,29 @@ import u, { U } from "umbrellajs";
 import { Step, StepData } from "./types/Step";
 import { CacheManager } from "./cachemanager/CacheManager";
 import MemoryCacheManager from "./cachemanager/InMemoryCacheManager";
-import { CacheKeys, KeyboardNavigationOptions, StepsSource, TourOptions, TourStyle, Tour as ITour, TourAction } from "./types";
-import { ScrollCoordinates, animateScroll, assert, clamp, colorObjToStyleVarString, getMaxZIndex, getScrollCoordinates, setAutoColors, setStyle } from "./utils";
+import {
+  CacheKeys,
+  KeyboardNavigationOptions,
+  StepsSource, TourOptions,
+  TourStyle,
+  Tour as ITour,
+  TourAction,
+  Helpers
+} from "./types";
+import { assert, clamp, getMaxZIndex, Style, Scroll, Color } from "./utils";
 import * as Utils from "./utils";
 
-import Style from "./Tour.scss";
 import PopoverStep from "./step/PopoverStep";
 import ActionHandler from "./handler/ActionHandler";
 import { ContentDecorator } from "./decorator/ContentDecorator";
 import { MarkdownDecorator } from "./decorator/MarkdownDecorator";
 import CardStep from "./step/CardStep";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+import BaseStyle from "./Tour.scss";
+import { getDataContents } from "./utils/dom";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const NOOP = () => { };
 
 const defaultKeyNavOptions: KeyboardNavigationOptions = {
@@ -108,23 +120,24 @@ export default class Tour implements ITour {
   static readonly ContentDecorator = ContentDecorator;
   static readonly MarkdownDecorator = MarkdownDecorator;
   static readonly PopoverStep = PopoverStep;
-  static readonly Helpers = {
+  static readonly Helpers: Helpers = {
     u,
     ...Utils
-  };
+  } as never as Helpers;
   private _options: TourOptions;
   private _steps: Array<Step> = [];
-  private _current: number = 0;
-  private _active: boolean = false;
-  private _ready: boolean = false;
+  private _current = 0;
+  private _active = false;
+  private _ready = false;
   private _stepsSrc: StepsSource = StepsSource.DOM;
-  private _initialposition: Array<ScrollCoordinates> | null = null;
+  private _initialposition: Array<Scroll.ScrollCoordinates> | null = null;
   private _containerElement!: U;
   private _shadowRoot!: ShadowRoot;
   private _cacheManager!: CacheManager;
-  private _helpers!: typeof Tour.Helpers & { decorate: (text: string, step: Step) => string };
+  private _helpers!: Helpers;
   get cacheManager() {
     return this._cacheManager ||
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       (this._cacheManager = new this.options.cacheManagerFactory!(this.options.identifier as string));
   }
   get currentstep() {
@@ -160,7 +173,7 @@ export default class Tour implements ITour {
       defaultOptions,
       options,
       {
-        style: setAutoColors(
+        style: Color.setAutoColors(
           defaultStyle,
           options.style || {}
         )
@@ -188,7 +201,7 @@ export default class Tour implements ITour {
               this._ready = true;
               this._onTourReady();
             }).catch(e => console.error(e))
-        ).catch(e => {
+        ).catch(() => {
           assert(false, "Failed to fetch step data. Check documentation.");
         });
       } break;
@@ -240,11 +253,11 @@ export default class Tour implements ITour {
   }
   private _injectStyles() {
     const style = u(
-      `<style>${Style}</style>${this.options.stepFactory.map((step: any) => step.Style).filter(Boolean).map((style: string) => `<style>${style}</style`).join("")}`
+      `<style>${BaseStyle}</style>${this.options.stepFactory.map((step: any) => step.Style).filter(Boolean).map((style: string) => `<style>${style}</style`).join("")}`
     );
     u(this._shadowRoot as ShadowRoot).append(style);
     const colors = u(
-      `<style>${colorObjToStyleVarString(
+      `<style>${Style.colorObjToStyleVarString(
         this._options.style || {},
         "--tourguide"
       )}</style>`
@@ -284,7 +297,7 @@ export default class Tour implements ITour {
       this.complete();
     }
   }
-  private _decorateText(text: string, step: Step) {
+  private _decorateText(text: string, step: Step): string {
     let _text = text;
     this._options.contentDecorators?.forEach(decorator => {
       if (decorator.test(_text)) _text = decorator.render(_text, step, this);
@@ -293,17 +306,28 @@ export default class Tour implements ITour {
   }
   reset() {
     if (this._active) this.stop();
-    if (this._stepsSrc === StepsSource.DOM) {
-      this._steps = [];
-    }
+    // if (this._stepsSrc === StepsSource.DOM) {
+    //   this._steps = [];
+    // }
     this._current = 0;
     this.cacheManager.set(CacheKeys.IsStarted, true);
   }
   start(step = 0) {
     if (this._ready) {
-      setStyle(this._containerElement, { "z-index": (getMaxZIndex() + 1) });
+      if (this._stepsSrc === StepsSource.DOM) {
+        this._initSteps(
+          u(this._options.selector)
+            .nodes.map(step => {
+              const data = getDataContents<StepData>(u(step).data("tour"));
+              data.selector = step as any;
+              return data;
+            })
+        );
+        assert(this._steps.length > 0, "Found no tour steps on page. Please verify your setup.");
+      }
+      Style.setStyle(this._containerElement, { "z-index": (getMaxZIndex() + 1) });
       if (this._options.restoreinitialposition) {
-        this._initialposition = getScrollCoordinates(this._options.root);
+        this._initialposition = Scroll.getScrollCoordinates(this._options.root);
       }
       if (!this._active) {
         this.cacheManager.set(CacheKeys.IsStarted, true);
@@ -376,7 +400,7 @@ export default class Tour implements ITour {
   stop() {
     if (this._active) {
       this.currentstep.hide();
-      setStyle(this._containerElement, { "z-index": 0 });
+      Style.setStyle(this._containerElement, { "z-index": 0 });
       this._active = false;
       this._steps.forEach((step) => step.remove());
       u(this._options.root).removeClass("__guided-tour-active");
@@ -384,7 +408,7 @@ export default class Tour implements ITour {
         u(":root").off("keyup", this._keyboardHandler);
       }
       if (this._options.restoreinitialposition && this._initialposition) {
-        animateScroll(this._initialposition, this._options.animationspeed);
+        Scroll.animateScroll(this._initialposition, this._options.animationspeed);
       }
       this._options.onStop?.(this);
       this.cacheManager.set(CacheKeys.IsStarted, false);

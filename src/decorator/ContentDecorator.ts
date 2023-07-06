@@ -19,7 +19,8 @@ function parseProperties(props: string): Array<string> {
 }
 
 function getMatches(str: string, regex: RegExp): Array<Match> {
-    let matches: Array<Match> = [], m: RegExpExecArray | null;
+    const matches: Array<Match> = [];
+    let m: RegExpExecArray | null;
     regex.lastIndex = 0;
     while ((m = regex.exec(str)) !== null) {
         // This is necessary to avoid infinite loops with zero-width matches
