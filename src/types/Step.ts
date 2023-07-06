@@ -11,13 +11,13 @@ export interface StepData {
 }
 
 export abstract class Step<StepDataType = StepData> {
-    static Type: string = "default";
-    static Style: string = "";
+    static Type = "default";
+    static Style = "";
     context: Tour;
-    index: number = 0;
-    active: boolean = false;
-    first: boolean = false;
-    last: boolean = false;
+    index = 0;
+    active = false;
+    first = false;
+    last = false;
     data!: StepDataType;
     constructor(data: StepDataType, context: Tour) {
       this.data = data;

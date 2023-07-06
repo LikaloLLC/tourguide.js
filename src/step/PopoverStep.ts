@@ -1,9 +1,10 @@
 // import scrollIntoView from "scroll-into-view";
 import { Step, StepData, Tour } from "../types";
 import { Element, U } from "umbrellajs";
+import { Alignment, Middleware } from "@floating-ui/dom";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 import Style from "./PopoverStep.scss";
-import { AlignedPlacement, Middleware } from "@floating-ui/dom";
 
 export type PopoverLayout = "horizontal" | "vertical";
 
@@ -14,7 +15,7 @@ export interface PopoverStepData extends StepData {
     title: string;
     content: string;
     layout: PopoverLayout;
-    alignment: AlignedPlacement;
+    alignment: Alignment;
     navigation: boolean;
 }
 
@@ -27,7 +28,7 @@ const popoverStepDataDefaults: PopoverStepData = {
     index: 0,
     selector: undefined,
     navigation: true,
-    alignment: "bottom-start",
+    alignment: "start",
     hidden: false
 }
 
@@ -39,12 +40,12 @@ const positionabsolute: () => Middleware = () => ({
     }
 });
 
-export default class PopoverStep<AdditionalStepData = {}> extends Step<PopoverStepData & AdditionalStepData> {
+export default class PopoverStep<AdditionalStepData = object> extends Step<PopoverStepData & AdditionalStepData> {
     static Style: string = Style;
     $container!: U;
     $highlight!: U;
     $tooltip!: U;
-    // $arrow: U | null = null;
+    $arrow!: U;
     get _image(): U {
         return this.context.helpers.u(`<figure class="guided-tour-step-image">${this.data.image ? `<img src="${this.data.image}" />` : ""}</figure>`);
     }
@@ -122,15 +123,15 @@ export default class PopoverStep<AdditionalStepData = {}> extends Step<PopoverSt
     get _el(): U {
         if (!this.$container) {
             const tooltip = this.$tooltip = this.context.helpers.u("<div role=\"document\" class=\"guided-tour-step-tooltip\"></div>");
-            if (this.data.width) this.context.helpers.setStyle(tooltip, { width: this.data.width + "px", maxWidth: this.data.width + "px" });
-            if (this.data.height) this.context.helpers.setStyle(tooltip, { height: this.data.height + "px", maxHeight: this.data.height + "px" });
+            if (this.data.width) this.context.helpers.Style.setStyle(tooltip, { width: this.data.width + "px", maxWidth: this.data.width + "px" });
+            if (this.data.height) this.context.helpers.Style.setStyle(tooltip, { height: this.data.height + "px", maxHeight: this.data.height + "px" });
             const tooltipinner = this.context.helpers.u(`<div class="guided-tour-step-tooltip-inner${this.data.layout === "horizontal" ? " step-layout-horizontal" : ""}"></div>`);
             const container = this.context.helpers.u("<div class=\"guided-tour-step-content-container\"></div>");
             container.append(this._image).append(this._content);
-            // const arrow = this.$arrow = this.context.helpers.u("<div class=\"guided-tour-arrow\"></div>");
+            const arrow = this.$arrow = this.context.helpers.u("<div class=\"guided-tour-arrow\"></div>");
             const navigation = this._navigation;
             tooltipinner
-                // .append(arrow)
+                .append(arrow)
                 .append(container).append(navigation);
             tooltip.append(tooltipinner);
             this.$container = this._container;
@@ -166,14 +167,14 @@ export default class PopoverStep<AdditionalStepData = {}> extends Step<PopoverSt
     }
     _validate(data: PopoverStepData) {
         this.context.helpers.assert((
-            data.hasOwnProperty("title")
+            Object.prototype.hasOwnProperty.call(data, "title")
         ),
             "missing required step parameter: title\n" +
             JSON.stringify(data, null, 2) + "\n" +
             "see this doc for more detail: https://github.com/LikaloLLC/tourguide.js#json-based-approach"
         );
         this.context.helpers.assert((
-            data.hasOwnProperty("content")
+            Object.prototype.hasOwnProperty.call(data, "content")
         ),
             "missing required step parameter: content\n" +
             JSON.stringify(data, null, 2) + "\n" +
@@ -189,61 +190,39 @@ export default class PopoverStep<AdditionalStepData = {}> extends Step<PopoverSt
     }
     _position($target: U) {
         const _target = $target?.first();
-        this.context.helpers.position(
+        if (!_target) this.$arrow.addClass("no-arrow ");
+        else this.$arrow.removeClass("no-arrow ");
+        this.context.helpers.Position.position(
             _target || document.body,
-            this.$tooltip?.first(),
+            this.$tooltip?.first() as HTMLElement,
             _target
                 ? [
                     positionabsolute(),
-                    this.context.helpers.autoPlacement({
+                    this.context.helpers.Position.autoPlacement({
                         alignment: this.data.alignment,
                         padding: 24
                     }),
-                    this.context.helpers.highlight({
-                        element: this.$highlight?.first(),
+                    this.context.helpers.Position.highlight({
+                        element: this.$highlight?.first() as HTMLElement,
                         padding: 5
                     }),
-                    this.context.helpers.offset,
-                    // this.context.helpers.arrow({
-                    //     element: this.$arrow?.first(),
-                    //     padding: 8
-                    // }),
-                    this.context.helpers.keepinview({
+                    this.context.helpers.Position.offset,
+                    this.context.helpers.Position.arrow({
+                        element: this.$arrow?.first() as HTMLElement,
+                        padding: 18
+                    }),
+                    this.context.helpers.Position.keepinview({
                         padding: 24
                     })
                 ]
                 : [
-                    this.context.helpers.positionfixed(),
-                    this.context.helpers.highlight({
-                        element: this.$highlight?.first(),
+                    this.context.helpers.Position.positionfixed(),
+                    this.context.helpers.Position.highlight({
+                        element: this.$highlight?.first() as HTMLElement,
                         centered: true
                     }),
                 ]
         );
-        // .then((data: any) => {
-        //     debugger;
-        //     const arrowEl = this.$arrow?.first() as HTMLDivElement;
-        //     if (data.middlewareData.arrow) {
-        //         const side = this.data.alignment.split("-")[0];
-        //         const staticSide = {
-        //             top: "bottom",
-        //             right: "left",
-        //             bottom: "top",
-        //             left: "right"
-        //         }[side] as string;
-        //         setStyle(arrowEl, {
-        //             left: data.middlewareData.arrow.x != null ? `${data.middlewareData.arrow.x}px` : "",
-        //             top: data.middlewareData.arrow.y != null ? `${data.middlewareData.arrow.y}px` : "",
-        //             right: "",
-        //             bottom: "",
-        //             [staticSide]: `${-arrowEl.offsetWidth / 2}px`,
-        //         });
-        //     } else {
-        //         setStyle(arrowEl, {
-        //             display: "none"
-        //         });
-        //     }
-        // });
     }
     attach(parent: Element) {
         this.context.helpers.u(parent).append(this._el);
@@ -253,43 +232,16 @@ export default class PopoverStep<AdditionalStepData = {}> extends Step<PopoverSt
         if (!this.active) {
             super.show();
             const $target = this.context.helpers.u(this.data.selector || "null");
-            this.context.helpers.smoothScroll($target.first() as HTMLElement, { block: "center" }).then(() => {
+            this.context.helpers.Scroll.smoothScroll($target.first() as HTMLElement, { block: "center" }).then(() => {
                 this._position($target);
-                this.context.helpers.setStyle(this.$container as U, {
+                this.context.helpers.Style.setStyle(this.$container as U, {
                     opacity: 1
                 });
                 (this.$container?.find(".guided-tour-step-tooltip, button.button, button.primary, .guided-tour-step-button-complete, .guided-tour-step-button-next").last() as any).focus({
                     preventScroll: true
                 });
             });
-            // const onShow = () => {
-            //     this._position($target);
-            //     setStyle(this.$container as U, {
-            //         opacity: 1
-            //     });
-            //     (this.$container?.find(".guided-tour-step-tooltip, button.primary, .guided-tour-step-button-complete, .guided-tour-step-button-next").last() as any).focus({
-            //         preventScroll: true
-            //     });
-            // };
             this._el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
-
-            // if (isTargetValid(this._target)) {
-            //     const animationspeed = clamp(this.context.options.animationspeed || 0, 120, 1000);
-            //     // this._scrollCancel = scrollIntoView(this.target, {
-            //     //     time: animationspeed,
-            //     //     cancellable: false,
-            //     //     align: {
-            //     //         top: 0.5,
-            //     //         left: 0.5
-            //     //     }
-            //     // }, onShow);
-            // } else
-            // const animationspeed = clamp(this.context.options.animationspeed || 0, 120, 1000);
-            // ($target.first() as HTMLElement)?.scrollIntoView({
-            //     behavior: "smooth",
-            //     block: "nearest"
-            // });
-            // onShow();
             return true;
         }
         return false;
@@ -297,7 +249,7 @@ export default class PopoverStep<AdditionalStepData = {}> extends Step<PopoverSt
     hide() {
         this._cancel();
         if (this.active) {
-            this.context.helpers.setStyle(this.$container as U, {
+            this.context.helpers.Style.setStyle(this.$container as U, {
                 opacity: 0
             });
             this._el.removeClass("active");

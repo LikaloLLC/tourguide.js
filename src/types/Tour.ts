@@ -1,20 +1,20 @@
-import { U } from "umbrellajs";
 import { ActionHandler, TourAction } from "./ActionHandler";
 import { CacheManager } from "./CacheManager";
 import { ContentDecorator } from "./ContentDecorator";
+import { Helpers } from "./Helpers";
 import { Step, StepData } from "./Step";
 
 export enum StepsSource {
     DOM,
     JSON,
     REMOTE
-};
+}
 
 export enum CacheKeys {
     "LastInitilized" = "timestamp",
     "IsStarted" = "started",
     "CurrentProgress" = "progress"
-};
+}
 
 export interface KeyboardNavigationOptions {
     next?: string | number | null;
@@ -59,7 +59,7 @@ export interface Tour {
     hasnext: boolean;
     nextstep: number;
     previousstep: number;
-    helpers: any;
+    helpers: Helpers;
     action(event: Event, action: any): void;
     go(step: number): void;
     next(e?: Event): void;

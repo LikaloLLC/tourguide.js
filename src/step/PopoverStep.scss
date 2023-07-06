@@ -53,12 +53,17 @@
 
                 .guided-tour-arrow {
                     position: absolute;
-                    width: 1em;
-                    height: 1em;
+                    width: 14px;
+                    height: 14px;
                     background: var(--tourguide-background-color);
                     z-index: -1;
                     transform: rotate(45deg);
                     pointer-events: none;
+                    margin-left: -7px;
+                    margin-top: -7px;
+                    &.no-arrow {
+                        display: none;
+                    }
                 }
 
                 .guided-tour-step-content-container {
@@ -83,12 +88,12 @@
                 }
 
                 .guided-tour-step-content-wrapper {
-                    margin: 1.5em 2.5em;
+                    margin: 1.2em 1.5em;
                 }
 
                 .guided-tour-step-title {
-                    font-size: 1.4em;
-                    margin-bottom: .8em;
+                    font-size: 130%;
+                    margin-bottom: 0.5em;
                 }
 
                 .guided-tour-step-content {
@@ -175,6 +180,7 @@
                             padding: 0.5em 1.5em;
                             color: #fff;
                             border-radius: 4px;
+                            font-size: 110%;
 
                             &:hover,
                             &:focus {
@@ -214,12 +220,12 @@
                 .guided-tour-step-button-prev,
                 .guided-tour-step-button-next,
                 .guided-tour-step-button-complete {
-                    width: 3em;
-                    height: 3em;
+                    width: 36px;
+                    height: 36px;
                     // border: 2px solid currentColor;
                     background: var(--tourguide-background-color);
                     border-radius: 50%;
-                    margin-top: -1.5em;
+                    margin-top: -18px;
                     position: absolute;
                 }
 
@@ -309,14 +315,6 @@
                                 }
                             }
                         }
-                    }
-                }
-            }
-
-            &.guided-tour-arrow-none {
-                .guided-tour-step-tooltip-inner {
-                    .guided-tour-arrow {
-                        display: none;
                     }
                 }
             }
