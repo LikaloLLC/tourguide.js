@@ -82,6 +82,14 @@ export namespace Position {
         }
     });
 
+    export const positionabsolute: () => Middleware = () => ({
+        name: "positionabsolute",
+        fn({ elements }) {
+            elements.floating.style.position = "absolute";
+            return ({ data: {} });
+        }
+    });
+
     export interface HighlightProps {
         element: HTMLElement;
         padding?: number;

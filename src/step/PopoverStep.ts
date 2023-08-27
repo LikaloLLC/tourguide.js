@@ -1,7 +1,7 @@
 // import scrollIntoView from "scroll-into-view";
 import { Step, StepData, Tour } from "../types";
 import { Element, U } from "umbrellajs";
-import { Alignment, Middleware } from "@floating-ui/dom";
+import { Alignment } from "@floating-ui/dom";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 import Style from "./PopoverStep.scss";
@@ -31,14 +31,6 @@ const popoverStepDataDefaults: PopoverStepData = {
     alignment: "start",
     hidden: false
 }
-
-const positionabsolute: () => Middleware = () => ({
-    name: "positionabsolute",
-    fn({ elements }) {
-        elements.floating.style.position = "absolute";
-        return ({ data: {} });
-    }
-});
 
 export default class PopoverStep<AdditionalStepData = object> extends Step<PopoverStepData & AdditionalStepData> {
     static Style: string = Style;
@@ -197,7 +189,7 @@ export default class PopoverStep<AdditionalStepData = object> extends Step<Popov
             this.$tooltip?.first() as HTMLElement,
             _target
                 ? [
-                    positionabsolute(),
+                    this.context.helpers.Position.positionabsolute(),
                     this.context.helpers.Position.autoPlacement({
                         alignment: this.data.alignment,
                         padding: 24
