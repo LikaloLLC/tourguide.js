@@ -90,29 +90,8 @@ const defaultOptions: TourOptions = {
   style: defaultStyle
 };
 
-function isEventAttrbutesMatched(event: Event, keyOption: number | string, type = "keyup") {
-  // if (typeof event === "object") {
-  //   let eventAttrsMap = { type };
-  //   if (typeof keyOption === "number") {
-  //     eventAttrsMap.keyCode = keyOption;
-  //   } else if (typeof keyOption === "string") {
-  //     eventAttrsMap.key = keyOption;
-  //   } else if (typeof keyOption === "object") {
-  //     eventAttrsMap = { ...keyOption, type };
-  //   } else {
-  //     throw new Error(
-  //       "keyboardNavigation option invalid. should be predefined object or false. Check documentation."
-  //     );
-  //   }
-
-  //   const eventAttrs = Object.entries(eventAttrsMap).map(([key, value]) => ({
-  //     key,
-  //     value,
-  //   }));
-  //   return !eventAttrs.filter((attr) => event[attr.key] !== attr.value).length;
-  // }
-
-  return false;
+function isEventAttrbutesMatched(event: KeyboardEvent, code: number | string): boolean {
+  return event.code === code;
 }
 
 export default class Tour implements ITour {
@@ -220,13 +199,6 @@ export default class Tour implements ITour {
   }
   private _initSteps(steps: Array<StepData>) {
     this._steps = steps.map((data) => {
-      // if (data.title)
-      //   data.title = this._decorateText(data.title, data);
-      // if (data.content) {
-      //   data.content = this._decorateText(
-      //     snarkdown(data.content), data
-      //   );
-      // }
       const stepType = data.type || "default";
       const StepFactory = this._options.stepFactory?.find((f: any) => f.Type === stepType) as any;
       assert(StepFactory, `No factory for step of type "${stepType}". Check your setup.`);
@@ -264,7 +236,7 @@ export default class Tour implements ITour {
     );
     u(this._shadowRoot as ShadowRoot).append(colors);
   }
-  private _keyboardHandler(event: Event) {
+  private _keyboardHandler(event: KeyboardEvent) {
     if (
       this._options.keyboardNavigation?.next &&
       isEventAttrbutesMatched(event, this._options.keyboardNavigation.next)
@@ -296,6 +268,7 @@ export default class Tour implements ITour {
     ) {
       this.complete();
     }
+    return true;
   }
   private _decorateText(text: string, step: Step): string {
     let _text = text;
@@ -344,7 +317,7 @@ export default class Tour implements ITour {
             Object.prototype.toString.call(this._options.keyboardNavigation) === "[object Object]",
             "keyboardNavigation option invalid. should be predefined object or false. Check documentation."
           );
-          u(":root").on("keyup", this._keyboardHandler);
+          u(":root").on<KeyboardEvent>("keyup", this._keyboardHandler);
         }
       } else {
         this.go(step);
@@ -405,7 +378,7 @@ export default class Tour implements ITour {
       this._steps.forEach((step) => step.remove());
       u(this._options.root).removeClass("__guided-tour-active");
       if (this._options.keyboardNavigation) {
-        u(":root").off("keyup", this._keyboardHandler);
+        u(":root").off<KeyboardEvent>("keyup", this._keyboardHandler);
       }
       if (this._options.restoreinitialposition && this._initialposition) {
         Scroll.animateScroll(this._initialposition, this._options.animationspeed);

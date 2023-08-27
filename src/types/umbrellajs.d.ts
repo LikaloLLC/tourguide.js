@@ -25,8 +25,8 @@ declare module "umbrellajs" {
         last: (selector?: string) => HTMLElement | false;
         map: (callback: (value: never, index: number) => never) => Array<HTMLElement>;
         not: (filter: string) => U;
-        off: (events: string | Array<string>, cb: (event: Event) => void, cb2?: (event: Event) => void) => U;
-        on: (events: string | Array<string>, cb: (event: Event) => void, cb2?: (event: Event) => void) => U;
+        off: <T = Event>(events: string | Array<string>, cb: (event: T) => void, cb2?: (event: T) => void) => U;
+        on: <T = Event>(events: string | Array<string>, cb: (event: T) => void, cb2?: (event: T) => void) => U;
         param: (obj: { key: string, value: string }) => string;
         parent: (selector?: string) => U;
         prepend: (html: Element) => U;

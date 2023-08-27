@@ -17,12 +17,12 @@ export enum CacheKeys {
 }
 
 export interface KeyboardNavigationOptions {
-    next?: string | number | null;
-    prev?: string | number | null;
-    first?: string | number | null;
-    last?: string | number | null;
-    complete?: string | number | null;
-    stop?: string | number | null;
+    next?: string | null;
+    prev?: string | null;
+    first?: string | null;
+    last?: string | null;
+    complete?: string | null;
+    stop?: string | null;
 }
 
 
