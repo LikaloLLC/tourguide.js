@@ -12,11 +12,12 @@ export interface PopoverStepData extends StepData {
     alignment: Alignment;
     navigation: boolean;
 }
-export default class PopoverStep<AdditionalStepData = {}> extends Step<PopoverStepData & AdditionalStepData> {
+export default class PopoverStep<AdditionalStepData = object> extends Step<PopoverStepData & AdditionalStepData> {
     static Style: string;
     $container: U;
     $highlight: U;
     $tooltip: U;
+    $arrow: U;
     get _image(): U;
     get _content(): U;
     get _footer(): U;

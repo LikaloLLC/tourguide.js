@@ -1,5 +1,6 @@
 /// <reference path="../../src/types/umbrellajs.d.ts" />
 import { Position } from "../utils/position";
+import { Element } from "umbrellajs";
 import PopoverStep from "./PopoverStep";
 interface CardStepData {
     placement: Position.AlignedPlacement;
@@ -11,5 +12,6 @@ export default class CardStep extends PopoverStep<CardStepData> {
     get _highlight(): import("umbrellajs").U;
     get _footer(): import("umbrellajs").U;
     _position(): void;
+    attach(parent: Element): void;
 }
 export {};
