@@ -95,10 +95,11 @@ function isEventAttrbutesMatched(event: KeyboardEvent, code: number | string): b
 }
 
 export default class Tour implements ITour {
+  static readonly DefaultKeyNavOptions = defaultKeyNavOptions;
+  static readonly DefaultTourStyles = defaultStyle;
+  static readonly DefaultTourOptions = defaultOptions;
   static readonly ActionHandler = ActionHandler;
   static readonly ContentDecorator = ContentDecorator;
-  static readonly MarkdownDecorator = MarkdownDecorator;
-  static readonly PopoverStep = PopoverStep;
   static readonly Helpers: Helpers = {
     u,
     ...Utils
