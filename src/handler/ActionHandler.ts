@@ -1,4 +1,4 @@
-import { ActionHandler as ActionHandlerType, Tour, TourAction } from "../../@types";
+import Tour, { ActionHandler as ActionHandlerType, TourAction } from "../../@types";
 
 export type ActionHandlerFn = (event: Event, action: TourAction, context: Tour) => void;
 

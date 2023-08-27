@@ -2,12 +2,11 @@ import u, { U } from "umbrellajs";
 
 import { AbstractStep, StepData } from "../@types/Step";
 import MemoryCacheManager from "./cachemanager/InMemoryCacheManager";
-import {
+import ITour, {
   CacheKeys,
   KeyboardNavigationOptions,
   StepsSource, TourOptions,
   TourStyle,
-  Tour as ITour,
   TourAction,
   Helpers,
   CacheManager

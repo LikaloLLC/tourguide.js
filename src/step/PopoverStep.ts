@@ -1,5 +1,5 @@
 // import scrollIntoView from "scroll-into-view";
-import { StepData, Tour } from "../../@types";
+import Tour, { AbstractStep, StepData } from "../../@types";
 import { Element, U } from "umbrellajs";
 import { Alignment } from "@floating-ui/dom";
 
@@ -66,7 +66,7 @@ export default class PopoverStep<AdditionalStepData = object> extends Step<Popov
     get _footer(): U {
         return this.context.helpers.u(
             `<div class="guided-tour-step-bullets">
-                <ul>${this.context.steps.map((step, i) => `<li>
+                <ul>${this.context.steps.map((step: AbstractStep, i: number) => `<li>
                     <button title="Go to step ${i + 1}" data-index="${i}" class="${step.index < this.index ? "complete" : step.index == this.index ? "current" : ""}"></button>
                     </li>`).join("")}</ul>
             </div>`
