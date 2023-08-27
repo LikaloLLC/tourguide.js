@@ -1,8 +1,8 @@
 import { ActionHandler, TourAction } from "./ActionHandler";
-import { CacheManager } from "./CacheManager";
+import { AbstractCacheManager, CacheManager } from "./CacheManager";
 import { ContentDecorator } from "./ContentDecorator";
 import { Helpers } from "./Helpers";
-import { Step, StepData } from "./Step";
+import { AbstractStep, StepData } from "./Step";
 
 export enum StepsSource {
     DOM,
@@ -38,7 +38,7 @@ export interface TourOptions {
     preloadimages: boolean;
     resumeOnLoad: boolean;
     keyboardNavigation: KeyboardNavigationOptions;
-    stepFactory: Array<{ new(data: any, context: Tour): Step }>;
+    stepFactory: Array<{ new(data: any, context: Tour): AbstractStep }>;
     actionHandlers: Array<ActionHandler>;
     contentDecorators: Array<ContentDecorator>;
     cacheManagerFactory: { new(identifier: string): CacheManager };
@@ -46,26 +46,40 @@ export interface TourOptions {
     onStart: (context: Tour) => void;
     onStop: (context: Tour) => void;
     onComplete: (context: Tour) => void;
-    onStep: (step: Step, context: Tour) => void;
+    onStep: (step: AbstractStep, context: Tour) => void;
     onAction: (event: Event, action: TourAction, context: Tour) => void;
 }
 
-export interface Tour {
-    options: TourOptions;
-    steps: Array<Step>;
-    cacheManager: CacheManager;
-    currentstep: Step;
-    length: number;
-    hasnext: boolean;
-    nextstep: number;
-    previousstep: number;
-    helpers: Helpers;
-    action(event: Event, action: any): void;
-    go(step: number): void;
+export class Tour {
+    static readonly DefaultKeyNavOptions: KeyboardNavigationOptions;
+    static readonly DefaultTourStyles: TourStyle;
+    static readonly DefaultTourOptions: TourOptions;
+    static readonly ActionHandler: ActionHandler;
+    static readonly ContentDecorator: ContentDecorator;
+    static readonly Abstracts: {
+        AbstractCacheManager: AbstractCacheManager,
+        Step: AbstractStep
+    };
+    static readonly Helpers: Helpers;
+    get cacheManager(): CacheManager;
+    get currentstep(): AbstractStep<StepData>;
+    get length(): number;
+    get steps(): AbstractStep<StepData>[];
+    get hasnext(): boolean;
+    get nextstep(): number;
+    get previousstep(): number;
+    get options(): TourOptions;
+    get helpers(): Helpers;
+    constructor(options?: Partial<TourOptions>);
+    reset(): void;
+    start(step?: number): void;
+    action(event: Event, action: TourAction): void;
     next(e?: Event): void;
     previous(e?: Event): void;
+    go(step: number): void;
     stop(): void;
     complete(): void;
+    deinit(): void;
 }
 
 

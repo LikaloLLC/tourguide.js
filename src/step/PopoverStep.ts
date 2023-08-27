@@ -1,10 +1,11 @@
 // import scrollIntoView from "scroll-into-view";
-import { Step, StepData, Tour } from "../types";
+import { StepData, Tour } from "../../@types";
 import { Element, U } from "umbrellajs";
 import { Alignment } from "@floating-ui/dom";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 import Style from "./PopoverStep.scss";
+import { Step } from "../abstracts/Step";
 
 export type PopoverLayout = "horizontal" | "vertical";
 

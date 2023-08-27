@@ -4,7 +4,7 @@
     "src": "src/Tour.ts",
     "main": "tourguide.js",
     "module": "tourguide.esm.js",
-    "types": "types/Tour.d.ts",
+    "types": "@types/index.d.ts",
     "description": "Guided tour feature plugin for docsie manager",
     "homepage": "https://github.com/LikaloLLC/tourguide.js",
     "bugs": {
@@ -12,7 +12,7 @@
     },
     "files": [
         "tourguide.*",
-        "types/*"
+        "@types/*"
     ],
     "author": {
         "name": "Likalo LLC",
@@ -77,11 +77,6 @@
         "build:types": "tsc --declaration --emitDeclarationOnly -p ./tsconfig.json",
         "devw": "rollup -w -c rollup.config.js",
         "test": "npm run test --prefix ./test"
-    },
-    "standard": {
-        "ignore": [
-            "build"
-        ]
     },
     "browserslist": "> 0.25%, not dead"
 }

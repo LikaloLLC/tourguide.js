@@ -1,5 +1,4 @@
-import { AbstractCacheManager } from "./CacheManager";
-
+import { AbstractCacheManager } from "../abstracts/CacheManager";
 export default class MemoryCacheManager extends AbstractCacheManager {
     private _memory: Record<string, any> = {};
     get(key: string) {

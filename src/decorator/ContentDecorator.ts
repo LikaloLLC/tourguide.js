@@ -1,4 +1,4 @@
-import { Tour } from "../types";
+import { Tour } from "../../@types";
 
 export interface Match {
     match: string;
@@ -44,6 +44,7 @@ export class ContentDecorator {
     private match: RegExp | false;
     constructor(match: string | RegExp, decoratorFn: DecoratorFn) {
         if (typeof match === 'string' && match)
+            // eslint-disable-next-line no-useless-escape
             this.match = new RegExp(`{\s*${match.trim()}\s*(,.+?)?\s*?}`, 'gmi');
         else if (!match) this.match = false;
         else this.match = match as RegExp;

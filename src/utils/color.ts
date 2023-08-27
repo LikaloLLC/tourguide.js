@@ -1,4 +1,4 @@
-import { TourStyle } from "../types";
+import { TourStyle } from "../../@types";
 import { clamp } from "./clamp";
 
 // eslint-disable-next-line @typescript-eslint/no-namespace

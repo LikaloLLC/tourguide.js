@@ -1,9 +1,4 @@
-export interface CacheManager {
-    identifier: string;
-    get<T = any>(key: string): T;
-    set(key: string, value: any): void;
-    clear(key: string): void;
-}
+import { CacheManager } from "../../@types";
 
 export abstract class AbstractCacheManager implements CacheManager {
     constructor(identifier = "") {

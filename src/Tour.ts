@@ -1,7 +1,6 @@
 import u, { U } from "umbrellajs";
 
-import { Step, StepData } from "./types/Step";
-import { CacheManager } from "./cachemanager/CacheManager";
+import { AbstractStep, StepData } from "../@types/Step";
 import MemoryCacheManager from "./cachemanager/InMemoryCacheManager";
 import {
   CacheKeys,
@@ -10,10 +9,12 @@ import {
   TourStyle,
   Tour as ITour,
   TourAction,
-  Helpers
-} from "./types";
+  Helpers,
+  CacheManager
+} from "../@types";
 import { assert, clamp, getMaxZIndex, Style, Scroll, Color } from "./utils";
 import * as Utils from "./utils";
+import * as Abstracts from "./abstracts";
 
 import PopoverStep from "./step/PopoverStep";
 import ActionHandler from "./handler/ActionHandler";
@@ -100,12 +101,13 @@ export default class Tour implements ITour {
   static readonly DefaultTourOptions = defaultOptions;
   static readonly ActionHandler = ActionHandler;
   static readonly ContentDecorator = ContentDecorator;
+  static readonly Abstracts = Abstracts;
   static readonly Helpers: Helpers = {
     u,
     ...Utils
   } as never as Helpers;
   private _options: TourOptions;
-  private _steps: Array<Step> = [];
+  private _steps: Array<AbstractStep> = [];
   private _current = 0;
   private _active = false;
   private _ready = false;
@@ -271,7 +273,7 @@ export default class Tour implements ITour {
     }
     return true;
   }
-  private _decorateText(text: string, step: Step): string {
+  private _decorateText(text: string, step: AbstractStep): string {
     let _text = text;
     this._options.contentDecorators?.forEach(decorator => {
       if (decorator.test(_text)) _text = decorator.render(_text, step, this);

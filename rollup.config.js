@@ -10,7 +10,7 @@ import pkg from "./package.json";
 const isDev = Boolean(process.argv.find((arg) => arg === "--configDev"));
 
 const babelplugin = babel({
-  extensions: ['.js', '.jsx', '.ts', '.tsx'],
+  extensions: ['.js', '.jsx', '.d.ts', '.ts', '.tsx'],
   babelHelpers: "bundled",
   exclude: pkg.commonjs
 });
@@ -25,7 +25,7 @@ const replaceplugin = replace({
     : JSON.stringify("production"),
 });
 const resolveplugin = resolve({
-  extensions: ['.js', '.jsx', '.ts', '.tsx'],
+  extensions: ['.js', '.jsx', '.d.ts', '.ts', '.tsx'],
   mainFields: ["module", "jsnext:main", "browser"],
   browser: true,
   preferBuiltins: true
