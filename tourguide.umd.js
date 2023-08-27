@@ -1465,6 +1465,18 @@
         };
       }
     });
+    _Position.positionabsolute = () => ({
+      name: "positionabsolute",
+      fn(_ref4) {
+        let {
+          elements
+        } = _ref4;
+        elements.floating.style.position = "absolute";
+        return {
+          data: {}
+        };
+      }
+    });
     _Position.highlight = options => ({
       name: "highlight",
       options,
@@ -1608,18 +1620,6 @@
     alignment: "start",
     hidden: false
   };
-  const positionabsolute = () => ({
-    name: "positionabsolute",
-    fn(_ref) {
-      let {
-        elements
-      } = _ref;
-      elements.floating.style.position = "absolute";
-      return {
-        data: {}
-      };
-    }
-  });
   class PopoverStep extends Step {
     get _image() {
       return this.context.helpers.u("<figure class=\"guided-tour-step-image\">".concat(this.data.image ? "<img src=\"".concat(this.data.image, "\" />") : "", "</figure>"));
@@ -1718,7 +1718,7 @@
       var _this$$tooltip, _this$$highlight, _this$$arrow, _this$$highlight2;
       const _target = $target === null || $target === void 0 ? void 0 : $target.first();
       if (!_target) this.$arrow.addClass("no-arrow ");else this.$arrow.removeClass("no-arrow ");
-      this.context.helpers.Position.position(_target || document.body, (_this$$tooltip = this.$tooltip) === null || _this$$tooltip === void 0 ? void 0 : _this$$tooltip.first(), _target ? [positionabsolute(), this.context.helpers.Position.autoPlacement({
+      this.context.helpers.Position.position(_target || document.body, (_this$$tooltip = this.$tooltip) === null || _this$$tooltip === void 0 ? void 0 : _this$$tooltip.first(), _target ? [this.context.helpers.Position.positionabsolute(), this.context.helpers.Position.autoPlacement({
         alignment: this.data.alignment,
         padding: 24
       }), this.context.helpers.Position.highlight({
@@ -2216,10 +2216,11 @@
       }
     }
   }
+  _defineProperty(Tour, "DefaultKeyNavOptions", defaultKeyNavOptions);
+  _defineProperty(Tour, "DefaultTourStyles", defaultStyle);
+  _defineProperty(Tour, "DefaultTourOptions", defaultOptions);
   _defineProperty(Tour, "ActionHandler", ActionHandler);
   _defineProperty(Tour, "ContentDecorator", ContentDecorator);
-  _defineProperty(Tour, "MarkdownDecorator", MarkdownDecorator);
-  _defineProperty(Tour, "PopoverStep", PopoverStep);
   _defineProperty(Tour, "Helpers", {
     u,
     ...Utils
