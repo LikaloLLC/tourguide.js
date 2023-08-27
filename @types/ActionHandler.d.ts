@@ -1,8 +1,8 @@
-import { Tour } from "./Tour";
+import Tour from ".";
 
 export type ActionHandlerFn = (event: Event, action: TourAction, context: Tour) => void;
 
-export interface ActionHandler {
+export interface ActionHandlerType {
     name: string;
     onAction: ActionHandlerFn;
 }
@@ -15,3 +15,5 @@ export interface TourAction {
     target?: string;
     primary?: boolean;
 }
+
+export default function ActionHandler(name: string, handlerFn: ActionHandlerFn): ActionHandlerType;

@@ -1,4 +1,4 @@
-import { ActionHandler, TourAction } from "./ActionHandler";
+import ActionHandler, { TourAction } from "./ActionHandler";
 import { AbstractCacheManager, CacheManager } from "./CacheManager";
 import { ContentDecorator } from "./ContentDecorator";
 import { Helpers } from "./Helpers";
@@ -9,11 +9,11 @@ export default class Tour {
     static readonly DefaultKeyNavOptions: KeyboardNavigationOptions;
     static readonly DefaultTourStyles: TourStyle;
     static readonly DefaultTourOptions: TourOptions;
-    static readonly ActionHandler: ActionHandler;
-    static readonly ContentDecorator: ContentDecorator;
+    static readonly ActionHandler: typeof ActionHandler;
+    static readonly ContentDecorator: typeof ContentDecorator;
     static readonly Abstracts: {
-        AbstractCacheManager: AbstractCacheManager,
-        Step: AbstractStep
+        AbstractCacheManager: typeof AbstractCacheManager,
+        Step: typeof AbstractStep
     };
     static readonly Helpers: Helpers;
     get cacheManager(): CacheManager;

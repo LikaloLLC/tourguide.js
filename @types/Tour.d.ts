@@ -1,7 +1,7 @@
 import Tour from ".";
-import { ActionHandler, TourAction } from "./ActionHandler";
+import { ActionHandlerType, TourAction } from "./ActionHandler";
 import { CacheManager } from "./CacheManager";
-import { ContentDecorator } from "./ContentDecorator";
+import { ContentDecoratorType } from "./ContentDecorator";
 import { AbstractStep, StepData } from "./Step";
 
 export enum StepsSource {
@@ -39,8 +39,8 @@ export interface TourOptions {
     resumeOnLoad: boolean;
     keyboardNavigation: KeyboardNavigationOptions;
     stepFactory: Array<{ new(data: any, context: Tour): AbstractStep }>;
-    actionHandlers: Array<ActionHandler>;
-    contentDecorators: Array<ContentDecorator>;
+    actionHandlers: Array<ActionHandlerType>;
+    contentDecorators: Array<ContentDecoratorType>;
     cacheManagerFactory: { new(identifier: string): CacheManager };
     style: TourStyle;
     onStart: (context: Tour) => void;
