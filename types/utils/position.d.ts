@@ -10,6 +10,7 @@ export declare namespace Position {
         padding: number;
     }
     const positionfixed: (options?: PositionfixedProps) => Middleware;
+    const positionabsolute: () => Middleware;
     interface HighlightProps {
         element: HTMLElement;
         padding?: number;
