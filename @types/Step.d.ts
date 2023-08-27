@@ -1,6 +1,6 @@
 import { Element } from "umbrellajs";
 import { TourAction } from "./ActionHandler";
-import { Tour } from "./Tour";
+import Tour from "./";
 
 export interface StepData {
   type?: string;
