@@ -4,14 +4,15 @@
     "src": "src/Tour.ts",
     "main": "tourguide.js",
     "module": "tourguide.esm.js",
-    "types": "types",
+    "types": "types/Tour.d.ts",
     "description": "Guided tour feature plugin for docsie manager",
     "homepage": "https://github.com/LikaloLLC/tourguide.js",
     "bugs": {
         "url": "https://github.com/LikaloLLC/tourguide.js/issues"
     },
     "files": [
-        "tourguide.*"
+        "tourguide.*",
+        "types/*"
     ],
     "author": {
         "name": "Likalo LLC",
