@@ -1,5 +1,5 @@
 import { Position } from "../utils/position";
-import { Element, U } from "umbrellajs";
+import { Element } from "umbrellajs";
 import PopoverStep from "./PopoverStep";
 
 interface CardStepData {
