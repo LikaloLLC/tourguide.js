@@ -25,9 +25,6 @@ import CardStep from "./step/CardStep";
 import BaseStyle from "./Tour.scss";
 import { getDataContents } from "./utils/dom";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const NOOP = () => { };
-
 const defaultKeyNavOptions: KeyboardNavigationOptions = {
   next: "ArrowRight",
   prev: "ArrowLeft",
