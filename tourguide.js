@@ -1630,7 +1630,10 @@ var Tourguide = (function () {
     get _content() {
       const content = this.context.helpers.u("<div class=\"guided-tour-step-content-wrapper\">\n                <div id=\"tooltip-title-".concat(this.data.index, "\" role=\"heading\" class=\"guided-tour-step-title\">").concat(this.data.title, "</div>\n                <div class=\"guided-tour-step-content\">").concat(this.data.content, "</div>\n            </div>"));
       if (Array.isArray(this.data.actions) && this.data.actions.length > 0) {
-        const actions = this.context.helpers.u("<div class=\"guided-tour-step-actions\">\n                    ".concat(this.data.actions.map((action, index) => "<".concat(action.href ? "a" : "button", " id=\"").concat(action.id, "\" ").concat(action.href ? "href=\"".concat(action.href, "\"") : "", " ").concat(action.target ? "target=\"".concat(action.target, "\"") : "", " class=\"button").concat(action.primary ? " primary" : "", "\" data-index=\"").concat(index, "\">").concat(action.label, "</").concat(action.href ? "a" : "button", ">")).join(""), "\n                </div>"));
+        const actions = this.context.helpers.u("<div class=\"guided-tour-step-actions\">\n                    ".concat(this.data.actions.map((action, index) => "<".concat(action.href ? "a" : "button", " ").concat(function () {
+          let attrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+          return Object.keys(attrs).map(key => "".concat(key, "=\"").concat(attrs[key], "\"")).join(" ");
+        }(action.attributes), " class=\"button").concat(action.primary ? " primary" : "", "\" data-index=\"").concat(index, "\">").concat(action.label, "</").concat(action.href ? "a" : "button", ">")).join(""), "\n                </div>"));
         actions.find("a, button").on("click", e => {
           const action = this.data.actions[parseInt((e === null || e === void 0 ? void 0 : e.target).dataset.index)];
           if (action.action) e.preventDefault();
@@ -1881,8 +1884,6 @@ var Tourguide = (function () {
     return result;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const NOOP = () => {};
   const defaultKeyNavOptions = {
     next: "ArrowRight",
     prev: "ArrowLeft",
@@ -1931,11 +1932,6 @@ var Tourguide = (function () {
     actionHandlers: [],
     contentDecorators: [MarkdownDecorator],
     cacheManagerFactory: MemoryCacheManager,
-    onStart: NOOP,
-    onStop: NOOP,
-    onComplete: NOOP,
-    onStep: NOOP,
-    onAction: NOOP,
     steps: [],
     src: "",
     style: defaultStyle
@@ -2110,7 +2106,6 @@ var Tourguide = (function () {
           this._initialposition = Scroll.getScrollCoordinates(this._options.root);
         }
         if (!this._active) {
-          var _this$_options$onStar, _this$_options;
           this.cacheManager.set(CacheKeys.IsStarted, true);
           u(this._options.root).addClass("__guided-tour-active");
           this.reset();
@@ -2118,7 +2113,12 @@ var Tourguide = (function () {
           this._current = step;
           this.currentstep.show();
           this._active = true;
-          (_this$_options$onStar = (_this$_options = this._options).onStart) === null || _this$_options$onStar === void 0 || _this$_options$onStar.call(_this$_options, this);
+          const startEvent = new CustomEvent('start', {
+            bubbles: true,
+            cancelable: true,
+            detail: this
+          });
+          this._containerElement.first().dispatchEvent(startEvent);
           if (this._options.keyboardNavigation) {
             assert(Object.prototype.toString.call(this._options.keyboardNavigation) === "[object Object]", "keyboardNavigation option invalid. should be predefined object or false. Check documentation.");
             u(":root").on("keyup", this._keyboardHandler);
@@ -2154,9 +2154,12 @@ var Tourguide = (function () {
               if (handler) handler.onAction(event, action, this);
             }
         }
-        if (typeof this._options.onAction === "function") {
-          this._options.onAction(event, action, this);
-        }
+        const actionEvent = new CustomEvent('action', {
+          bubbles: true,
+          cancelable: true,
+          detail: action
+        });
+        this._containerElement.first().dispatchEvent(actionEvent);
       }
     }
     next(e) {
@@ -2175,17 +2178,20 @@ var Tourguide = (function () {
     }
     go(step) {
       if (this._active && this._current !== step) {
-        var _this$_options$onStep, _this$_options2;
         this.currentstep.hide();
         this._current = clamp(step, 0, this.length - 1);
         this.currentstep.show();
-        (_this$_options$onStep = (_this$_options2 = this._options).onStep) === null || _this$_options$onStep === void 0 || _this$_options$onStep.call(_this$_options2, this.currentstep, this);
+        const stepEvent = new CustomEvent('step', {
+          bubbles: true,
+          cancelable: true,
+          detail: this
+        });
+        this._containerElement.first().dispatchEvent(stepEvent);
         this.cacheManager.set(CacheKeys.CurrentProgress, this._current);
       }
     }
     stop() {
       if (this._active) {
-        var _this$_options$onStop, _this$_options3;
         this.currentstep.hide();
         Style$1.setStyle(this._containerElement, {
           "z-index": 0
@@ -2199,19 +2205,28 @@ var Tourguide = (function () {
         if (this._options.restoreinitialposition && this._initialposition) {
           Scroll.animateScroll(this._initialposition, this._options.animationspeed);
         }
-        (_this$_options$onStop = (_this$_options3 = this._options).onStop) === null || _this$_options$onStop === void 0 || _this$_options$onStop.call(_this$_options3, this);
+        const stopEvent = new CustomEvent('stop', {
+          bubbles: true,
+          cancelable: true,
+          detail: this
+        });
+        this._containerElement.first().dispatchEvent(stopEvent);
         this.cacheManager.set(CacheKeys.IsStarted, false);
         this.cacheManager.clear(CacheKeys.CurrentProgress);
       }
     }
     complete() {
       if (this._active) {
-        var _this$_options$onComp, _this$_options4;
         this.stop();
-        (_this$_options$onComp = (_this$_options4 = this._options).onComplete) === null || _this$_options$onComp === void 0 || _this$_options$onComp.call(_this$_options4, this);
+        const completeEvent = new CustomEvent('complete', {
+          bubbles: true,
+          cancelable: true,
+          detail: this
+        });
+        this._containerElement.first().dispatchEvent(completeEvent);
       }
     }
-    deinit() {
+    remove() {
       if (this._ready) {
         var _this$_containerEleme;
         (_this$_containerEleme = this._containerElement) === null || _this$_containerEleme === void 0 || _this$_containerEleme.remove();
@@ -2219,6 +2234,12 @@ var Tourguide = (function () {
         this._active = false;
         this._ready = false;
       }
+    }
+    addEventListener(type, listener) {
+      this._containerElement.on(type, listener);
+    }
+    removeEventListener(type, listener) {
+      this._containerElement.off(type, listener);
     }
   }
   _defineProperty(Tour, "DefaultKeyNavOptions", defaultKeyNavOptions);
