@@ -2046,6 +2046,7 @@ var Tourguide = (function () {
       if (this._ready && this.cacheManager.get(CacheKeys.IsStarted) && this.options.resumeOnLoad) {
         this._current = parseInt(this.cacheManager.get(CacheKeys.CurrentProgress));
         if (isNaN(this._current)) this._current = 0;
+        this._triggerCustomEvent("resume");
         this.start(this._current);
       }
     }
@@ -2080,6 +2081,16 @@ var Tourguide = (function () {
       });
       return _text;
     }
+    _triggerCustomEvent(type) {
+      let detail = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
+      const customEvent = new CustomEvent(type, {
+        bubbles: false,
+        cancelable: false,
+        composed: false,
+        detail
+      });
+      this._containerElement.first().dispatchEvent(customEvent);
+    }
     reset() {
       if (this._active) this.stop();
       // if (this._stepsSrc === StepsSource.DOM) {
@@ -2113,12 +2124,7 @@ var Tourguide = (function () {
           this._current = step;
           this.currentstep.show();
           this._active = true;
-          const startEvent = new CustomEvent('start', {
-            bubbles: true,
-            cancelable: true,
-            detail: this
-          });
-          this._containerElement.first().dispatchEvent(startEvent);
+          this._triggerCustomEvent("start");
           if (this._options.keyboardNavigation) {
             assert(Object.prototype.toString.call(this._options.keyboardNavigation) === "[object Object]", "keyboardNavigation option invalid. should be predefined object or false. Check documentation.");
             u(":root").on("keyup", this._keyboardHandler);
@@ -2154,12 +2160,11 @@ var Tourguide = (function () {
               if (handler) handler.onAction(event, action, this);
             }
         }
-        const actionEvent = new CustomEvent('action', {
-          bubbles: true,
-          cancelable: true,
-          detail: action
+        this._triggerCustomEvent("action", {
+          action,
+          context: this,
+          trigger: event
         });
-        this._containerElement.first().dispatchEvent(actionEvent);
       }
     }
     next(e) {
@@ -2181,13 +2186,8 @@ var Tourguide = (function () {
         this.currentstep.hide();
         this._current = clamp(step, 0, this.length - 1);
         this.currentstep.show();
-        const stepEvent = new CustomEvent('step', {
-          bubbles: true,
-          cancelable: true,
-          detail: this
-        });
-        this._containerElement.first().dispatchEvent(stepEvent);
         this.cacheManager.set(CacheKeys.CurrentProgress, this._current);
+        this._triggerCustomEvent("step");
       }
     }
     stop() {
@@ -2205,12 +2205,7 @@ var Tourguide = (function () {
         if (this._options.restoreinitialposition && this._initialposition) {
           Scroll.animateScroll(this._initialposition, this._options.animationspeed);
         }
-        const stopEvent = new CustomEvent('stop', {
-          bubbles: true,
-          cancelable: true,
-          detail: this
-        });
-        this._containerElement.first().dispatchEvent(stopEvent);
+        this._triggerCustomEvent("stop");
         this.cacheManager.set(CacheKeys.IsStarted, false);
         this.cacheManager.clear(CacheKeys.CurrentProgress);
       }
@@ -2218,12 +2213,7 @@ var Tourguide = (function () {
     complete() {
       if (this._active) {
         this.stop();
-        const completeEvent = new CustomEvent('complete', {
-          bubbles: true,
-          cancelable: true,
-          detail: this
-        });
-        this._containerElement.first().dispatchEvent(completeEvent);
+        this._triggerCustomEvent("complete");
       }
     }
     remove() {
