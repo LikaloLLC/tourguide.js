@@ -43,11 +43,8 @@ export interface TourOptions {
     contentDecorators: Array<ContentDecoratorType>;
     cacheManagerFactory: { new(identifier: string): CacheManager };
     style: TourStyle;
-    onStart: (context: Tour) => void;
-    onStop: (context: Tour) => void;
-    onComplete: (context: Tour) => void;
-    onStep: (step: AbstractStep, context: Tour) => void;
-    onAction: (event: Event, action: TourAction, context: Tour) => void;
+    // AdditionalData
+    additionalData?: any;
 }
 
 export interface TourStyle {

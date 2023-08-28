@@ -34,7 +34,9 @@ export default class Tour {
     go(step: number): void;
     stop(): void;
     complete(): void;
-    deinit(): void;
+    remove(): void;
+    addEventListener(type: string, listener: EventListenerOrEventListenerObject): void;
+    removeEventListener(type: string, listener: EventListenerOrEventListenerObject): void;
 }
 
 export * from "./ActionHandler";

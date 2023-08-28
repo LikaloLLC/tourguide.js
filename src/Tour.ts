@@ -2,7 +2,7 @@ import u, { U } from "umbrellajs";
 
 import { AbstractStep, StepData } from "../@types/Step";
 import MemoryCacheManager from "./cachemanager/InMemoryCacheManager";
-import ITour, {
+import Guidedtour, {
   CacheKeys,
   KeyboardNavigationOptions,
   StepsSource, TourOptions,
@@ -80,11 +80,6 @@ const defaultOptions: TourOptions = {
   actionHandlers: [],
   contentDecorators: [MarkdownDecorator],
   cacheManagerFactory: MemoryCacheManager,
-  onStart: NOOP,
-  onStop: NOOP,
-  onComplete: NOOP,
-  onStep: NOOP,
-  onAction: NOOP,
   steps: [],
   src: "",
   style: defaultStyle
@@ -94,7 +89,7 @@ function isEventAttrbutesMatched(event: KeyboardEvent, code: number | string): b
   return event.code === code;
 }
 
-export default class Tour implements ITour {
+export default class Tour implements Guidedtour {
   static readonly DefaultKeyNavOptions = defaultKeyNavOptions;
   static readonly DefaultTourStyles = defaultStyle;
   static readonly DefaultTourOptions = defaultOptions;
@@ -312,7 +307,12 @@ export default class Tour implements ITour {
         this._current = step;
         this.currentstep.show();
         this._active = true;
-        this._options.onStart?.(this);
+        const startEvent = new CustomEvent('start', {
+          bubbles: true,
+          cancelable: true,
+          detail: this
+        });
+        (this._containerElement.first() as HTMLElement).dispatchEvent(startEvent);
 
         if (this._options.keyboardNavigation) {
           assert(
@@ -342,11 +342,12 @@ export default class Tour implements ITour {
           if (handler) handler.onAction(event, action, this);
         }
       }
-      if (
-        typeof this._options.onAction === "function"
-      ) {
-        this._options.onAction(event, action, this);
-      }
+      const actionEvent = new CustomEvent('action', {
+        bubbles: true,
+        cancelable: true,
+        detail: action
+      });
+      (this._containerElement.first() as HTMLElement).dispatchEvent(actionEvent);
     }
   }
   next(e?: Event) {
@@ -368,7 +369,12 @@ export default class Tour implements ITour {
       this.currentstep.hide();
       this._current = clamp(step, 0, this.length - 1);
       this.currentstep.show();
-      this._options.onStep?.(this.currentstep, this);
+      const stepEvent = new CustomEvent('step', {
+        bubbles: true,
+        cancelable: true,
+        detail: this
+      });
+      (this._containerElement.first() as HTMLElement).dispatchEvent(stepEvent);
       this.cacheManager.set(CacheKeys.CurrentProgress, this._current);
     }
   }
@@ -385,7 +391,12 @@ export default class Tour implements ITour {
       if (this._options.restoreinitialposition && this._initialposition) {
         Scroll.animateScroll(this._initialposition, this._options.animationspeed);
       }
-      this._options.onStop?.(this);
+      const stopEvent = new CustomEvent('stop', {
+        bubbles: true,
+        cancelable: true,
+        detail: this
+      });
+      (this._containerElement.first() as HTMLElement).dispatchEvent(stopEvent);
       this.cacheManager.set(CacheKeys.IsStarted, false);
       this.cacheManager.clear(CacheKeys.CurrentProgress);
     }
@@ -393,15 +404,26 @@ export default class Tour implements ITour {
   complete() {
     if (this._active) {
       this.stop();
-      this._options.onComplete?.(this);
+      const completeEvent = new CustomEvent('complete', {
+        bubbles: true,
+        cancelable: true,
+        detail: this
+      });
+      (this._containerElement.first() as HTMLElement).dispatchEvent(completeEvent);
     }
   }
-  deinit() {
+  remove() {
     if (this._ready) {
       this._containerElement?.remove();
       // delete this._containerElement;
       this._active = false;
       this._ready = false;
     }
+  }
+  addEventListener(type: string, listener: (event: Event) => void): void {
+    this._containerElement.on(type, listener);
+  }
+  removeEventListener(type: string, listener: (event: Event) => void): void {
+    this._containerElement.off(type, listener);
   }
 }
