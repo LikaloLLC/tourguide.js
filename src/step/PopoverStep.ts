@@ -1,12 +1,12 @@
 // import scrollIntoView from "scroll-into-view";
 import Tour, { AbstractStep, StepData } from "../../@types";
 import { Element, U } from "umbrellajs";
-import { Alignment } from "@floating-ui/dom";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 import Style from "./PopoverStep.scss";
 import { Step } from "../abstracts/Step";
 
+export type Alignment = 'start' | 'end';
 export type PopoverLayout = "horizontal" | "vertical";
 
 export interface PopoverStepData extends StepData {
@@ -50,7 +50,9 @@ export default class PopoverStep<AdditionalStepData = object> extends Step<Popov
         if (Array.isArray(this.data.actions) && this.data.actions.length > 0) {
             const actions = this.context.helpers.u(`<div class="guided-tour-step-actions">
                     ${this.data.actions
-                    .map((action, index) => `<${action.href ? "a" : "button"} id="${action.id}" ${action.href ? `href="${action.href}"` : ""} ${action.target ? `target="${action.target}"` : ""} class="button${action.primary ? " primary" : ""}" data-index="${index}">${action.label}</${action.href ? "a" : "button"}>`)
+                    .map((action, index) => `<${action.href ? "a" : "button"} ${(
+                        (attrs = {}) => Object.keys(attrs).map(key => `${key}="${attrs[key]}"`).join(" ")
+                    )(action.attributes)} class="button${action.primary ? " primary" : ""}" data-index="${index}">${action.label}</${action.href ? "a" : "button"}>`)
                     .join("")
                 }
                 </div>`);
