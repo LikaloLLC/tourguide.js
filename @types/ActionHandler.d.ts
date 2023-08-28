@@ -10,10 +10,10 @@ export interface ActionHandlerType {
 export interface TourAction {
     action: string;
     label: string;
-    href?: string;
-    id?: string;
-    target?: string;
     primary?: boolean;
+    href?: string;
+    attributes?: Record<string, string>;
+    payload?: any;
 }
 
 export default function ActionHandler(name: string, handlerFn: ActionHandlerFn): ActionHandlerType;
