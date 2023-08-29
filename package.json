@@ -16,6 +16,10 @@
     "name": "Likalo LLC",
     "url": "https://likalo.com/"
   },
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/LikaloLLC/tourguide.js.git"
+},
   "keywords": [
     "tourguidejs",
     "js",
