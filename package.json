@@ -38,7 +38,6 @@
     },
     "dependencies": {
         "@floating-ui/dom": "^1.5.1",
-        "snarkdown": "^2.0.0",
         "umbrellajs": "^3.3.1"
     },
     "devDependencies": {
@@ -74,7 +73,6 @@
     ],
     "scripts": {
         "build": "rollup -c rollup.config.js",
-        "build:types": "tsc --declaration --emitDeclarationOnly -p ./tsconfig.json",
         "devw": "rollup -w -c rollup.config.js",
         "test": "npm run test --prefix ./test"
     },
