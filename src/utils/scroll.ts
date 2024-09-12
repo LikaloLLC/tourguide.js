@@ -111,11 +111,19 @@ export namespace Scroll {
      **  ::Resolves when the scrolling ends
      *
      */
-    export function smoothScroll(elem: HTMLElement | undefined, options: ScrollIntoViewOptions) {
+    export function smoothScroll(element: HTMLElement | undefined, options: ScrollIntoViewOptions) {
         return new Promise<boolean>((resolve) => {
-            if (!elem) return resolve(false);
-            elem.scrollIntoView(Object.assign({ behavior: "auto" }, options));
-            setTimeout(() => resolve(true), 180);
+            if (!element) return resolve(false);
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        observer.disconnect();
+                        setTimeout(() => resolve(true), 100);
+                    }
+                });
+            }, { root: null, threshold: 0.5 });
+            observer.observe(element);
+            element.scrollIntoView(Object.assign({ behavior: "auto" }, options));
         });
     }
 

@@ -30,7 +30,6 @@ export interface TourOptions {
     identifier: string;
     root: string;
     selector: string;
-    animationspeed: number;
     steps: Array<StepData>;
     src: string;
     request: Record<string, any>;
@@ -51,11 +50,14 @@ export interface TourStyle {
     fontFamily?: string;
     fontSize?: string;
     tooltipWidth?: string;
+    stepCardRadius?: string;
 
     overlayColor?: string;
     textColor?: string;
+    mutedTextColor?: string;
     accentColor?: string;
 
+    borderColor?: string;
     focusColor?: string;
     bulletColor?: string;
     bulletVisitedColor?: string;
@@ -64,6 +66,7 @@ export interface TourStyle {
     stepButtonPrevColor?: string;
     stepButtonNextColor?: string;
     stepButtonCompleteColor?: string;
+    stepFooterColor?: string;
     stepCardPadding?: string;
     backgroundColor?: string;
 }

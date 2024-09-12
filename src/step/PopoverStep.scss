@@ -25,7 +25,7 @@
             position: absolute;
             box-sizing: border-box;
             border-radius: 4px;
-            box-shadow: 0 0 0 999em var(--tourguide-overlay-color);
+            box-shadow: 0 0 0 1em var(--tourguide-overlay-color);
             z-index: 1;
         }
 
@@ -210,11 +210,13 @@
 
                 .guided-tour-step-button-close {
                     position: absolute;
-                    top: 0;
-                    right: 0;
+                    top: 4px;
+                    right: 4px;
                     width: 2em;
                     height: 2em;
                     color: var(--tourguide-step-button-close-color);
+                    border-radius: 50%;
+                    background-color: black;
                 }
 
                 .guided-tour-step-button-prev,

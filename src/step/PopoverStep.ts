@@ -118,8 +118,8 @@ export default class PopoverStep<AdditionalStepData = object> extends Step<Popov
     get _el(): U {
         if (!this.$container) {
             const tooltip = this.$tooltip = this.context.helpers.u("<div role=\"document\" class=\"guided-tour-step-tooltip\"></div>");
-            if (this.data.width) this.context.helpers.Style.setStyle(tooltip, { width: this.data.width + "px", maxWidth: this.data.width + "px" });
-            if (this.data.height) this.context.helpers.Style.setStyle(tooltip, { height: this.data.height + "px", maxHeight: this.data.height + "px" });
+            if (this.data.width) this.context.helpers.Style.setStyle(tooltip, { width: this.data.width, maxWidth: this.data.width });
+            if (this.data.height) this.context.helpers.Style.setStyle(tooltip, { height: this.data.height, maxHeight: this.data.height });
             const tooltipinner = this.context.helpers.u(`<div class="guided-tour-step-tooltip-inner${this.data.layout === "horizontal" ? " step-layout-horizontal" : ""}"></div>`);
             const container = this.context.helpers.u("<div class=\"guided-tour-step-content-container\"></div>");
             container.append(this._image).append(this._content);
@@ -227,14 +227,12 @@ export default class PopoverStep<AdditionalStepData = object> extends Step<Popov
         if (!this.active) {
             super.show();
             const $target = this.context.helpers.u(this.data.selector || "null");
-            this.context.helpers.Scroll.smoothScroll($target.first() as HTMLElement, { block: "center" }).then(() => {
-                this._position($target);
-                this.context.helpers.Style.setStyle(this.$container as U, {
-                    opacity: 1
-                });
-                (this.$container?.find(".guided-tour-step-tooltip, button.button, button.primary, .guided-tour-step-button-complete, .guided-tour-step-button-next").last() as any).focus({
-                    preventScroll: true
-                });
+            this._position($target);
+            this.context.helpers.Style.setStyle(this.$container as U, {
+                opacity: 1
+            });
+            (this.$container?.find(".guided-tour-step-tooltip, button.button, button.primary, .guided-tour-step-button-complete, .guided-tour-step-button-next").last() as any).focus({
+                preventScroll: true
             });
             this._el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
             return true;

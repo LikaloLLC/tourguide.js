@@ -38,7 +38,7 @@ const defaultStyle: TourStyle = {
   fontFamily: "sans-serif",
   fontSize: "14px",
 
-  overlayColor: "rgba(0, 0, 0, 0.5)",
+  overlayColor: "rgb(0 100 255 / 25%)",
   textColor: "#333",
   accentColor: "#0d6efd",
   backgroundColor: "#fff",
@@ -59,7 +59,6 @@ const defaultOptions: TourOptions = {
   identifier: "default",
   root: "body",
   selector: "[data-tour]",
-  animationspeed: 120,
   restoreinitialposition: true,
   preloadimages: true,
   resumeOnLoad: true,
@@ -307,14 +306,14 @@ export default class Tour implements Guidedtour {
         this._initialposition = Scroll.getScrollCoordinates(this._options.root);
       }
       if (!this._active) {
+        this._triggerCustomEvent("start");
         this.cacheManager.set(CacheKeys.IsStarted, true);
         u(this._options.root).addClass("__guided-tour-active");
         this.reset();
         this._steps.forEach((step) => step.attach(this._shadowRoot as ShadowRoot));
-        this._current = step;
-        this.currentstep.show();
+        this._current = NaN;
         this._active = true;
-        this._triggerCustomEvent("start");
+        this.go(step);
 
         if (this._options.keyboardNavigation) {
           assert(
@@ -363,9 +362,15 @@ export default class Tour implements Guidedtour {
   }
   go(step: number) {
     if (this._active && this._current !== step) {
-      this.currentstep.hide();
+      this.currentstep?.hide();
       this._current = clamp(step, 0, this.length - 1);
-      this.currentstep.show();
+      if (this.currentstep.data?.selector) {
+        Scroll.smoothScroll(u(this.currentstep.data.selector).first() as HTMLElement, { block: "center" }).then(
+          () => {
+            this.currentstep.show();
+          });
+      } else
+        this.currentstep.show();
       this.cacheManager.set(CacheKeys.CurrentProgress, this._current);
       this._triggerCustomEvent("step");
     }
@@ -381,11 +386,11 @@ export default class Tour implements Guidedtour {
         u(":root").off<KeyboardEvent>("keyup", this._keyboardHandler);
       }
       if (this._options.restoreinitialposition && this._initialposition) {
-        Scroll.animateScroll(this._initialposition, this._options.animationspeed);
+        Scroll.animateScroll(this._initialposition, 120);
       }
-      this._triggerCustomEvent("stop");
       this.cacheManager.set(CacheKeys.IsStarted, false);
       this.cacheManager.clear(CacheKeys.CurrentProgress);
+      this._triggerCustomEvent("stop");
     }
   }
   complete() {
