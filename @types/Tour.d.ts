@@ -15,6 +15,12 @@ export enum Direction {
     BACKWARD
 }
 
+export enum TourStopState {
+    COMPLETE,
+    INCOMPLETE,
+    SKIPPED
+}
+
 export enum CacheKeys {
     "LastInitilized" = "timestamp",
     "IsStarted" = "started",

@@ -10,7 +10,8 @@ import Guidedtour, {
   TourAction,
   Helpers,
   CacheManager,
-  Direction
+  Direction,
+  TourStopState
 } from "../@types";
 import { assert, clamp, getMaxZIndex, Style, Scroll, Color } from "./utils";
 import * as Utils from "./utils";
@@ -102,6 +103,7 @@ export default class Tour implements Guidedtour {
   private _current = 0;
   private _active = false;
   private _ready = false;
+  private _complete = false;
   private _stepsSrc: StepsSource = StepsSource.DOM;
   private _initialposition: Array<Scroll.ScrollCoordinates> | null = null;
   private _containerElement!: U;
@@ -286,11 +288,13 @@ export default class Tour implements Guidedtour {
     // if (this._stepsSrc === StepsSource.DOM) {
     //   this._steps = [];
     // }
+    this._complete = false;
     this._current = 0;
     this.cacheManager.set(CacheKeys.IsStarted, true);
   }
   start(step = 0) {
     if (this._ready) {
+      this._complete = false;
       if (this._stepsSrc === StepsSource.DOM) {
         this._initSteps(
           u(this._options.selector)
@@ -382,7 +386,7 @@ export default class Tour implements Guidedtour {
       this.currentstep.hide();
       Style.setStyle(this._containerElement, { "z-index": 0 });
       this._active = false;
-      this._steps.forEach((step) => step.remove());
+      this._steps.forEach((step) => step.remove(this._complete ? TourStopState.COMPLETE : TourStopState.INCOMPLETE));
       u(this._options.root).removeClass("__guided-tour-active");
       if (this._options.keyboardNavigation) {
         u(":root").off<KeyboardEvent>("keyup", this._keyboardHandler);
@@ -397,6 +401,7 @@ export default class Tour implements Guidedtour {
   }
   complete() {
     if (this._active) {
+      this._complete = true;
       this.stop();
       this._triggerCustomEvent("complete");
     }

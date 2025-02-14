@@ -1,6 +1,6 @@
 import { Element } from "umbrellajs";
 import { TourAction } from "./ActionHandler";
-import Tour, { Direction } from "./";
+import Tour, { Direction, TourStopState } from "./";
 
 export interface StepData {
   type?: string;
@@ -13,6 +13,7 @@ export interface StepData {
 export declare abstract class AbstractStep<StepDataType = StepData> {
   static Type: string;
   static Style: string;
+  readonly uid: string;
   context: Tour;
   index: number;
   active: boolean;
@@ -23,5 +24,5 @@ export declare abstract class AbstractStep<StepDataType = StepData> {
   abstract attach(parent: Element): void;
   show(direction?: Direction): void;
   hide(): void;
-  abstract remove(): void;
+  abstract remove(state: TourStopState): void;
 }
