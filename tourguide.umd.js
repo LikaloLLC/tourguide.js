@@ -73,6 +73,17 @@
     StepsSource[StepsSource["REMOTE"] = 2] = "REMOTE";
     return StepsSource;
   }({});
+  let Direction = /*#__PURE__*/function (Direction) {
+    Direction[Direction["FORWARD"] = 0] = "FORWARD";
+    Direction[Direction["BACKWARD"] = 1] = "BACKWARD";
+    return Direction;
+  }({});
+  let TourStopState = /*#__PURE__*/function (TourStopState) {
+    TourStopState[TourStopState["COMPLETE"] = 0] = "COMPLETE";
+    TourStopState[TourStopState["INCOMPLETE"] = 1] = "INCOMPLETE";
+    TourStopState[TourStopState["SKIPPED"] = 2] = "SKIPPED";
+    return TourStopState;
+  }({});
   let CacheKeys = /*#__PURE__*/function (CacheKeys) {
     CacheKeys["LastInitilized"] = "timestamp";
     CacheKeys["IsStarted"] = "started";
@@ -1598,8 +1609,20 @@
     get Position () { return Position; }
   });
 
+  /**
+   * Generate a random GUID
+   * 
+   * @export
+   * @returns {string} a random GUID string
+   */
+  function GUID() {
+    let s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    return "".concat(s4()).concat(s4(), "-").concat(s4(), "-").concat(s4(), "-").concat(s4(), "-").concat(s4()).concat(s4()).concat(s4());
+  }
+
   class Step {
     constructor(data, context) {
+      _defineProperty(this, "uid", GUID());
       _defineProperty(this, "index", 0);
       _defineProperty(this, "active", false);
       _defineProperty(this, "first", false);
@@ -2118,6 +2141,7 @@
       _defineProperty(this, "_current", 0);
       _defineProperty(this, "_active", false);
       _defineProperty(this, "_ready", false);
+      _defineProperty(this, "_complete", false);
       _defineProperty(this, "_stepsSrc", StepsSource.DOM);
       _defineProperty(this, "_initialposition", null);
       this._options = Object.assign({}, defaultOptions, options, {
@@ -2236,12 +2260,14 @@
       // if (this._stepsSrc === StepsSource.DOM) {
       //   this._steps = [];
       // }
+      this._complete = false;
       this._current = 0;
       this.cacheManager.set(CacheKeys.IsStarted, true);
     }
     start() {
       let step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
       if (this._ready) {
+        this._complete = false;
         if (this._stepsSrc === StepsSource.DOM) {
           this._initSteps(u(this._options.selector).nodes.map(step => {
             const data = getDataContents(u(step).data("tour"));
@@ -2324,15 +2350,16 @@
     go(step) {
       if (this._active && this._current !== step) {
         var _this$currentstep, _this$currentstep$dat;
+        const direction = this._current < step ? Direction.FORWARD : Direction.BACKWARD;
         (_this$currentstep = this.currentstep) === null || _this$currentstep === void 0 || _this$currentstep.hide();
         this._current = clamp(step, 0, this.length - 1);
         if ((_this$currentstep$dat = this.currentstep.data) !== null && _this$currentstep$dat !== void 0 && _this$currentstep$dat.selector) {
           Scroll.smoothScroll(u(this.currentstep.data.selector).first(), {
             block: "center"
           }).then(() => {
-            this.currentstep.show();
+            this.currentstep.show(direction);
           });
-        } else this.currentstep.show();
+        } else this.currentstep.show(direction);
         this.cacheManager.set(CacheKeys.CurrentProgress, this._current);
         this._triggerCustomEvent("step");
       }
@@ -2344,7 +2371,7 @@
           "z-index": 0
         });
         this._active = false;
-        this._steps.forEach(step => step.remove());
+        this._steps.forEach(step => step.remove(this._complete ? TourStopState.COMPLETE : TourStopState.INCOMPLETE));
         u(this._options.root).removeClass("__guided-tour-active");
         if (this._options.keyboardNavigation) {
           u(":root").off("keyup", this._keyboardHandler);
@@ -2359,6 +2386,7 @@
     }
     complete() {
       if (this._active) {
+        this._complete = true;
         this.stop();
         this._triggerCustomEvent("complete");
       }
