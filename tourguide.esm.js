@@ -1,31 +1,4 @@
-function _defineProperty(obj, key, value) {
-  key = _toPropertyKey(key);
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-  return obj;
-}
-function _toPrimitive(input, hint) {
-  if (typeof input !== "object" || input === null) return input;
-  var prim = input[Symbol.toPrimitive];
-  if (prim !== undefined) {
-    var res = prim.call(input, hint || "default");
-    if (typeof res !== "object") return res;
-    throw new TypeError("@@toPrimitive must return a primitive value.");
-  }
-  return (hint === "string" ? String : Number)(input);
-}
-function _toPropertyKey(arg) {
-  var key = _toPrimitive(arg, "string");
-  return typeof key === "symbol" ? key : String(key);
-}
+import { StepsSource, CacheKeys, Direction, TourStopState } from '@types';
 
 var umbrella_min = {exports: {}};
 
@@ -40,16 +13,13 @@ var u = umbrella_min.exports;
 class AbstractCacheManager {
   constructor() {
     let identifier = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
-    _defineProperty(this, "identifier", "");
     this.identifier = identifier;
   }
+  identifier = "";
 }
 
 class MemoryCacheManager extends AbstractCacheManager {
-  constructor() {
-    super(...arguments);
-    _defineProperty(this, "_memory", {});
-  }
+  _memory = {};
   get(key) {
     return this._memory[key];
   }
@@ -61,36 +31,13 @@ class MemoryCacheManager extends AbstractCacheManager {
   }
 }
 
-let StepsSource = /*#__PURE__*/function (StepsSource) {
-  StepsSource[StepsSource["DOM"] = 0] = "DOM";
-  StepsSource[StepsSource["JSON"] = 1] = "JSON";
-  StepsSource[StepsSource["REMOTE"] = 2] = "REMOTE";
-  return StepsSource;
-}({});
-let Direction = /*#__PURE__*/function (Direction) {
-  Direction[Direction["FORWARD"] = 0] = "FORWARD";
-  Direction[Direction["BACKWARD"] = 1] = "BACKWARD";
-  return Direction;
-}({});
-let TourStopState = /*#__PURE__*/function (TourStopState) {
-  TourStopState[TourStopState["COMPLETE"] = 0] = "COMPLETE";
-  TourStopState[TourStopState["INCOMPLETE"] = 1] = "INCOMPLETE";
-  TourStopState[TourStopState["SKIPPED"] = 2] = "SKIPPED";
-  return TourStopState;
-}({});
-let CacheKeys = /*#__PURE__*/function (CacheKeys) {
-  CacheKeys["LastInitilized"] = "timestamp";
-  CacheKeys["IsStarted"] = "started";
-  CacheKeys["CurrentProgress"] = "progress";
-  return CacheKeys;
-}({});
-
 function assert(condition, message) {
-  if (!condition) throw "TourguideJS: ".concat(message);
+  if (!condition) throw `TourguideJS: ${message}`;
   return true;
 }
 
-function clamp(value, min) {
+function clamp(value) {
+  let min = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : NaN;
   let max = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : NaN;
   min = isNaN(min) ? value : min;
   max = isNaN(max) ? value : max;
@@ -102,7 +49,7 @@ let Color;
 (function (_Color) {
   function hexToRGB(hex) {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return [parseInt((result === null || result === void 0 ? void 0 : result[1]) || "", 16), parseInt((result === null || result === void 0 ? void 0 : result[2]) || "", 16), parseInt((result === null || result === void 0 ? void 0 : result[3]) || "", 16)];
+    return [parseInt(result?.[1] || "", 16), parseInt(result?.[2] || "", 16), parseInt(result?.[3] || "", 16)];
   }
   _Color.hexToRGB = hexToRGB;
   function componentToHex(c) {
@@ -216,9 +163,9 @@ let Style$1;
         }
       }
       splitNameArray.push(key.substring(prevIndex, key.length).toLowerCase());
-      styleArray.push("".concat(splitNameArray.join("-"), ": ").concat(value));
+      styleArray.push(`${splitNameArray.join("-")}: ${value}`);
     });
-    return "".concat(selector, " {\n").concat(styleArray.join(";\n"), ";\n}");
+    return `${selector} {\n${styleArray.join(";\n")};\n}`;
   }
   _Style.colorObjToStyleVarString = colorObjToStyleVarString;
 })(Style$1 || (Style$1 = {}));
@@ -237,14 +184,15 @@ let Scroll;
    */
   function getScrollCoordinates(target) {
     const scrollItems = [];
-    let targetUEl = u(target);
+    let targetUEl;
+    targetUEl = u(target);
     do {
       if (!targetUEl) targetUEl = false;
       if (!targetUEl.first()) targetUEl = false;
       try {
         const element = targetUEl.first();
         const rect = targetUEl.size();
-        if (element.scrollHeight !== rect.height || element.scrollWidth !== rect.width) {
+        if (element.scrollHeight !== rect?.height || element.scrollWidth !== rect?.width) {
           scrollItems.push({
             element,
             x: element.scrollLeft,
@@ -276,7 +224,7 @@ let Scroll;
     }
     function animate(el, x, y, resolve) {
       if (!el) {
-        console.warn("target element ".concat(el, " not found, skip"));
+        console.warn(`target element ${el} not found, skip`);
         return;
       }
       const diffTime = Date.now() - startTime;
@@ -1498,10 +1446,10 @@ let Position;
         data.width = "0";
         data.height = "0";
       } else {
-        data.top = "".concat(rects.reference.y - padding, "px");
-        data.left = "".concat(rects.reference.x - padding, "px");
-        data.width = "".concat(rects.reference.width + padding * 2, "px");
-        data.height = "".concat(rects.reference.height + padding * 2, "px");
+        data.top = `${rects.reference.y - padding}px`;
+        data.left = `${rects.reference.x - padding}px`;
+        data.width = `${rects.reference.width + padding * 2}px`;
+        data.height = `${rects.reference.height + padding * 2}px`;
       }
       Style$1.setStyle(element, data);
       return {
@@ -1530,8 +1478,8 @@ let Position;
       middleware
     }).then(data => {
       Style$1.setStyle(tooltip, {
-        left: "".concat(data.x, "px"),
-        top: "".concat(data.y, "px")
+        left: `${data.x}px`,
+        top: `${data.y}px`
       });
       return data;
     });
@@ -1593,14 +1541,14 @@ let Position;
 })(Position || (Position = {}));
 
 var Utils = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  assert: assert,
-  clamp: clamp,
-  get Color () { return Color; },
-  get Style () { return Style$1; },
-  getMaxZIndex: getMaxZIndex,
-  get Scroll () { return Scroll; },
-  get Position () { return Position; }
+    __proto__: null,
+    assert: assert,
+    clamp: clamp,
+    get Color () { return Color; },
+    get Style () { return Style$1; },
+    getMaxZIndex: getMaxZIndex,
+    get Scroll () { return Scroll; },
+    get Position () { return Position; }
 });
 
 /**
@@ -1610,17 +1558,19 @@ var Utils = /*#__PURE__*/Object.freeze({
  * @returns {string} a random GUID string
  */
 function GUID() {
-  let s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-  return "".concat(s4()).concat(s4(), "-").concat(s4(), "-").concat(s4(), "-").concat(s4(), "-").concat(s4()).concat(s4()).concat(s4());
+  const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  return `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
 }
 
 class Step {
+  static Type = "default";
+  static Style = "";
+  uid = (() => GUID())();
+  index = 0;
+  active = false;
+  first = false;
+  last = false;
   constructor(data, context) {
-    _defineProperty(this, "uid", GUID());
-    _defineProperty(this, "index", 0);
-    _defineProperty(this, "active", false);
-    _defineProperty(this, "first", false);
-    _defineProperty(this, "last", false);
     this.data = data;
     this.context = context;
   }
@@ -1631,17 +1581,16 @@ class Step {
     this.active && (this.active = false);
   }
 }
-_defineProperty(Step, "Type", "default");
-_defineProperty(Step, "Style", "");
 
 var Abstracts = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  AbstractCacheManager: AbstractCacheManager,
-  Step: Step
+    __proto__: null,
+    AbstractCacheManager: AbstractCacheManager,
+    Step: Step
 });
 
 var Style = ".guided-tour-step {\n  display: none;\n  opacity: 0;\n}\n.guided-tour-step .guided-tour-step-clickblock {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100vw;\n  height: 100vh;\n  pointer-events: all;\n}\n.guided-tour-step.active {\n  display: block;\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  pointer-events: all;\n  transition: opacity 150ms;\n}\n.guided-tour-step.active .guided-tour-step-highlight {\n  position: absolute;\n  box-sizing: border-box;\n  border-radius: 4px;\n  box-shadow: 0 0 0 1em var(--tourguide-overlay-color);\n  z-index: 1;\n}\n.guided-tour-step.active .guided-tour-step-tooltip {\n  position: absolute;\n  z-index: 2;\n  background-color: var(--tourguide-background-color);\n  width: var(--tourguide-tooltip-width);\n  max-width: max-content;\n  border-radius: 5px;\n  box-sizing: border-box;\n  box-shadow: 0 0 2.5em -0.8em #000, 0 0 10px -5px #000, 0 0 3px -1px #000;\n  transition: opacity 150ms;\n}\n@media screen and (max-width: 760px) {\n  .guided-tour-step.active .guided-tour-step-tooltip {\n    max-width: 85vw;\n    width: max-content !important;\n  }\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner {\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-arrow {\n  position: absolute;\n  width: 14px;\n  height: 14px;\n  background: var(--tourguide-background-color);\n  z-index: -1;\n  transform: rotate(45deg);\n  pointer-events: none;\n  margin-left: -7px;\n  margin-top: -7px;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-arrow.no-arrow {\n  display: none;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-container {\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  height: calc(100% - 2.6em);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-image {\n  flex-grow: 1;\n  flex-shrink: 1;\n  overflow: hidden;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-image img {\n  width: 100%;\n  height: 100%;\n  border-radius: 4px 4px 0 0;\n  object-fit: cover;\n  object-position: center;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content-wrapper {\n  margin: 1.2em 1.5em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-title {\n  font-size: 130%;\n  margin-bottom: 0.5em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content {\n  flex-shrink: 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content b,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content strong {\n  font-weight: bold;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content i,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content em {\n  font-style: italic;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content a {\n  cursor: pointer;\n  text-decoration: underline;\n  color: var(--tourguide-accent-color);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content mark {\n  background: inherit;\n  text-shadow: 0px 2px 4px #ff0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content code,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content dfn {\n  padding: 1px 6px 1px 4px;\n  border-radius: 4px;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content code {\n  background-color: #f0f0f0;\n  color: #e83e8c;\n  font-family: monospace;\n  font-size: 87.5%;\n  word-break: break-word;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content dfn {\n  font-style: italic;\n  background-color: #ffc6e5;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content p,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote {\n  margin: 1em 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content p:last-child,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul:last-child,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol:last-child,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote:last-child {\n  margin-bottom: 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content blockquote {\n  padding-left: 1em;\n  border-left: 4px solid silver;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol {\n  padding-left: 1.5em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ul li,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-content ol li {\n  margin: 0.3em 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions {\n  display: flex;\n  column-gap: 0.5em;\n  margin-top: 1.5em;\n  justify-content: end;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button {\n  color: var(--tourguide-accent-color);\n  padding: 0.5em 1em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button.primary {\n  background: var(--tourguide-accent-color);\n  padding: 0.5em 1.5em;\n  color: #fff;\n  border-radius: 4px;\n  font-size: 110%;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button.primary:hover, .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-actions .button.primary:focus {\n  filter: brightness(120%);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-icon {\n  display: inline-block;\n  overflow: hidden;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button {\n  flex-direction: column;\n  justify-content: center;\n  /* <-- actual veertical align */\n  display: inline-flex;\n  text-align: center;\n  cursor: pointer;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button .guided-tour-icon {\n  align-self: center;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-close {\n  position: absolute;\n  top: 4px;\n  right: 4px;\n  width: 2em;\n  height: 2em;\n  color: var(--tourguide-step-button-close-color);\n  border-radius: 50%;\n  background-color: black;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-prev,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-next,\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-complete {\n  width: 36px;\n  height: 36px;\n  background: var(--tourguide-background-color);\n  border-radius: 50%;\n  margin-top: -18px;\n  position: absolute;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-prev {\n  color: var(--tourguide-step-button-prev-color);\n  left: 0;\n  transform: translateX(-50%);\n  top: 50%;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-next {\n  color: var(--tourguide-step-button-next-color);\n  right: 0;\n  transform: translateX(50%);\n  top: 50%;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-button-complete {\n  color: var(--tourguide-step-button-complete-color);\n  right: 0;\n  transform: translateX(50%);\n  top: 50%;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-footer {\n  flex-shrink: 0;\n  flex-grow: 0;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets {\n  text-align: center;\n  line-height: 16px;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul {\n  list-style: none;\n  margin: -0.5em 1em 0.5em;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li {\n  display: inline-block;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button {\n  width: 8px;\n  height: 8px;\n  border-radius: 50%;\n  display: inline-block;\n  background-color: var(--tourguide-bullet-color);\n  border: 8px solid var(--tourguide-background-color);\n  box-sizing: content-box;\n  cursor: pointer;\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button.complete {\n  background-color: var(--tourguide-bullet-visited-color);\n}\n.guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner .guided-tour-step-bullets ul li button.current {\n  background-color: var(--tourguide-bullet-current-color);\n}\n@media screen and (min-width: 760px) {\n  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container {\n    flex-direction: row;\n    height: 100%;\n  }\n  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container .guided-tour-step-content-wrapper {\n    flex: 1 1 auto;\n  }\n  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container .guided-tour-step-image {\n    width: 50%;\n    margin-bottom: -24px;\n    flex: 0 0 auto;\n  }\n  .guided-tour-step.active .guided-tour-step-tooltip .guided-tour-step-tooltip-inner.step-layout-horizontal .guided-tour-step-content-container .guided-tour-step-image img {\n    border-radius: 4px 0 0 4px;\n    height: 100%;\n    object-fit: cover;\n    object-position: center;\n  }\n}";
 
+// import scrollIntoView from "scroll-into-view";
 const popoverStepDataDefaults = {
   layout: "vertical",
   image: "",
@@ -1655,18 +1604,24 @@ const popoverStepDataDefaults = {
   hidden: false
 };
 class PopoverStep extends Step {
+  static Style = (() => Style)();
   get _image() {
-    return this.context.helpers.u("<figure class=\"guided-tour-step-image\">".concat(this.data.image ? "<img src=\"".concat(this.data.image, "\" />") : "", "</figure>"));
+    return this.context.helpers.u(`<figure class="guided-tour-step-image">${this.data.image ? `<img src="${this.data.image}" />` : ""}</figure>`);
   }
   get _content() {
-    const content = this.context.helpers.u("<div class=\"guided-tour-step-content-wrapper\">\n                <div id=\"tooltip-title-".concat(this.data.index, "\" role=\"heading\" class=\"guided-tour-step-title\">").concat(this.data.title, "</div>\n                <div class=\"guided-tour-step-content\">").concat(this.data.content, "</div>\n            </div>"));
+    const content = this.context.helpers.u(`<div class="guided-tour-step-content-wrapper">
+                <div id="tooltip-title-${this.data.index}" role="heading" class="guided-tour-step-title">${this.data.title}</div>
+                <div class="guided-tour-step-content">${this.data.content}</div>
+            </div>`);
     if (Array.isArray(this.data.actions) && this.data.actions.length > 0) {
-      const actions = this.context.helpers.u("<div class=\"guided-tour-step-actions\">\n                    ".concat(this.data.actions.map((action, index) => "<".concat(action.href ? "a" : "button", " ").concat(function () {
+      const actions = this.context.helpers.u(`<div class="guided-tour-step-actions">
+                    ${this.data.actions.map((action, index) => `<${action.href ? "a" : "button"} ${function () {
         let attrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        return Object.keys(attrs).map(key => "".concat(key, "=\"").concat(attrs[key], "\"")).join(" ");
-      }(action.attributes), " class=\"button").concat(action.primary ? " primary" : "", "\" data-index=\"").concat(index, "\">").concat(action.label, "</").concat(action.href ? "a" : "button", ">")).join(""), "\n                </div>"));
+        return Object.keys(attrs).map(key => `${key}="${attrs[key]}"`).join(" ");
+      }(action.attributes)} class="button${action.primary ? " primary" : ""}" data-index="${index}">${action.label}</${action.href ? "a" : "button"}>`).join("")}
+                </div>`);
       actions.find("a, button").on("click", e => {
-        const action = this.data.actions[parseInt((e === null || e === void 0 ? void 0 : e.target).dataset.index)];
+        const action = this.data.actions[parseInt((e?.target).dataset.index)];
         if (action.action) e.preventDefault();
         this.context.action(e, action);
       });
@@ -1675,11 +1630,31 @@ class PopoverStep extends Step {
     return content;
   }
   get _footer() {
-    return this.context.helpers.u("<div class=\"guided-tour-step-bullets\">\n                <ul>".concat(this.context.steps.map((step, i) => "<li>\n                    <button title=\"Go to step ".concat(i + 1, "\" data-index=\"").concat(i, "\" class=\"").concat(step.index < this.index ? "complete" : step.index == this.index ? "current" : "", "\"></button>\n                    </li>")).join(""), "</ul>\n            </div>"));
+    return this.context.helpers.u(`<div class="guided-tour-step-bullets">
+                <ul>${this.context.steps.map((step, i) => `<li>
+                    <button title="Go to step ${i + 1}" data-index="${i}" class="${step.index < this.index ? "complete" : step.index == this.index ? "current" : ""}"></button>
+                    </li>`).join("")}</ul>
+            </div>`);
   }
   get _navigation() {
     const footer = this.context.helpers.u("<div class=\"guided-tour-step-footer\"></div>");
-    if (this.data.navigation) footer.append(this.context.helpers.u("<button class=\"guided-tour-step-button guided-tour-step-button-close\" title=\"End tour\">\n                        <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\"><g fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M16,16 L4,4\"></path><path d=\"M16,4 L4,16\"></path></g></svg>\n                    </button>\n                    ".concat(!this.first ? "<button class=\"guided-tour-step-button guided-tour-step-button-prev\" title=\"Prev step\">\n                      <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                      <polyline points=\"12 4 6 10 12 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline>\n                      </svg>\n                    </button>" : "", "\n                    ").concat(this.last ? "<button class=\"guided-tour-step-button guided-tour-step-button-complete\" title=\"Complete tour\">\n                      <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                      <polyline points=\"4,10 8,15 17,4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline>\n                      </svg>\n                    </button>" : "<button class=\"guided-tour-step-button guided-tour-step-button-next\" title=\"Next step\">\n                      <svg class=\"guided-tour-icon\" viewBox=\"0 0 20 20\" width=\"32\" height=\"32\">\n                      <polyline points=\"7 4 13 10 7 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1\"></polyline>\n                      </svg>\n                    </button>")));
+    if (this.data.navigation) footer.append(this.context.helpers.u(`<button class="guided-tour-step-button guided-tour-step-button-close" title="End tour">
+                        <svg class="guided-tour-icon" viewBox="0 0 20 20" width="16" height="16"><g fill="none" stroke="currentColor" stroke-width="2"><path d="M16,16 L4,4"></path><path d="M16,4 L4,16"></path></g></svg>
+                    </button>
+                    ${!this.first ? `<button class="guided-tour-step-button guided-tour-step-button-prev" title="Prev step">
+                      <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
+                      <polyline points="12 4 6 10 12 16" fill="none" stroke="currentColor" stroke-width="1"></polyline>
+                      </svg>
+                    </button>` : ""}
+                    ${this.last ? `<button class="guided-tour-step-button guided-tour-step-button-complete" title="Complete tour">
+                      <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
+                      <polyline points="4,10 8,15 17,4" fill="none" stroke="currentColor" stroke-width="1"></polyline>
+                      </svg>
+                    </button>` : `<button class="guided-tour-step-button guided-tour-step-button-next" title="Next step">
+                      <svg class="guided-tour-icon" viewBox="0 0 20 20" width="32" height="32">
+                      <polyline points="7 4 13 10 7 16" fill="none" stroke="currentColor" stroke-width="1"></polyline>
+                      </svg>
+                    </button>`}`));
     if (this.context.steps.length > 1) footer.append(this._footer);
     footer.find(".guided-tour-step-button-prev").on("click", this.context.previous);
     footer.find(".guided-tour-step-button-next").on("click", this.context.next);
@@ -1689,7 +1664,7 @@ class PopoverStep extends Step {
     return footer;
   }
   get _container() {
-    return this.context.helpers.u("<div role=\"dialog\" aria-labelleby=\"tooltip-title-".concat(this.data.index, "\" class=\"guided-tour-step").concat(this.first ? " guided-tour-step-first" : "").concat(this.last ? " guided-tour-step-last" : "", "\"><div class=\"guided-tour-step-clickblock\"></div></div>"));
+    return this.context.helpers.u(`<div role="dialog" aria-labelleby="tooltip-title-${this.data.index}" class="guided-tour-step${this.first ? " guided-tour-step-first" : ""}${this.last ? " guided-tour-step-last" : ""}"><div class="guided-tour-step-clickblock"></div></div>`);
   }
   get _highlight() {
     return this.$highlight = this.context.helpers.u("<div class=\"guided-tour-step-highlight\"></div>");
@@ -1705,7 +1680,7 @@ class PopoverStep extends Step {
         height: this.data.height,
         maxHeight: this.data.height
       });
-      const tooltipinner = this.context.helpers.u("<div class=\"guided-tour-step-tooltip-inner".concat(this.data.layout === "horizontal" ? " step-layout-horizontal" : "", "\"></div>"));
+      const tooltipinner = this.context.helpers.u(`<div class="guided-tour-step-tooltip-inner${this.data.layout === "horizontal" ? " step-layout-horizontal" : ""}"></div>`);
       const container = this.context.helpers.u("<div class=\"guided-tour-step-content-container\"></div>");
       container.append(this._image).append(this._content);
       const arrow = this.$arrow = this.context.helpers.u("<div class=\"guided-tour-arrow\"></div>");
@@ -1726,7 +1701,7 @@ class PopoverStep extends Step {
     if (data.image && context.options.preloadimages && !/^data:/i.test(data.image)) {
       const preload = new Image();
       preload.onerror = () => {
-        console.error(new Error("Invalid image URL: ".concat(data.image)));
+        console.error(new Error(`Invalid image URL: ${data.image}`));
         this.data.image = "";
       };
       preload.src = this.data.image;
@@ -1734,7 +1709,7 @@ class PopoverStep extends Step {
     this.data.actions = [];
     if (data.actions) {
       if (!Array.isArray(data.actions)) {
-        console.error(new Error("actions must be array but got ".concat(typeof data.actions)));
+        console.error(new Error(`actions must be array but got ${typeof data.actions}`));
       } else {
         this.data.actions = data.actions;
       }
@@ -1752,22 +1727,21 @@ class PopoverStep extends Step {
     // if (this._scrollCancel) this._scrollCancel();
   }
   _position($target) {
-    var _this$$tooltip, _this$$highlight, _this$$arrow, _this$$highlight2;
-    const _target = $target === null || $target === void 0 ? void 0 : $target.first();
+    const _target = $target?.first();
     if (!_target) this.$arrow.addClass("no-arrow ");else this.$arrow.removeClass("no-arrow ");
-    this.context.helpers.Position.position(_target || document.body, (_this$$tooltip = this.$tooltip) === null || _this$$tooltip === void 0 ? void 0 : _this$$tooltip.first(), _target ? [this.context.helpers.Position.positionabsolute(), this.context.helpers.Position.autoPlacement({
+    this.context.helpers.Position.position(_target || document.body, this.$tooltip?.first(), _target ? [this.context.helpers.Position.positionabsolute(), this.context.helpers.Position.autoPlacement({
       alignment: this.data.alignment,
       padding: 24
     }), this.context.helpers.Position.highlight({
-      element: (_this$$highlight = this.$highlight) === null || _this$$highlight === void 0 ? void 0 : _this$$highlight.first(),
+      element: this.$highlight?.first(),
       padding: 5
     }), this.context.helpers.Position.offset, this.context.helpers.Position.arrow({
-      element: (_this$$arrow = this.$arrow) === null || _this$$arrow === void 0 ? void 0 : _this$$arrow.first(),
+      element: this.$arrow?.first(),
       padding: 18
     }), this.context.helpers.Position.keepinview({
       padding: 24
     })] : [this.context.helpers.Position.positionfixed(), this.context.helpers.Position.highlight({
-      element: (_this$$highlight2 = this.$highlight) === null || _this$$highlight2 === void 0 ? void 0 : _this$$highlight2.first(),
+      element: this.$highlight?.first(),
       centered: true
     })]);
   }
@@ -1777,14 +1751,13 @@ class PopoverStep extends Step {
   show() {
     this._cancel();
     if (!this.active) {
-      var _this$$container;
       super.show();
       const $target = this.context.helpers.u(this.data.selector || "null");
       this._position($target);
       this.context.helpers.Style.setStyle(this.$container, {
         opacity: 1
       });
-      ((_this$$container = this.$container) === null || _this$$container === void 0 ? void 0 : _this$$container.find(".guided-tour-step-tooltip, button.button, button.primary, .guided-tour-step-button-complete, .guided-tour-step-button-next").last()).focus({
+      (this.$container?.find(".guided-tour-step-tooltip, button.button, button.primary, .guided-tour-step-button-complete, .guided-tour-step-button-next").last()).focus({
         preventScroll: true
       });
       this._el.addClass("active"); // Add 'active' first to calculate the tooltip real size on the DOM.
@@ -1809,7 +1782,6 @@ class PopoverStep extends Step {
     this._el.remove();
   }
 }
-_defineProperty(PopoverStep, "Style", Style);
 
 function ActionHandler(name, handlerFn) {
   return {
@@ -1845,7 +1817,7 @@ class ContentDecorator {
   constructor(match, decoratorFn) {
     if (typeof match === 'string' && match)
       // eslint-disable-next-line no-useless-escape
-      this.match = new RegExp("{s*".concat(match.trim(), "s*(,.+?)?s*?}"), 'gmi');else if (!match) this.match = false;else this.match = match;
+      this.match = new RegExp(`{\s*${match.trim()}\s*(,.+?)?\s*?}`, 'gmi');else if (!match) this.match = false;else this.match = match;
     this.decoratorFn = decoratorFn;
   }
   test(text) {
@@ -1917,10 +1889,11 @@ function encodeAttr(str) {
  * Parse Markdown into an HTML String.
  */
 function parse(md, prevLinks) {
-  let tokenizer = /((?:^|\n+)(?:\n---+|\* \*(?: \*)+)\n)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|(  \n\n*|\n{2,}|__|\*\*|[_*]|~~)/gm;
-  let context = [];
+  // eslint-disable-next-line no-regex-spaces
+  const tokenizer = /((?:^|\n+)(?:\n---+|\* \*(?: \*)+)\n)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|(  \n\n*|\n{2,}|__|\*\*|[_*]|~~)/gm;
+  const context = [];
   let out = '';
-  let links = prevLinks || {};
+  const links = prevLinks || {};
   let last = 0;
   let chunk = null;
   let prev = '';
@@ -1950,10 +1923,12 @@ function parse(md, prevLinks) {
     chunk = token[0];
     if (prev.match(/[^\\](\\\\)*\\$/)) ;
     // Code/Indent blocks:
+    // eslint-disable-next-line no-cond-assign
     else if (t = token[3] || token[4]) {
-      chunk = '<pre class="code ' + (token[4] ? 'poetry' : token[2].toLowerCase()) + '"><code' + (token[2] ? " class=\"language-".concat(token[2].toLowerCase(), "\"") : '') + '>' + outdent(encodeAttr(t).replace(/^\n+|\n+$/g, '')) + '</code></pre>';
+      chunk = '<pre class="code ' + (token[4] ? 'poetry' : token[2].toLowerCase()) + '"><code' + (token[2] ? ` class="language-${token[2].toLowerCase()}"` : '') + '>' + outdent(encodeAttr(t).replace(/^\n+|\n+$/g, '')) + '</code></pre>';
     }
     // > Quotes, -* lists:
+    // eslint-disable-next-line no-cond-assign
     else if (t = token[6]) {
       if (t.match(/\./)) {
         token[5] = token[5].replace(/^\d+/gm, '');
@@ -1967,11 +1942,11 @@ function parse(md, prevLinks) {
     }
     // Images:
     else if (token[8]) {
-      chunk = "<img src=\"".concat(encodeAttr(token[8]), "\" alt=\"").concat(encodeAttr(token[7]), "\">");
+      chunk = `<img src="${encodeAttr(token[8])}" alt="${encodeAttr(token[7])}">`;
     }
     // Links:
     else if (token[10]) {
-      out = out.replace('<a>', "<a href=\"".concat(encodeAttr(token[11] || links[prev.toLowerCase()]), "\" target=\"_blank\">"));
+      out = out.replace('<a>', `<a href="${encodeAttr(token[11] || links[prev.toLowerCase()])}" target="_blank">`);
       chunk = flush() + '</a>';
     } else if (token[9]) {
       chunk = '<a>';
@@ -2000,8 +1975,10 @@ const MarkdownDecorator = new ContentDecorator("", text => {
 });
 
 class CardStep extends PopoverStep {
+  static Type = "card";
+  static Style = "";
   get _container() {
-    return this.context.helpers.u("<div role=\"dialog\" aria-labelleby=\"tooltip-title-".concat(this.data.index, "\" class=\"guided-tour-step").concat(this.first ? " guided-tour-step-first" : "").concat(this.last ? " guided-tour-step-last" : "", "\"></div>"));
+    return this.context.helpers.u(`<div role="dialog" aria-labelleby="tooltip-title-${this.data.index}" class="guided-tour-step${this.first ? " guided-tour-step-first" : ""}${this.last ? " guided-tour-step-last" : ""}"></div>`);
   }
   get _highlight() {
     return this.context.helpers.u("<span></span>");
@@ -2010,8 +1987,7 @@ class CardStep extends PopoverStep {
     return this.context.helpers.u("<span></span>");
   }
   _position() {
-    var _this$$tooltip;
-    this.context.helpers.Position.position(document.body, (_this$$tooltip = this.$tooltip) === null || _this$$tooltip === void 0 ? void 0 : _this$$tooltip.first(), [this.context.helpers.Position.positionfixed({
+    this.context.helpers.Position.position(document.body, this.$tooltip?.first(), [this.context.helpers.Position.positionfixed({
       placement: this.data.placement,
       padding: 25
     })]);
@@ -2023,8 +1999,6 @@ class CardStep extends PopoverStep {
     }
   }
 }
-_defineProperty(CardStep, "Type", "card");
-_defineProperty(CardStep, "Style", "");
 
 var BaseStyle = ":host {\n  position: absolute;\n  overflow: visible;\n  top: 0;\n  left: 0;\n  width: 0;\n  height: 0;\n  box-sizing: border-box;\n  line-height: 1.4;\n  text-align: left;\n  text-rendering: optimizespeed;\n  font-family: var(--tourguide-font-family);\n  font-size: var(--tourguide-font-size);\n  color: var(--tourguide-text-color);\n  /* 1 */\n  -webkit-text-size-adjust: 100%;\n  /* 2 */\n  -moz-tab-size: 4;\n  /* 3 */\n  tab-size: 4;\n  /* 3 */\n}\n:host * {\n  margin: 0;\n  padding: 0;\n  background: none;\n  border: none;\n  border-width: 0;\n  border-style: none;\n  border-color: currentColor;\n  box-shadow: none;\n  color: inherit;\n  appearance: none;\n  font-size: inherit;\n  font-weight: inherit;\n  text-decoration: none;\n}\n:host a,\n:host button {\n  cursor: pointer;\n}\n:host a:hover, :host a:focus,\n:host button:hover,\n:host button:focus {\n  outline: 5px auto var(--tourguide-focus-color);\n}";
 
@@ -2037,7 +2011,11 @@ function getDataContents() {
   };
   parts.forEach(part => {
     const entries = (part || "").split(":");
-    result[(entries[0] || "").trim()] = (entries[1] || "").trim();
+    if (entries[0]) {
+      result[(entries[0] || "").trim()] = (entries[1] || "").trim();
+    } else {
+      console.warn("Invalid key-value pair found in data string:", part);
+    }
   });
   return result;
 }
@@ -2097,6 +2075,23 @@ function isEventAttrbutesMatched(event, code) {
   return event.code === code;
 }
 class Tour {
+  static DefaultKeyNavOptions = (() => defaultKeyNavOptions)();
+  static DefaultTourStyles = (() => defaultStyle)();
+  static DefaultTourOptions = (() => defaultOptions)();
+  static ActionHandler = (() => ActionHandler)();
+  static ContentDecorator = (() => ContentDecorator)();
+  static Abstracts = (() => Abstracts)();
+  static Helpers = (() => ({
+    u,
+    ...Utils
+  }))();
+  _steps = [];
+  _current = 0;
+  _active = false;
+  _ready = false;
+  _complete = false;
+  _stepsSrc = (() => StepsSource.DOM)();
+  _initialposition = null;
   get cacheManager() {
     return this._cacheManager || (
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -2131,13 +2126,6 @@ class Tour {
   }
   constructor() {
     let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    _defineProperty(this, "_steps", []);
-    _defineProperty(this, "_current", 0);
-    _defineProperty(this, "_active", false);
-    _defineProperty(this, "_ready", false);
-    _defineProperty(this, "_complete", false);
-    _defineProperty(this, "_stepsSrc", StepsSource.DOM);
-    _defineProperty(this, "_initialposition", null);
     this._options = Object.assign({}, defaultOptions, options, {
       style: Color.setAutoColors(defaultStyle, options.style || {})
     });
@@ -2186,10 +2174,9 @@ class Tour {
   }
   _initSteps(steps) {
     this._steps = steps.map(data => {
-      var _this$_options$stepFa;
       const stepType = data.type || "default";
-      const StepFactory = (_this$_options$stepFa = this._options.stepFactory) === null || _this$_options$stepFa === void 0 ? void 0 : _this$_options$stepFa.find(f => f.Type === stepType);
-      assert(StepFactory, "No factory for step of type \"".concat(stepType, "\". Check your setup."));
+      const StepFactory = this._options.stepFactory?.find(f => f.Type === stepType);
+      assert(StepFactory, `No factory for step of type "${stepType}". Check your setup.`);
       return new StepFactory({
         ...data
       }, this);
@@ -2209,32 +2196,30 @@ class Tour {
     }
   }
   _injectStyles() {
-    const style = u("<style>".concat(BaseStyle, "</style>").concat(this.options.stepFactory.map(step => step.Style).filter(Boolean).map(style => "<style>".concat(style, "</style")).join("")));
+    const style = u(`<style>${BaseStyle}</style>${this.options.stepFactory.map(step => step.Style).filter(Boolean).map(style => `<style>${style}</style`).join("")}`);
     u(this._shadowRoot).append(style);
-    const colors = u("<style>".concat(Style$1.colorObjToStyleVarString(this._options.style || {}, "--tourguide"), "</style>"));
+    const colors = u(`<style>${Style$1.colorObjToStyleVarString(this._options.style || {}, "--tourguide")}</style>`);
     u(this._shadowRoot).append(colors);
   }
   _keyboardHandler(event) {
-    var _this$_options$keyboa, _this$_options$keyboa2, _this$_options$keyboa3, _this$_options$keyboa4, _this$_options$keyboa5, _this$_options$keyboa6;
-    if ((_this$_options$keyboa = this._options.keyboardNavigation) !== null && _this$_options$keyboa !== void 0 && _this$_options$keyboa.next && isEventAttrbutesMatched(event, this._options.keyboardNavigation.next)) {
+    if (this._options.keyboardNavigation?.next && isEventAttrbutesMatched(event, this._options.keyboardNavigation.next)) {
       this.next();
-    } else if ((_this$_options$keyboa2 = this._options.keyboardNavigation) !== null && _this$_options$keyboa2 !== void 0 && _this$_options$keyboa2.prev && isEventAttrbutesMatched(event, this._options.keyboardNavigation.prev)) {
+    } else if (this._options.keyboardNavigation?.prev && isEventAttrbutesMatched(event, this._options.keyboardNavigation.prev)) {
       this.previous();
-    } else if ((_this$_options$keyboa3 = this._options.keyboardNavigation) !== null && _this$_options$keyboa3 !== void 0 && _this$_options$keyboa3.first && isEventAttrbutesMatched(event, this._options.keyboardNavigation.first)) {
+    } else if (this._options.keyboardNavigation?.first && isEventAttrbutesMatched(event, this._options.keyboardNavigation.first)) {
       this.go(0);
-    } else if ((_this$_options$keyboa4 = this._options.keyboardNavigation) !== null && _this$_options$keyboa4 !== void 0 && _this$_options$keyboa4.last && isEventAttrbutesMatched(event, this._options.keyboardNavigation.last)) {
+    } else if (this._options.keyboardNavigation?.last && isEventAttrbutesMatched(event, this._options.keyboardNavigation.last)) {
       this.go(this._steps.length - 1);
-    } else if ((_this$_options$keyboa5 = this._options.keyboardNavigation) !== null && _this$_options$keyboa5 !== void 0 && _this$_options$keyboa5.stop && isEventAttrbutesMatched(event, this._options.keyboardNavigation.stop)) {
+    } else if (this._options.keyboardNavigation?.stop && isEventAttrbutesMatched(event, this._options.keyboardNavigation.stop)) {
       this.stop();
-    } else if ((_this$_options$keyboa6 = this._options.keyboardNavigation) !== null && _this$_options$keyboa6 !== void 0 && _this$_options$keyboa6.complete && isEventAttrbutesMatched(event, this._options.keyboardNavigation.complete)) {
+    } else if (this._options.keyboardNavigation?.complete && isEventAttrbutesMatched(event, this._options.keyboardNavigation.complete)) {
       this.complete();
     }
     return true;
   }
   _decorateText(text, step) {
-    var _this$_options$conten;
     let _text = text;
-    (_this$_options$conten = this._options.contentDecorators) === null || _this$_options$conten === void 0 || _this$_options$conten.forEach(decorator => {
+    this._options.contentDecorators?.forEach(decorator => {
       if (decorator.test(_text)) _text = decorator.render(_text, step, this);
     });
     return _text;
@@ -2315,8 +2300,7 @@ class Tour {
           break;
         default:
           {
-            var _this$_options$action;
-            const handler = (_this$_options$action = this._options.actionHandlers) === null || _this$_options$action === void 0 ? void 0 : _this$_options$action.find(handler => handler.name === action.action);
+            const handler = this._options.actionHandlers?.find(handler => handler.name === action.action);
             if (handler) handler.onAction(event, action, this);
           }
       }
@@ -2343,11 +2327,10 @@ class Tour {
   }
   go(step) {
     if (this._active && this._current !== step) {
-      var _this$currentstep, _this$currentstep$dat;
       const direction = this._current < step ? Direction.FORWARD : Direction.BACKWARD;
-      (_this$currentstep = this.currentstep) === null || _this$currentstep === void 0 || _this$currentstep.hide();
+      this.currentstep?.hide();
       this._current = clamp(step, 0, this.length - 1);
-      if ((_this$currentstep$dat = this.currentstep.data) !== null && _this$currentstep$dat !== void 0 && _this$currentstep$dat.selector) {
+      if (this.currentstep.data?.selector) {
         Scroll.smoothScroll(u(this.currentstep.data.selector).first(), {
           block: "center"
         }).then(() => {
@@ -2387,8 +2370,7 @@ class Tour {
   }
   remove() {
     if (this._ready) {
-      var _this$_containerEleme;
-      (_this$_containerEleme = this._containerElement) === null || _this$_containerEleme === void 0 || _this$_containerEleme.remove();
+      this._containerElement?.remove();
       // delete this._containerElement;
       this._active = false;
       this._ready = false;
@@ -2401,15 +2383,5 @@ class Tour {
     this._containerElement.off(type, listener);
   }
 }
-_defineProperty(Tour, "DefaultKeyNavOptions", defaultKeyNavOptions);
-_defineProperty(Tour, "DefaultTourStyles", defaultStyle);
-_defineProperty(Tour, "DefaultTourOptions", defaultOptions);
-_defineProperty(Tour, "ActionHandler", ActionHandler);
-_defineProperty(Tour, "ContentDecorator", ContentDecorator);
-_defineProperty(Tour, "Abstracts", Abstracts);
-_defineProperty(Tour, "Helpers", {
-  u,
-  ...Utils
-});
 
-export { Tour as default };
+export { Tour as default, defaultKeyNavOptions, defaultOptions, defaultStyle };

@@ -54,16 +54,17 @@ function encodeAttr(str: string): string {
  * Parse Markdown into an HTML String.
  */
 export default function parse(md: string, prevLinks?: Record<string, string>): string {
-    let tokenizer = /((?:^|\n+)(?:\n---+|\* \*(?: \*)+)\n)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|(  \n\n*|\n{2,}|__|\*\*|[_*]|~~)/gm;
-    let context: string[] = [];
-    let out: string = '';
-    let links: Record<string, string> = prevLinks || {};
-    let last: number = 0;
+// eslint-disable-next-line no-regex-spaces
+    const tokenizer = /((?:^|\n+)(?:\n---+|\* \*(?: \*)+)\n)|(?:^``` *(\w*)\n([\s\S]*?)\n```$)|((?:(?:^|\n+)(?:\t|  {2,}).+)+\n*)|((?:(?:^|\n)([>*+-]|\d+\.)\s+.*)+)|(?:!\[([^\]]*?)\]\(([^)]+?)\))|(\[)|(\](?:\(([^)]+?)\))?)|(?:(?:^|\n+)([^\s].*)\n(-{3,}|={3,})(?:\n+|$))|(?:(?:^|\n+)(#{1,6})\s*(.+)(?:\n+|$))|(?:`([^`].*?)`)|(  \n\n*|\n{2,}|__|\*\*|[_*]|~~)/gm;
+    const context: string[] = [];
+    let out = '';
+    const links: Record<string, string> = prevLinks || {};
+    let last = 0;
     let chunk: string | null = null;
-    let prev: string = '';
+    let prev = '';
     let token: RegExpExecArray | null = null;
-    let inner: string = ''
-    let t: string = '';
+    let inner = ''
+    let t = '';
 
     function tag(token: string): string {
         const desc: string[] = TAGS[token[1] || ''];
@@ -76,7 +77,7 @@ export default function parse(md: string, prevLinks?: Record<string, string>): s
     }
 
     function flush(): string {
-        let str: string = '';
+        let str = '';
         while (context.length > 0) str += tag(context[context.length - 1]);
         return str;
     }
@@ -94,6 +95,7 @@ export default function parse(md: string, prevLinks?: Record<string, string>): s
             // escaped
         }
         // Code/Indent blocks:
+// eslint-disable-next-line no-cond-assign
         else if (t = (token[3] || token[4])) {
             chunk = '<pre class="code '
                 + (token[4]
@@ -110,6 +112,7 @@ export default function parse(md: string, prevLinks?: Record<string, string>): s
                 + '</code></pre>';
         }
         // > Quotes, -* lists:
+// eslint-disable-next-line no-cond-assign
         else if (t = token[6]) {
             if (t.match(/\./)) {
                 token[5] = token[5].replace(/^\d+/gm, '');

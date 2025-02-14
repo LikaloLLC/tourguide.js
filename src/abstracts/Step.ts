@@ -1,6 +1,6 @@
 import { Element } from "umbrellajs";
 import {GUID} from "../utils/guid";
-import Tour, { AbstractStep, StepData } from "../../@types";
+import Tour, { AbstractStep, StepData } from "@types";
 
 export abstract class Step<StepDataType = StepData> implements AbstractStep<StepDataType> {
   static Type = "default";

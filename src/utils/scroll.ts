@@ -1,4 +1,4 @@
-import u, { Element } from "umbrellajs";
+import u, { Element, U } from "umbrellajs";
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Scroll {
@@ -16,17 +16,18 @@ export namespace Scroll {
      */
     export function getScrollCoordinates(target: Element): Array<ScrollCoordinates> {
         const scrollItems = [];
-        let targetUEl: any = u(target);
+        let targetUEl: U | boolean;
+        targetUEl = u(target);
 
         do {
             if (!targetUEl) targetUEl = false;
-            if (!targetUEl.first()) targetUEl = false;
+            if (!(targetUEl as U).first()) targetUEl = false;
             try {
-                const element = targetUEl.first() as HTMLElement;
-                const rect = targetUEl.size();
+                const element = (targetUEl as U).first() as HTMLElement;
+                const rect = (targetUEl as U).size();
                 if (
-                    element.scrollHeight !== rect.height ||
-                    element.scrollWidth !== rect.width
+                    element.scrollHeight !== rect?.height ||
+                    element.scrollWidth !== rect?.width
                 ) {
                     scrollItems.push({
                         element,
@@ -34,7 +35,7 @@ export namespace Scroll {
                         y: element.scrollTop,
                     });
                 }
-                targetUEl = targetUEl.parent();
+                targetUEl = (targetUEl as U).parent();
             } catch (error) {
                 targetUEl = false;
             }

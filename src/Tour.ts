@@ -1,18 +1,20 @@
 import u, { U } from "umbrellajs";
 
-import { AbstractStep, StepData } from "../@types/Step";
 import MemoryCacheManager from "./cachemanager/InMemoryCacheManager";
 import Guidedtour, {
   CacheKeys,
   KeyboardNavigationOptions,
-  StepsSource, TourOptions,
+  TourOptions,
   TourStyle,
   TourAction,
   Helpers,
   CacheManager,
   Direction,
-  TourStopState
-} from "../@types";
+  TourStopState,
+  AbstractStep,
+  StepData,
+  StepsSource,
+} from "@types";
 import { assert, clamp, getMaxZIndex, Style, Scroll, Color } from "./utils";
 import * as Utils from "./utils";
 import * as Abstracts from "./abstracts";
@@ -27,7 +29,7 @@ import CardStep from "./step/CardStep";
 import BaseStyle from "./Tour.scss";
 import { getDataContents } from "./utils/dom";
 
-const defaultKeyNavOptions: KeyboardNavigationOptions = {
+export const defaultKeyNavOptions: KeyboardNavigationOptions = {
   next: "ArrowRight",
   prev: "ArrowLeft",
   first: "Home",
@@ -36,7 +38,7 @@ const defaultKeyNavOptions: KeyboardNavigationOptions = {
   stop: "Escape",
 };
 
-const defaultStyle: TourStyle = {
+export const defaultStyle: TourStyle = {
   fontFamily: "sans-serif",
   fontSize: "14px",
 
@@ -57,7 +59,7 @@ const defaultStyle: TourStyle = {
   stepCardPadding: "5px",
 };
 
-const defaultOptions: TourOptions = {
+export const defaultOptions: TourOptions = {
   identifier: "default",
   root: "body",
   selector: "[data-tour]",

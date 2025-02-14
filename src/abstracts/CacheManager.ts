@@ -1,4 +1,4 @@
-import { CacheManager } from "../../@types";
+import { CacheManager } from "@types";
 
 export abstract class AbstractCacheManager implements CacheManager {
     constructor(identifier = "") {

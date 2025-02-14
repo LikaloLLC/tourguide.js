@@ -1,5 +1,5 @@
 // import scrollIntoView from "scroll-into-view";
-import Tour, { AbstractStep, StepData } from "../../@types";
+import Tour, { AbstractStep, StepData } from "@types";
 import { Element, U } from "umbrellajs";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -20,7 +20,7 @@ export interface PopoverStepData extends StepData {
     navigation: boolean;
 }
 
-const popoverStepDataDefaults: PopoverStepData = {
+export const popoverStepDataDefaults: PopoverStepData = {
     layout: "vertical",
     image: "",
     title: "",
