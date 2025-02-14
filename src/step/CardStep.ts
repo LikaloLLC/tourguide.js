@@ -6,7 +6,10 @@ interface CardStepData {
     placement: Position.AlignedPlacement
 }
 
-export default class CardStep extends PopoverStep<CardStepData> {
+/**
+ * Represents a step in a tour, not attached to any specific element, that includes a card with an image, title, and content , extending the functionality of {@link PopoverStep}.
+ */
+class CardStep extends PopoverStep<CardStepData> {
     static Type = "card";
     static Style = "";
     get _container() {
@@ -31,6 +34,11 @@ export default class CardStep extends PopoverStep<CardStepData> {
             ]
         );
     }
+    /**
+     * Attach the popover step to a parent container.
+     *
+     * @param parent The parent container.
+     */
     attach(parent: Element) {
         super.attach(parent);
         if (this.$arrow) {
@@ -38,3 +46,5 @@ export default class CardStep extends PopoverStep<CardStepData> {
         }
     }
 }
+
+export default CardStep;

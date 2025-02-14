@@ -1,8 +1,6 @@
 /**
- * Generate a random GUID
- * 
- * @export
- * @returns {string} a random GUID string
+ * Generates a GUID (Globally Unique Identifier) in string format.
+ * @returns A string representing a GUID.
  */
 export function GUID(): string {
   const s4 = () => Math

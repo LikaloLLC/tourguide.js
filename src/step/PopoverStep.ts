@@ -33,7 +33,10 @@ export const popoverStepDataDefaults: PopoverStepData = {
     hidden: false
 }
 
-export default class PopoverStep<AdditionalStepData = object> extends Step<PopoverStepData & AdditionalStepData> {
+/**
+ * Represents a step in a tour, attached to a specific element, that includes a popover with an image, title, content, and layout options.
+ */
+class PopoverStep<AdditionalStepData = object> extends Step<PopoverStepData & AdditionalStepData> {
     static Style: string = Style;
     $container!: U;
     $highlight!: U;
@@ -134,6 +137,12 @@ export default class PopoverStep<AdditionalStepData = object> extends Step<Popov
         }
         return this.$container;
     }
+    /**
+     * Constructs a new PopoverStep instance.
+     *
+     * @param data The step data, including additional properties for the popover (e.g., image, title, content).
+     * @param context The tour context in which this step is being used.
+     */
     constructor(data: PopoverStepData & AdditionalStepData, context: Tour) {
         super(Object.assign({}, popoverStepDataDefaults, data), context);
         this._validate(this.data);
@@ -219,9 +228,20 @@ export default class PopoverStep<AdditionalStepData = object> extends Step<Popov
                 ]
         );
     }
+    /**
+     * Attach the popover step to a parent container.
+     *
+     * @param parent The parent container.
+     */
     attach(parent: Element) {
         this.context.helpers.u(parent).append(this._el);
     }
+
+    /**
+     * Show the popover step.
+     *
+     * @return {boolean} Whether the popover step was shown successfully.
+     */
     show() {
         this._cancel();
         if (!this.active) {
@@ -239,6 +259,12 @@ export default class PopoverStep<AdditionalStepData = object> extends Step<Popov
         }
         return false;
     }
+
+    /**
+     * Hide the popover step.
+     *
+     * @return {boolean} Whether the popover step was hidden successfully.
+     */
     hide() {
         this._cancel();
         if (this.active) {
@@ -251,8 +277,14 @@ export default class PopoverStep<AdditionalStepData = object> extends Step<Popov
         }
         return false;
     }
+
+    /**
+     * Remove the popover step from the DOM.
+     */
     remove() {
         this.hide();
         this._el.remove();
     }
 }
+
+export default PopoverStep;

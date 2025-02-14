@@ -19,6 +19,12 @@ export namespace Style {
         }
     }
 
+    /**
+     * Sets multiple CSS styles for an element.
+     * @param {Element} element - The target element to which the styles will be applied.
+     * @param {Record<string, string | number>} styleObj - An object where keys are CSS properties and values are their respective values.
+     * @returns {Element} - The modified element.
+     */
     export function setStyle(element: Element, styleObj: Record<string, string | number>): Element {
         const style: Record<string, string> = {};
         Object.keys(styleObj).forEach((key) => {

@@ -10,32 +10,105 @@ var u=function(t,e){return this instanceof u?t instanceof u?t:((t="string"==type
 
 var u = umbrella_min.exports;
 
+/**
+ * Abstract base class for CacheManager
+ *
+ * The `CacheManager` class serves as a template for managing caching mechanisms, particularly useful when tracking user interactions during a guided tour. This could include storing data such as:
+ * - User progress through the tour steps
+ * - Completion status of the tour
+ * - Preferences or settings related to the tour (e.g., whether users want to skip certain steps)
+ * - Any other relevant interaction details that might enhance用户体验 or improve future iterations of the guided tour.
+ *
+ * By implementing this abstract class, specific caching strategies can be developed for different environments (e.g., browser local storage, server-side storage, in-memory cache). This flexibility allows for efficient and scalable handling of user interactions across various platforms and devices.
+ */
 class AbstractCacheManager {
+  /**
+   * Creates an instance of AbstractCacheManager.
+   * @param identifier - A string to identify the cache manager.
+   */
   constructor() {
     let identifier = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
     this.identifier = identifier;
   }
-  identifier = "";
+  /**
+   * The unique identifier for this cache manager.
+   */
+
+  /**
+   * Retrieves a value from the cache by its key.
+   * @template T - The type of the value to retrieve.
+   * @param key - The key under which the value is stored.
+   * @returns The value associated with the given key, or undefined if the key does not exist in the cache.
+   */
+
+  /**
+   * Stores a value in the cache against a specific key.
+   * @param key - The key under which to store the value.
+   * @param value - The value to be stored.
+   */
+
+  /**
+   * Removes a value from the cache by its key.
+   * @param key - The key of the value to remove.
+   */
 }
 
+/**
+ * The MemoryCacheManager class provides an in-memory caching mechanism using a JavaScript Map object.
+ * This implementation extends the AbstractCacheManager abstract class and implements its methods.
+ */
 class MemoryCacheManager extends AbstractCacheManager {
   _memory = {};
+
+  /**
+   * Retrieves the value associated with the given key.
+   * @param key - The unique identifier for the cached item.
+   * @returns The value associated with the key, or undefined if the key does not exist.
+   */
   get(key) {
     return this._memory[key];
   }
+
+  /**
+   * Stores a value in the cache under the specified key.
+   * @param key - The unique identifier for the cached item.
+   * @param value - The value to be stored in the cache.
+   */
   set(key, value) {
     return this._memory[key] = value;
   }
+
+  /**
+   * Clears the value associated with the given key from the cache, if it exists.
+   * @param key - The unique identifier for the cached item to be cleared.
+   */
   clear(key) {
     this._memory[key] = undefined;
   }
 }
 
+/**
+ * Asserts that a given condition is true. If the condition is false, it throws an error with the provided message.
+ *
+ * @param {boolean | string | number | any} condition - The condition to be evaluated. Can be of type boolean, string, number, or any other type.
+ * @param {string} message - The error message to be displayed if the condition is false.
+ * @returns {boolean} - Always returns true if the condition is true. Throws an error and does not return anything if the condition is false.
+ *
+ * @throws {Error} - If the condition is false, throws an error with the specified message prefixed by "TourguideJS: ".
+ */
 function assert(condition, message) {
   if (!condition) throw `TourguideJS: ${message}`;
   return true;
 }
 
+/**
+ * Clamps a number between a minimum and maximum value.
+ *
+ * @param value - The number to clamp.
+ * @param min - Optional minimum limit. If not provided, it defaults to the value itself.
+ * @param max - Optional maximum limit. If not provided, it defaults to the value itself.
+ * @returns The clamped value between `min` and `max`.
+ */
 function clamp(value) {
   let min = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : NaN;
   let max = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : NaN;
@@ -47,6 +120,21 @@ function clamp(value) {
 // eslint-disable-next-line @typescript-eslint/no-namespace
 let Color;
 (function (_Color) {
+  /**
+   * Converts a hexadecimal color code to an RGB color.
+   *
+   * The function takes a string representing a hexadecimal color and converts it to its corresponding RGB values.
+   * Hexadecimal colors are represented as `#RRGGBB`, where RR, GG, and BB are two-digit hexadecimal numbers representing the red, green, and blue components of the color respectively.
+   *
+   * @param hex - A string representing a hexadecimal color code. It should be in the format `#RRGGBB`.
+   * @returns An array containing three elements: [R, G, B]. Each element is a number between 0 and 255 representing the intensity of the red, green, and blue components of the color respectively.
+   *
+   * Example usage:
+   * ```typescript
+   * const rgb = Color.hexToRGB("#FFA501"); // [255, 165, 1]
+   * console.log(rgb); // Output: [255, 165, 1]
+   * ```
+   */
   function hexToRGB(hex) {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return [parseInt(result?.[1] || "", 16), parseInt(result?.[2] || "", 16), parseInt(result?.[3] || "", 16)];
@@ -170,6 +258,11 @@ let Style$1;
   _Style.colorObjToStyleVarString = colorObjToStyleVarString;
 })(Style$1 || (Style$1 = {}));
 
+/**
+ * Returns the maximum z-index value of all elements in the document.
+ *
+ * @returns {number} The maximum z-index value found in the document. If no elements have a z-index set, it returns 0.
+ */
 function getMaxZIndex() {
   return Math.max(...Array.from(document.querySelectorAll('body *'), el => parseFloat(window.getComputedStyle(el).zIndex)).filter(zIndex => !Number.isNaN(zIndex)), 0);
 }
@@ -178,9 +271,10 @@ function getMaxZIndex() {
 let Scroll;
 (function (_Scroll) {
   /**
-   * Getting scroll coordinates
-   * @param {Element | string} target target element
-   * @returns {{ element: Element, x: number, y: number }[]} scrollItems
+   * Retrieves the scroll coordinates of all elements that have a non-zero scrollable area.
+   *
+   * @param target - The initial HTML element from which to start checking for scrollable areas.
+   * @returns An array of objects containing the element, its horizontal (x) and vertical (y) scroll positions.
    */
   function getScrollCoordinates(target) {
     const scrollItems = [];
@@ -1328,6 +1422,12 @@ function getWindowComputedView() {
 // eslint-disable-next-line @typescript-eslint/no-namespace
 let Position;
 (function (_Position) {
+  /**
+   * Generates a middleware that keeps the floating element within the viewport, ensuring it does not go out of bounds.
+   * @param options - An object containing the padding to maintain around the floating element.
+   * @param options.padding - The number of pixels to keep as padding from the edges of the viewport.
+   * @returns A middleware function that adjusts the position of the floating element if it is about to go out of bounds.
+   */
   _Position.keepinview = _ref => {
     let {
       padding = 0
@@ -1360,6 +1460,13 @@ let Position;
       }
     };
   };
+  /**
+   * Generates a middleware that positions the floating element fixed relative to the viewport.
+   * @param options - An object containing optional properties for the placement and padding.
+   * @param options.placement - The alignment of the floating element within the viewport, defaulting to "middle-center".
+   * @param options.padding - The number of pixels to keep as padding from the edges of the viewport, defaulting to 0.
+   * @returns A middleware function that sets the position of the floating element to fixed and adjusts it based on the provided placement and padding.
+   */
   _Position.positionfixed = options => ({
     name: "positionInView",
     options,
@@ -1422,6 +1529,14 @@ let Position;
       };
     }
   });
+  /**
+   * Generates a middleware that highlights the reference element by setting its position to absolute and adjusting its size.
+   * @param options - An object containing the reference element, optional padding, and whether the highlight should be centered.
+   * @param options.element - The HTML element to be highlighted.
+   * @param options.padding - Optional padding around the reference element. Default is 0.
+   * @param options.centered - Whether the highlight should be centered on the reference element. Default is false.
+   * @returns A middleware function that sets the position of the reference element to absolute and adjusts its size based on the provided options.
+   */
   _Position.highlight = options => ({
     name: "highlight",
     options,
@@ -1540,6 +1655,17 @@ let Position;
   });
 })(Position || (Position = {}));
 
+/**
+ * This file contains a collection of tools used to aid in the management and display of guided tours and tour steps.
+ *
+ * The primary functionalities include:
+ * - Managing various aspects of guided tours, such as start times, durations, and content.
+ * - Providing utilities for displaying specific tour steps within the context of a tour.
+ * - Supporting customizations and configurations to tailor the user experience during guided tours.
+ *
+ * This module can be integrated into applications that require interactive tutorials or step-by-step guidance, enhancing user engagement and satisfaction through clear and engaging onboarding experiences.
+ */
+
 var Utils = /*#__PURE__*/Object.freeze({
     __proto__: null,
     assert: assert,
@@ -1552,34 +1678,82 @@ var Utils = /*#__PURE__*/Object.freeze({
 });
 
 /**
- * Generate a random GUID
- * 
- * @export
- * @returns {string} a random GUID string
+ * Generates a GUID (Globally Unique Identifier) in string format.
+ * @returns A string representing a GUID.
  */
 function GUID() {
   const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
   return `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
 }
 
+/**
+ * Represents an abstract step in a tour. 
+ * This is an interface that defines the basic structure and properties
+ * for all steps within a tour. It includes properties such as id (a unique identifier), title, description, element
+ * to highlight (which should be an instance of Element from umbrellajs), and a callback function that will execute
+ * when the step is completed. This abstract class can be extended to create additional step types, each with their
+ * own specific properties and behaviors, allowing for customization based on different user experiences or application needs.
+ */
 class Step {
+  /**
+   * The type of the step, defaults to "default".
+   */
   static Type = "default";
+  /**
+   * The style or appearance of the step, represented as a string.
+   */
   static Style = "";
+  /**
+   * A unique identifier for the step, generated using GUID().
+   */
   uid = (() => GUID())();
+  /**
+   * The context in which the step is placed, typically a Tour object.
+   */
+
+  /**
+   * The index of the step within its container.
+   */
   index = 0;
+  /**
+   * Indicates whether the step is currently active.
+   */
   active = false;
+  /**
+   * Indicates whether the step is the first in its sequence.
+   */
   first = false;
+  /**
+   * Indicates whether the step is the last in its sequence.
+   */
   last = false;
+  /**
+   * The data associated with the step, which must be provided when creating a new instance.
+   */
+
   constructor(data, context) {
     this.data = data;
     this.context = context;
   }
+  /**
+   * Attaches the step to a parent element in the DOM. This method must be implemented by concrete subclasses.
+   */
+
+  /**
+   * Shows the step, setting its active state to true if it is not already active.
+   */
   show() {
     !this.active && (this.active = true);
   }
+  /**
+   * Hides the step, setting its active state to false if it is currently active.
+   */
   hide() {
     this.active && (this.active = false);
   }
+  /**
+   * Removes the step from its parent element in the DOM. This method must be implemented by concrete subclasses.
+   */
 }
 
 var Abstracts = /*#__PURE__*/Object.freeze({
@@ -1603,6 +1777,10 @@ const popoverStepDataDefaults = {
   alignment: "start",
   hidden: false
 };
+
+/**
+ * Represents a step in a tour, attached to a specific element, that includes a popover with an image, title, content, and layout options.
+ */
 class PopoverStep extends Step {
   static Style = (() => Style)();
   get _image() {
@@ -1692,6 +1870,12 @@ class PopoverStep extends Step {
     }
     return this.$container;
   }
+  /**
+   * Constructs a new PopoverStep instance.
+   *
+   * @param data The step data, including additional properties for the popover (e.g., image, title, content).
+   * @param context The tour context in which this step is being used.
+   */
   constructor(data, context) {
     super(Object.assign({}, popoverStepDataDefaults, data), context);
     this._validate(this.data);
@@ -1745,9 +1929,20 @@ class PopoverStep extends Step {
       centered: true
     })]);
   }
+  /**
+   * Attach the popover step to a parent container.
+   *
+   * @param parent The parent container.
+   */
   attach(parent) {
     this.context.helpers.u(parent).append(this._el);
   }
+
+  /**
+   * Show the popover step.
+   *
+   * @return {boolean} Whether the popover step was shown successfully.
+   */
   show() {
     this._cancel();
     if (!this.active) {
@@ -1765,6 +1960,12 @@ class PopoverStep extends Step {
     }
     return false;
   }
+
+  /**
+   * Hide the popover step.
+   *
+   * @return {boolean} Whether the popover step was hidden successfully.
+   */
   hide() {
     this._cancel();
     if (this.active) {
@@ -1777,12 +1978,23 @@ class PopoverStep extends Step {
     }
     return false;
   }
+
+  /**
+   * Remove the popover step from the DOM.
+   */
   remove() {
     this.hide();
     this._el.remove();
   }
 }
 
+/**
+ * Generates a function that creates an ActionHandler object for use in a tour.
+ *
+ * @param name - The unique identifier for the action handler.
+ * @param handlerFn - The function that will handle the actions defined by the tour.
+ * @returns An ActionHandlerType object containing the name and the onAction method.
+ */
 function ActionHandler(name, handlerFn) {
   return {
     name,
@@ -1813,16 +2025,39 @@ function getMatches(str, regex) {
   }
   return matches;
 }
+
+/**
+ * The `ContentDecorator` class is designed to apply a custom decoration function to specific patterns within text. It supports both regular expressions and literal strings as match patterns, allowing for flexible content manipulation.
+ */
 class ContentDecorator {
+  /**
+   * Constructs a new `ContentDecorator` instance.
+   * @param match - A string or regular expression pattern to be matched in the text. If provided as a string, it is wrapped in a regular expression with global and case-insensitive flags.
+   * @param decoratorFn - The function that will be applied to the matched content. It receives the entire text, an array of matches, additional step data, and context information.
+   */
   constructor(match, decoratorFn) {
     if (typeof match === 'string' && match)
       // eslint-disable-next-line no-useless-escape
       this.match = new RegExp(`{\s*${match.trim()}\s*(,.+?)?\s*?}`, 'gmi');else if (!match) this.match = false;else this.match = match;
     this.decoratorFn = decoratorFn;
   }
+
+  /**
+   * Tests whether the given text matches the configured pattern.
+   * @param text - The string to be tested against the match pattern.
+   * @returns `true` if the text matches the pattern, otherwise `false`. If no pattern is set (`match` is false), it always returns true.
+   */
   test(text) {
     return this.match ? this.match.test(text) : true;
   }
+
+  /**
+   * Applies the decorator function to the text based on the configured match pattern and properties.
+   * @param text - The input text in which matches are to be found and decorated.
+   * @param step - Additional data or context that might be used by the decorator function during rendering.
+   * @param context - A broader context object that can include additional information necessary for decoration.
+   * @returns The text with matched patterns decorated according to the configured decorator function.
+   */
   render(text, step, context) {
     try {
       const matches = this.match ? getMatches(text, this.match).reverse() : [];
@@ -1974,6 +2209,9 @@ const MarkdownDecorator = new ContentDecorator("", text => {
   return parse(text);
 });
 
+/**
+ * Represents a step in a tour, not attached to any specific element, that includes a card with an image, title, and content , extending the functionality of {@link PopoverStep}.
+ */
 class CardStep extends PopoverStep {
   static Type = "card";
   static Style = "";
@@ -1992,6 +2230,11 @@ class CardStep extends PopoverStep {
       padding: 25
     })]);
   }
+  /**
+   * Attach the popover step to a parent container.
+   *
+   * @param parent The parent container.
+   */
   attach(parent) {
     super.attach(parent);
     if (this.$arrow) {
@@ -2002,6 +2245,12 @@ class CardStep extends PopoverStep {
 
 var BaseStyle = ":host {\n  position: absolute;\n  overflow: visible;\n  top: 0;\n  left: 0;\n  width: 0;\n  height: 0;\n  box-sizing: border-box;\n  line-height: 1.4;\n  text-align: left;\n  text-rendering: optimizespeed;\n  font-family: var(--tourguide-font-family);\n  font-size: var(--tourguide-font-size);\n  color: var(--tourguide-text-color);\n  /* 1 */\n  -webkit-text-size-adjust: 100%;\n  /* 2 */\n  -moz-tab-size: 4;\n  /* 3 */\n  tab-size: 4;\n  /* 3 */\n}\n:host * {\n  margin: 0;\n  padding: 0;\n  background: none;\n  border: none;\n  border-width: 0;\n  border-style: none;\n  border-color: currentColor;\n  box-shadow: none;\n  color: inherit;\n  appearance: none;\n  font-size: inherit;\n  font-weight: inherit;\n  text-decoration: none;\n}\n:host a,\n:host button {\n  cursor: pointer;\n}\n:host a:hover, :host a:focus,\n:host button:hover,\n:host button:focus {\n  outline: 5px auto var(--tourguide-focus-color);\n}";
 
+/**
+ * Parses a data string into an object with default values.
+ * @param data - The input data string, where key-value pairs are separated by ";".
+ * @param defaults - An optional object containing default key-value pairs.
+ * @returns A new object constructed from the parsed data and defaults.
+ */
 function getDataContents() {
   let data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
   let defaults = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -2046,13 +2295,41 @@ const defaultStyle = {
   stepButtonCompleteColor: "auto",
   stepCardPadding: "5px"
 };
+
+/**
+ * Default options for a guided tour in the application.
+ */
 const defaultOptions = {
+  /**
+   * A unique identifier for the tour instance, used to manage multiple tours.
+   */
   identifier: "default",
+  /**
+   * The root element of the page on which the tour will be displayed.
+   */
   root: "body",
+  /**
+   * A CSS selector for elements with the `data-tour` attribute, used to select the steps of the tour.
+   */
   selector: "[data-tour]",
+  /**
+   * Whether to restore the position and visibility state of the tour on page load.
+   * Defaults to `true`.
+   */
   restoreinitialposition: true,
+  /**
+   * Whether to preload images for the tour steps before displaying them.
+   * Defaults to `true`.
+   */
   preloadimages: true,
+  /**
+   * Whether to resume the tour if it was in progress when the page was last loaded.
+   * Defaults to `true`.
+   */
   resumeOnLoad: true,
+  /**
+   * Configuration for making requests to fetch tour data from a server.
+   */
   request: {
     options: {
       mode: "cors",
@@ -2062,18 +2339,73 @@ const defaultOptions = {
       "Content-Type": "application/json"
     }
   },
+  /**
+   * Keyboard navigation configuration for the tour.
+   */
   keyboardNavigation: defaultKeyNavOptions,
+  /**
+   * A list of factories for creating new tour steps.
+   */
   stepFactory: [PopoverStep, CardStep],
+  /**
+   * List of action handlers to be applied to the tour steps.
+   */
   actionHandlers: [],
+  /**
+   * List of content decorators to be applied to the tour steps' content.
+   */
   contentDecorators: [MarkdownDecorator],
+  /**
+   * The cache manager used for managing the state and data of the tour.
+   */
   cacheManagerFactory: MemoryCacheManager,
+  /**
+   * A list of steps that make up the tour.
+   */
   steps: [],
+  /**
+   * The source of the tour data (e.g., a URL or a local file path).
+   */
   src: "",
+  /**
+   * Customizable styling options for the tour.
+   */
   style: defaultStyle
 };
 function isEventAttrbutesMatched(event, code) {
   return event.code === code;
 }
+
+/**
+ * A class that manages guided tours in a web application. It provides an interface for creating, managing, and displaying interactive guided tours on a webpage. The tour can be customized with various options such as keyboard navigation settings, step types, action handlers, content decorators, and styling. It also supports data fetching from external sources to dynamically load tour steps.
+ *
+ * ### Possible Uses:
+ * - **Guided Tours**: Enhance user experience by guiding users through the main features of an application or website with a series of informative and interactive steps.
+ * - **Educational Tools**: Use guided tours as educational aids for new users, explaining complex functionalities in a step-by-step manner.
+ * - **Help and Support**: Provide quick access to essential information and tutorials right within the product through guided tours that highlight key features or provide help messages.
+ *
+ * ### Key Features:
+ * - **Step Management**: Easily add, remove, or modify steps in the tour using a variety of step types (e.g., popover, card).
+ * - **Keyboard Navigation**: Support for navigating through steps using keyboard shortcuts, customizable by the user.
+ * - **Dynamic Data Loading**: Fetch tour data from external sources to dynamically update tour content without hardcoding it.
+ * - **Custom Styling**: Highly configurable styling options allow you to match the tour's appearance with your application's design language.
+ * - **State Management**: Persistent state management ensures that users can resume tours where they left off even after navigating away and returning to the page.
+ *
+ * ### Usage Example:
+ * ```typescript
+ * const tour = new GuidedTour({
+ *   identifier: "exampleTour",
+ *   root: "#app",
+ *   selector: "[data-tour-step]",
+ *   steps: [
+ *     { content: "Welcome to the app!", target: ".welcome" },
+ *     { content: "Here's how you can use this feature.", target: ".feature-section" }
+ *   ]
+ * });
+ *
+ * tour.start();
+ * ```
+ */
 class Tour {
   static DefaultKeyNavOptions = (() => defaultKeyNavOptions)();
   static DefaultTourStyles = (() => defaultStyle)();
@@ -2092,38 +2424,77 @@ class Tour {
   _complete = false;
   _stepsSrc = (() => StepsSource.DOM)();
   _initialposition = null;
+  /**
+   * Get the cache manager instance. If it doesn't exist, create a new one using the factory provided in options.
+   */
   get cacheManager() {
     return this._cacheManager || (
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this._cacheManager = new this.options.cacheManagerFactory(this.options.identifier));
   }
+
+  /**
+   * Get the current step in the tour.
+   */
   get currentstep() {
     return this._steps[this._current];
   }
+
+  /**
+   * Get the total number of steps in the tour.
+   */
   get length() {
     return this._steps.length;
   }
+
+  /**
+   * Get all visible steps in the tour, excluding hidden ones.
+   */
   get steps() {
     return this._steps.filter(step => !step.data.hidden);
   }
+
+  /**
+   * Check if there is a next step available.
+   */
   get hasnext() {
     return this.nextstep !== this._current;
   }
+
+  /**
+   * Get the index of the next step. If no next step exists, returns the current step index.
+   */
   get nextstep() {
     return clamp(this._current + 1, 0, this.length - 1);
   }
+
+  /**
+   * Get the index of the previous step. If no previous step exists, returns the current step index.
+   */
   get previousstep() {
     return clamp(this._current - 1, 0);
   }
+
+  /**
+   * Get the tour options object.
+   */
   get options() {
     return this._options;
   }
+
+  /**
+   * Get the helpers object which includes utility functions for the tour.
+   */
   get helpers() {
     return this._helpers || (this._helpers = {
       ...Tour.Helpers,
       decorate: this._decorateText.bind(this)
     });
   }
+  /**
+   * Creates an instance of GuidedTour.
+   * @param options - The configuration options for the guided tour.
+   */
   constructor() {
     let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     this._options = Object.assign({}, defaultOptions, options, {
@@ -2172,6 +2543,10 @@ class Tour {
         }
     }
   }
+  /**
+   * Initializes the steps for the tour.
+   * @param steps - The array of step data.
+   */
   _initSteps(steps) {
     this._steps = steps.map(data => {
       const stepType = data.type || "default";
@@ -2187,6 +2562,9 @@ class Tour {
     this._steps[0].first = true;
     this._steps[this.length - 1].last = true;
   }
+  /**
+   * Triggers the tour ready event.
+   */
   _onTourReady() {
     if (this._ready && this.cacheManager.get(CacheKeys.IsStarted) && this.options.resumeOnLoad) {
       this._current = parseInt(this.cacheManager.get(CacheKeys.CurrentProgress));
@@ -2195,12 +2573,19 @@ class Tour {
       this.start(this._current);
     }
   }
+  /**
+   * Injects the base and custom styles for the tour.
+   */
   _injectStyles() {
     const style = u(`<style>${BaseStyle}</style>${this.options.stepFactory.map(step => step.Style).filter(Boolean).map(style => `<style>${style}</style`).join("")}`);
     u(this._shadowRoot).append(style);
     const colors = u(`<style>${Style$1.colorObjToStyleVarString(this._options.style || {}, "--tourguide")}</style>`);
     u(this._shadowRoot).append(colors);
   }
+  /**
+   * Handles keyboard events for navigation and actions within the tour.
+   * @param event - The KeyboardEvent to handle.
+   */
   _keyboardHandler(event) {
     if (this._options.keyboardNavigation?.next && isEventAttrbutesMatched(event, this._options.keyboardNavigation.next)) {
       this.next();
@@ -2217,6 +2602,11 @@ class Tour {
     }
     return true;
   }
+  /**
+   * Decorates the text content of a step with custom decorators if defined.
+   * @param text - The raw text to be decorated.
+   * @param step - The current step being processed.
+   */
   _decorateText(text, step) {
     let _text = text;
     this._options.contentDecorators?.forEach(decorator => {
@@ -2224,6 +2614,11 @@ class Tour {
     });
     return _text;
   }
+  /**
+   * Triggers a custom event on the tour container element.
+   * @param type - The type of the custom event.
+   * @param detail - Additional data to be included in the event.
+   */
   _triggerCustomEvent(type) {
     let detail = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
     const customEvent = new CustomEvent(type, {
@@ -2234,6 +2629,9 @@ class Tour {
     });
     this._containerElement.first().dispatchEvent(customEvent);
   }
+  /**
+   * Resets the tour state to its initial position.
+   */
   reset() {
     if (this._active) this.stop();
     // if (this._stepsSrc === StepsSource.DOM) {
@@ -2243,6 +2641,10 @@ class Tour {
     this._current = 0;
     this.cacheManager.set(CacheKeys.IsStarted, true);
   }
+  /**
+   * Starts the tour from a specific step.
+   * @param step - The index of the step to start from.
+   */
   start() {
     let step = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
     if (this._ready) {
@@ -2283,6 +2685,11 @@ class Tour {
       }, 50);
     }
   }
+  /**
+   * Triggers a custom action based on the provided tour action.
+   * @param event - The triggering event.
+   * @param action - The action to be performed.
+   */
   action(event, action) {
     if (this._active) {
       switch (action.action) {
@@ -2311,6 +2718,10 @@ class Tour {
       });
     }
   }
+  /**
+   * Moves to the next step in the tour.
+   * @param e - The optional event that triggered the method call.
+   */
   next(e) {
     e && e.preventDefault && e.preventDefault();
     e && e.stopPropagation && e.stopPropagation();
@@ -2318,6 +2729,10 @@ class Tour {
       this.go(this.nextstep);
     }
   }
+  /**
+   * Moves to the previous step in the tour.
+   * @param e - The optional event that triggered the method call.
+   */
   previous(e) {
     e && e.preventDefault && e.preventDefault();
     e && e.stopPropagation && e.stopPropagation();
@@ -2325,6 +2740,10 @@ class Tour {
       this.go(this.previousstep);
     }
   }
+  /**
+   * Moves to a specific step in the tour.
+   * @param step - The index of the step to navigate to.
+   */
   go(step) {
     if (this._active && this._current !== step) {
       const direction = this._current < step ? Direction.FORWARD : Direction.BACKWARD;
@@ -2341,6 +2760,9 @@ class Tour {
       this._triggerCustomEvent("step");
     }
   }
+  /**
+   * Stops and resets the tour.
+   */
   stop() {
     if (this._active) {
       this.currentstep.hide();
@@ -2361,6 +2783,9 @@ class Tour {
       this._triggerCustomEvent("stop");
     }
   }
+  /**
+   * Completes the tour and marks it as finished.
+   */
   complete() {
     if (this._active) {
       this._complete = true;
@@ -2368,6 +2793,9 @@ class Tour {
       this._triggerCustomEvent("complete");
     }
   }
+  /**
+   * Removes the tour from the DOM and resets its state.
+   */
   remove() {
     if (this._ready) {
       this._containerElement?.remove();
@@ -2376,9 +2804,19 @@ class Tour {
       this._ready = false;
     }
   }
+  /**
+   * Adds an event listener to the tour container element.
+   * @param type - The type of the event to listen for.
+   * @param listener - The function that handles the event.
+   */
   addEventListener(type, listener) {
     this._containerElement.on(type, listener);
   }
+  /**
+   * Removes an event listener from the tour container element.
+   * @param type - The type of the event to remove the listener for.
+   * @param listener - The function that handles the event.
+   */
   removeEventListener(type, listener) {
     this._containerElement.off(type, listener);
   }

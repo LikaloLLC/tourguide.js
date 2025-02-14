@@ -8,12 +8,13 @@ export namespace Scroll {
         x: number;
         y: number;
     }
-
-    /**
-     * Getting scroll coordinates
-     * @param {Element | string} target target element
-     * @returns {{ element: Element, x: number, y: number }[]} scrollItems
-     */
+    
+/**
+ * Retrieves the scroll coordinates of all elements that have a non-zero scrollable area.
+ *
+ * @param target - The initial HTML element from which to start checking for scrollable areas.
+ * @returns An array of objects containing the element, its horizontal (x) and vertical (y) scroll positions.
+ */
     export function getScrollCoordinates(target: Element): Array<ScrollCoordinates> {
         const scrollItems = [];
         let targetUEl: U | boolean;

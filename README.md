@@ -1,8 +1,8 @@
 # Tourguide.js
 
-######  Simple, lightweight library for creating guided tours for your web, apps and more.
+######  Library for creating guided tours for your web, apps and more.
 
->  A **tour guide** is a  person who provides assistance, information on cultural, historical and  contemporary heritage to people on organized [tours](https://en.wikipedia.org/wiki/Tourism)  and individual clients at educational establishments, religious and  historical sites, museums, and at venues of other significant interest,  attractions sites. [[https://en.wikipedia.org/wiki/Tour_guide](https://en.wikipedia.org/wiki/Tour_guide)]
+>  A **tour guide** is a person who provides assistance, information on cultural, historical and  contemporary heritage to people on organized [tours](https://en.wikipedia.org/wiki/Tourism)  and individual clients at educational establishments, religious and  historical sites, museums, and at venues of other significant interest,  attractions sites. [[https://en.wikipedia.org/wiki/Tour_guide](https://en.wikipedia.org/wiki/Tour_guide)]
 
 ## Examples
 
@@ -63,73 +63,30 @@ Before use, **Tourguide.js** must be instantiated:
 ```
 var tourguide = new Tourguide({options});
 ```
-
-* `root?<string>`: root element the tour steps will attach to; default is document.body
-* `selector?<string>`: if you want to use content based tour approach you can use this option to specify the common selector for the tour steps; default is `[data-tour]`
-* `animationspeed?<number>`: speed of all tour built-in animations; default is 120
-* `padding?<number>`: additional padding to add to step highlighter; default is 5(px)
-* `steps?<Array<Step>>`: if you choose to take JSON based tour approach provide use this property to provide the data; default is null
-* `src?<string>`: if you want to load the tour from a remote URL you may specify it here; default is null
-* `preloadimages?<boolean>`: if you want to preload images, you may set this attribute to true; default is false
-* `restoreinitialposition?<boolean>`: if you want to restore the scroll position after the tour ended, you may set this attribute to true; default is true
-* `colors<Object>`: if you want to customize the color schema of this plugin, use the following properties; the object you passed in will be combine with default values. The defaults are:
+Tour constructor accepts the following options:
 ```
-{
-  fontFamily: 'sans-serif',
-  fontSize: "14px",
-  tooltipWidth: "40vw",
-  overlayColor: "rgba(0, 0, 0, 0.5)",
-  textColor: "#333",
-  accentColor: "#0d6efd",
-  focusColor: "auto",
-  bulletColor: "auto",
-  bulletVisitedColor: "auto",
-  bulletCurrentColor: "auto",
-  stepButtonCloseColor: "auto",
-  stepButtonPrevColor: "auto",
-  stepButtonNextColor: "auto",
-  stepButtonCompleteColor: "auto",
-  backgroundColor: "#fff",
+const defaultOptions: {
+  root?: HTMLElement | string; // Optional, if you don't provide a selector, the tour will be initialized on `document`;
+  selector?: string; // Required for DOM steps. The selector used to pick up HTML elements that represent your steps
+  selectorSteps?: Array<string>; // If provided, will be used instead of a single selector. Useful if you have multiple steps on the same page
+  contentDecorators?: Function[] // An array of functions that are responsible for decorating your step content (optional)
+  style?: Object // A styles object applied to the container element (optional)
+  actionHandlers?: Array<{name: string, fn: Function}> // An array of custom actions you can define on your tour (optional)
+  request?: RequestInit | null; // An object containing various browser settings for the fetch() call if using `src` option. (default is { mode: 'cors' })
+  keyboardNavigation?: Object // Keyboard navigation configuration
+    next?: string | undefined; // name of the keyboard shortcut used to navigate to the next step; the default value is 'ArrowRight'
+    prev?: string | undefined; // name of the keyboard shortcut used to navigate to the previous step; the default value is 'ArrowLeft'
+    first?: string | undefined; // name of the keyboard shortcut used to navigate to the first step; the default value is 'Home'
+    last?: string | undefined; // name of the keyboard shortcut used to navigate to the last step; the default value is 'End'
+    stop?: string | undefined; // name of the keyboard shortcut used to stop the tour; the default value is 'Escape'
+    complete?: string | undefined; // name of the keyboard shortcut used to stop the tour
+  stepFactory?: Array<any> // An array of classes for creating your steps. (optional)
+    Type?: string; // Defines the type of the step to create, for example "card"
+    Style?: string; // Defines the styles applied to the created step
+  resumeOnLoad?: boolean; // If true, will start tour from last known position if one is saved. (default false)
+  restoreinitialposition?: boolean; // If true, when the tour stops, it will restore the initial scroll position of the page (default false)
 }
 ```
-
-* `keyboardNavigation?<Object>`: if you want to enable keyboard navigation, use this attribute. each attribute can be number, string or object.
-  If you want to disable the keyboard navigation, just set this option to `false`.
-  
-  * number - used as `keyCode` : [DEPRECATED](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode)
-  * string - used as `key`
-  * object - All KeyboardEvent attribute is accepted including `keyCode`, `altKey`, `metaKey`, `ctrlKey` and etc.
-    View This doc for more details about the KeyboardEvent: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
-  The defaults are:
-  ```json
-  {
-    "next": "ArrowRight",
-    "prev": "ArrowLeft",
-    "first": "Home",
-    "last": "End",
-    "complete": null,
-    "stop": "Escape"
-  }
-  ```
-* `request?<Object>`: if you want to load the tour from a remote URL you may provide request headers here
-Defaults are:
-```
-{
-	options: {
-		mode: "cors",
-		cache: "no-cache",
-	},
-	headers: {
-		"Content-Type": "application/json",
-	},
-}
-```
-* `actionHandlers?<Array<ActionHandler>>`: optional array of custom step action handlers (see **Handling tour actions** for details)
-* `contentDecorators?<Array<ContentDecorator>>`: optional array of custom step decoration handlers (see **Content decorators** for details)
-* `onStart?<Function>`: callback function triggered when the tour starts
-* `onStop?<Function>`: callback function triggered when tour stops
-* `onComplete?<Function>`: callback triggered when tour completes
-* `onStep?<Function>`: callback triggered when a tour step is shown
 
 Once instantiated you can use tourguide instance a several different ways:
 
@@ -195,31 +152,9 @@ tourguide.start();
 
 About step details, See [Step](#Step) section.
 
-### Step
+### Step Class Constructor
 
-* `selector?<string>`: [CSS selector](https://www.w3schools.com/cssref/css_selectors.asp) used to find the target element *(used on JSON based approach and Remote URL approach)*
-* `step?<number>`: tour step sequence number (when using JSON as data source this property may be omitted)
-* `title<string>`: tour step title
-* `content<string>`: write the content
-Both `title` and `content` support [markdown](https://en.wikipedia.org/wiki/Markdown) language and content decorators (see Content decorators for details)
-* `image?<url>`: tour step illustration
-* `width?<number>`: step width in pixels (computed automatically by default)
-* `height?<number>`: step height in pixels (computed automatically by default)
-* `layout?<enum>`: this property can be `horizontal` or `vertical` and causes the tour step to be oriented horizontally or vertically (the default is `vertical`, works only when `image` is defined)
-* `placement?<enum>`: optional hint on where to place a tour step in relation to the step target; may be one of the following:
-	* top-start
-	* top
-	* top-end
-	* left
-	* right
-	* bottom-start
-	* bottom
-	* bottom-end
-* `overlay?<boolean>`: when set to `false` - hides step overlay (the default is `true`)
-* `navigation?<boolean>`: when set to `false` - hides step control buttons (the default is `true`)
-* `actions<Action>`: an array of step actions to be rendered in step footer (see **Handling tour actions** for details)
-
-> **?*** indicates the property is optional*
+The **Tourguide.js** library includes two default steps: `PopoverStep` and `CardStep`. Here is the code for these steps:
 
 ## Content decorators
 
@@ -402,75 +337,25 @@ Causes tour to go to the step specified
 ```
 tourguide.go(2)
 ```
-### Additional properties
-
-* `tourguide.currentstep`: returns the current [step object](#step_object)
-
-* `tourguide.length`: return the number of steps on the tour
-
-* `tourguide.steps`: returns the tour steps as JSON notation
-
-* `tourguide.hasnext`: return true if there are steps remaining in the tour, otherwise returns false
-
-* `tourguide.options`: returns **Tourguide.js** options object
 
 ## Attaching callbacks
 
 **Tourguide.js** supports several helpful [callbacks](https://developer.mozilla.org/en-US/docs/Glossary/Callback_function) to help you better control the tour. You may optionally pass the callback functions into the tour instance at initialization time:
 
 ```
-var tourguide = new Tourguide({
-  `onStart:function(options){...},`
-  `onStop:function(options){...},`
-  `onComplete:function(){...},`
-  `onStep:function(currentstep, type){...},`
-});
+var tourguide = new Tourguide({...});
+tourguide.addEventListener('start', function(options){...});
 ```
-### onStart
+### Available events:
+* start - Fires when the guided tour is started.
+* stop - Fires when the guided tour stops.
+* complete - Fires when the guided tour is complete.
+* step - Fires when tour step is activated.
+* action - Fires when an action is triggered (next/previous/go/custom).
 
-Fires when the guided tour is started. The callback function will receive a single param:
+## Detailed documentation:
+For more detailed documentation, please refer to the [documentation markdown file located at /docs/README.md](https://github.com/LikaloLLC/tourguide.js/docs/README.md).
 
-* `options`: tour options object
-
-### onStop
-
-Fires when the guided tour stops. The callback function will receive a single param:
-
-* `options`: tour options object
-
-### onComplete
-
-Fires when the guided tour is complete. The callback function will receives no params.
-
-> NOTE: onStop is always fired first, before onComplete is fired
-
-### onStep
-
-Fires when tour step is activated. The callback function receives two params:
-
-*  `currentstep`: tour [step object](#step_object)
-
-* `type`: string representing the current direction of the tor; can be one of: "previous" | "next"
-
-## Step object
-
-Each step of the tour is wrapped into a Step class. This allows you to have a direct access to the individual step properties and actions:
-
-* `target`: returns the target element step is attached to
-
-* `el`: returns the step view element
-
-* `show()`: show step element
-
-* `hide()`: hide step element
-
-You can obtain the current step object an any time during the tour execution by calling `tourguide.currentstep` property:
-
-```
-var currentstep = tourguide.currentstep;
-var stepTarget = currentstep.target;
-var stepView = currentstep.el;
-```
 ## License
 
 **Tourguide.js** is licensed under BSD 3-Clause "New" or "Revised" License

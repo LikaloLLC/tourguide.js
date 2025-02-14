@@ -1,3 +1,9 @@
+/**
+ * Parses a data string into an object with default values.
+ * @param data - The input data string, where key-value pairs are separated by ";".
+ * @param defaults - An optional object containing default key-value pairs.
+ * @returns A new object constructed from the parsed data and defaults.
+ */
 export function getDataContents<T>(data = "", defaults: Record<string, string> = {}): T {
   const parts = data.split(";");
   const result = { ...defaults };
