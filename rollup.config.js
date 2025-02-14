@@ -1,5 +1,4 @@
 import filesize from "rollup-plugin-filesize";
-import { eslint } from "rollup-plugin-eslint";
 import babel from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
@@ -11,6 +10,7 @@ import pkg from "./package.json";
 const isDev = Boolean(process.argv.find((arg) => arg === "--configDev"));
 
 const babelplugin = babel({
+  extensions: ['.js', '.jsx', '.d.ts', '.ts', '.tsx'],
   babelHelpers: "bundled",
   exclude: pkg.commonjs
 });
@@ -25,6 +25,7 @@ const replaceplugin = replace({
     : JSON.stringify("production"),
 });
 const resolveplugin = resolve({
+  extensions: ['.js', '.jsx', '.d.ts', '.ts', '.tsx'],
   mainFields: ["module", "jsnext:main", "browser"],
   browser: true,
   preferBuiltins: true
@@ -48,12 +49,12 @@ export default [{
     file: pkg.main
   },
   plugins: [
-    eslint({
-      fix: true,
-      include: [
-        "./src/**",
-      ]
-    }),
+    // eslint({
+    //   fix: true,
+    //   include: [
+    //     "./src/**",
+    //   ]
+    // }),
     ...plugins
   ]
 }, {

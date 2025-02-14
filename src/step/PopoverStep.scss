@@ -1,0 +1,325 @@
+.guided-tour-step {
+    display: none;
+    opacity: 0;
+
+    .guided-tour-step-clickblock {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: all;
+    }
+
+    &.active {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: all;
+        transition: opacity 150ms;
+
+        .guided-tour-step-highlight {
+            position: absolute;
+            box-sizing: border-box;
+            border-radius: 4px;
+            box-shadow: 0 0 0 1em var(--tourguide-overlay-color);
+            z-index: 1;
+        }
+
+        .guided-tour-step-tooltip {
+            position: absolute;
+            // margin: 0;
+            z-index: 2;
+            background-color: var(--tourguide-background-color);
+            width: var(--tourguide-tooltip-width);
+            max-width: max-content;
+            border-radius: 5px;
+            box-sizing: border-box;
+            box-shadow: 0 0 2.5em -0.8em #000, 0 0 10px -5px #000, 0 0 3px -1px #000;
+            transition: opacity 150ms;
+
+            @media screen and (max-width: 760px) {
+                max-width: 85vw;
+                width: max-content !important;
+            }
+
+            .guided-tour-step-tooltip-inner {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+
+                .guided-tour-arrow {
+                    position: absolute;
+                    width: 14px;
+                    height: 14px;
+                    background: var(--tourguide-background-color);
+                    z-index: -1;
+                    transform: rotate(45deg);
+                    pointer-events: none;
+                    margin-left: -7px;
+                    margin-top: -7px;
+                    &.no-arrow {
+                        display: none;
+                    }
+                }
+
+                .guided-tour-step-content-container {
+                    display: flex;
+                    flex-direction: column;
+                    flex-grow: 1;
+                    height: calc(100% - 2.6em);
+                }
+
+                .guided-tour-step-image {
+                    flex-grow: 1;
+                    flex-shrink: 1;
+                    overflow: hidden;
+
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 4px 4px 0 0;
+                        object-fit: cover;
+                        object-position: center;
+                    }
+                }
+
+                .guided-tour-step-content-wrapper {
+                    margin: 1.2em 1.5em;
+                }
+
+                .guided-tour-step-title {
+                    font-size: 130%;
+                    margin-bottom: 0.5em;
+                }
+
+                .guided-tour-step-content {
+                    flex-shrink: 0;
+
+                    b,
+                    strong {
+                        font-weight: bold;
+                    }
+
+                    i,
+                    em {
+                        font-style: italic;
+                    }
+
+                    a {
+                        cursor: pointer;
+                        text-decoration: underline;
+                        color: var(--tourguide-accent-color);
+                    }
+
+                    mark {
+                        background: inherit;
+                        text-shadow: 0px 2px 4px #ff0;
+                    }
+
+                    code,
+                    dfn {
+                        padding: 1px 6px 1px 4px;
+                        border-radius: 4px;
+                    }
+
+                    code {
+                        background-color: #f0f0f0;
+                        color: #e83e8c;
+                        font-family: monospace;
+                        font-size: 87.5%;
+                        word-break: break-word;
+                    }
+
+                    dfn {
+                        font-style: italic;
+                        background-color: #ffc6e5;
+                    }
+
+                    p,
+                    ul,
+                    ol,
+                    blockquote {
+                        margin: 1em 0;
+
+                        &:last-child {
+                            margin-bottom: 0;
+                        }
+                    }
+
+                    blockquote {
+                        padding-left: 1em;
+                        border-left: 4px solid silver;
+                    }
+
+                    ul,
+                    ol {
+                        padding-left: 1.5em;
+
+                        li {
+                            margin: .3em 0;
+                        }
+                    }
+                }
+
+                .guided-tour-step-actions {
+                    display: flex;
+                    column-gap: .5em;
+                    margin-top: 1.5em;
+                    justify-content: end;
+
+                    .button {
+                        color: var(--tourguide-accent-color);
+                        padding: 0.5em 1em;
+
+                        &.primary {
+                            background: var(--tourguide-accent-color);
+                            padding: 0.5em 1.5em;
+                            color: #fff;
+                            border-radius: 4px;
+                            font-size: 110%;
+
+                            &:hover,
+                            &:focus {
+                                filter: brightness(120%);
+                            }
+                        }
+                    }
+                }
+
+                .guided-tour-icon {
+                    display: inline-block;
+                    overflow: hidden;
+                }
+
+                .guided-tour-step-button {
+                    flex-direction: column;
+                    justify-content: center;
+                    /* <-- actual veertical align */
+                    display: inline-flex;
+                    text-align: center;
+                    cursor: pointer;
+
+                    .guided-tour-icon {
+                        align-self: center;
+                    }
+                }
+
+                .guided-tour-step-button-close {
+                    position: absolute;
+                    top: 4px;
+                    right: 4px;
+                    width: 2em;
+                    height: 2em;
+                    color: var(--tourguide-step-button-close-color);
+                    border-radius: 50%;
+                    background-color: black;
+                }
+
+                .guided-tour-step-button-prev,
+                .guided-tour-step-button-next,
+                .guided-tour-step-button-complete {
+                    width: 36px;
+                    height: 36px;
+                    // border: 2px solid currentColor;
+                    background: var(--tourguide-background-color);
+                    border-radius: 50%;
+                    margin-top: -18px;
+                    position: absolute;
+                }
+
+                .guided-tour-step-button-prev {
+                    color: var(--tourguide-step-button-prev-color);
+                    // box-shadow: -5px 0 1em 0 rgba(0, 0, 0, 0.4);
+                    left: 0;
+                    transform: translateX(-50%);
+                    top: 50%;
+                }
+
+                .guided-tour-step-button-next {
+                    color: var(--tourguide-step-button-next-color);
+                    // box-shadow: 5px 0 1em 0 rgba(0, 0, 0, 0.4);
+                    right: 0;
+                    transform: translateX(50%);
+                    top: 50%;
+                }
+
+                .guided-tour-step-button-complete {
+                    color: var(--tourguide-step-button-complete-color);
+                    // box-shadow: 5px 0 1em 0 rgba(0, 0, 0, 0.4);
+                    right: 0;
+                    transform: translateX(50%);
+                    top: 50%;
+                }
+
+                .guided-tour-step-footer {
+                    flex-shrink: 0;
+                    flex-grow: 0;
+                }
+
+                .guided-tour-step-bullets {
+                    text-align: center;
+                    line-height: 16px;
+
+                    ul {
+                        list-style: none;
+                        margin: -0.5em 1em 0.5em;
+
+                        li {
+                            display: inline-block;
+
+                            button {
+                                width: 8px;
+                                height: 8px;
+                                border-radius: 50%;
+                                display: inline-block;
+                                background-color: var(--tourguide-bullet-color);
+                                border: 8px solid var(--tourguide-background-color);
+                                box-sizing: content-box;
+                                cursor: pointer;
+
+                                &.complete {
+                                    background-color: var(--tourguide-bullet-visited-color);
+                                }
+
+                                &.current {
+                                    background-color: var(--tourguide-bullet-current-color);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                @media screen and (min-width: 760px) {
+                    &.step-layout-horizontal {
+                        .guided-tour-step-content-container {
+                            flex-direction: row;
+                            height: 100%;
+
+                            .guided-tour-step-content-wrapper {
+                                flex: 1 1 auto;
+                            }
+
+                            .guided-tour-step-image {
+                                width: 50%;
+                                // margin-bottom: calc((1em + 24px) * -1);
+                                margin-bottom: -24px;
+                                flex: 0 0 auto;
+
+                                img {
+                                    border-radius: 4px 0 0 4px;
+                                    height: 100%;
+                                    object-fit: cover;
+                                    object-position: center;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

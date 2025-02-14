@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "declaration": true,
+        "declarationDir": "types",
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "baseUrl": "./",
+        "paths": {
+            "@types/*": ["@types/*"]
+        },
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "include": [
+        "src",
+        "@types"
+, "tests/Tour.test.ts", "tests/step/PopoverStep.test.ts", "tests/handler/ActionHandler.test.ts", "tests/decorator/ContentDecorator.test.ts", "tests/cachemanager/InMemoryCacheManager.test.ts"    ]
+}
