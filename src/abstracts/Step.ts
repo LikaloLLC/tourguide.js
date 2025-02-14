@@ -1,10 +1,11 @@
 import { Element } from "umbrellajs";
-import { AbstractStep, StepData, Tour, } from "../../@types";
-
+import {GUID} from "../utils/guid";
+import Tour, { AbstractStep, StepData } from "../../@types";
 
 export abstract class Step<StepDataType = StepData> implements AbstractStep<StepDataType> {
   static Type = "default";
   static Style = "";
+  readonly uid: string = GUID();
   context: Tour;
   index = 0;
   active = false;
