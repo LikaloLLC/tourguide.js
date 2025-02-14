@@ -9,7 +9,8 @@ import Guidedtour, {
   TourStyle,
   TourAction,
   Helpers,
-  CacheManager
+  CacheManager,
+  Direction
 } from "../@types";
 import { assert, clamp, getMaxZIndex, Style, Scroll, Color } from "./utils";
 import * as Utils from "./utils";
@@ -362,15 +363,16 @@ export default class Tour implements Guidedtour {
   }
   go(step: number) {
     if (this._active && this._current !== step) {
+      const direction = this._current < step ? Direction.FORWARD : Direction.BACKWARD;
       this.currentstep?.hide();
       this._current = clamp(step, 0, this.length - 1);
       if (this.currentstep.data?.selector) {
         Scroll.smoothScroll(u(this.currentstep.data.selector).first() as HTMLElement, { block: "center" }).then(
           () => {
-            this.currentstep.show();
+            this.currentstep.show(direction);
           });
       } else
-        this.currentstep.show();
+        this.currentstep.show(direction);
       this.cacheManager.set(CacheKeys.CurrentProgress, this._current);
       this._triggerCustomEvent("step");
     }

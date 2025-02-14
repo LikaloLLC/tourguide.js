@@ -10,6 +10,11 @@ export enum StepsSource {
     REMOTE
 }
 
+export enum Direction {
+    FORWARD,
+    BACKWARD
+}
+
 export enum CacheKeys {
     "LastInitilized" = "timestamp",
     "IsStarted" = "started",
