@@ -14,7 +14,7 @@ import Guidedtour, {
   AbstractStep,
   StepData,
   StepsSource,
-} from "@types";
+} from "../@types";
 import { assert, clamp, getMaxZIndex, Style, Scroll, Color } from "./utils";
 import * as Utils from "./utils";
 import * as Abstracts from "./abstracts";
