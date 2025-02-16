@@ -368,7 +368,7 @@ class Tour implements Guidedtour {
    */
   private _injectStyles() {
     const style = u(
-      `<style>${BaseStyle}</style>${this.options.stepFactory.map((step: any) => step.Style).filter(Boolean).map((style: string) => `<style>${style}</style`).join("")}`
+      `<style>${BaseStyle}</style>${this.options.stepFactory.map((step: any) => step.Style).filter(Boolean).map((style: string) => `<style>${style}</style>`).join("")}`
     );
     u(this._shadowRoot as ShadowRoot).append(style);
     const colors = u(
