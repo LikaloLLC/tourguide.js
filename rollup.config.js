@@ -4,7 +4,7 @@ import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import sass from "rollup-plugin-sass";
-import { terser } from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
 import pkg from "./package.json";
 
 const isDev = Boolean(process.argv.find((arg) => arg === "--configDev"));
@@ -60,7 +60,7 @@ export default [{
 }, {
   input: pkg.main,
   output: {
-    format: "esm",
+    format: "cjs",
     file: pkg.main.replace(".js", ".min.js")
   },
   plugins: [terser()]

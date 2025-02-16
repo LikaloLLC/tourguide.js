@@ -25,5 +25,5 @@
     "include": [
         "src",
         "@types"
-, "tests/Tour.test.ts", "tests/step/PopoverStep.test.ts", "tests/handler/ActionHandler.test.ts", "tests/decorator/ContentDecorator.test.ts", "tests/cachemanager/InMemoryCacheManager.test.ts"    ]
+    ]
 }
