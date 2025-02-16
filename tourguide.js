@@ -3454,7 +3454,7 @@ var Tourguide = (function (exports) {
        * Injects the base and custom styles for the tour.
        */
       _injectStyles() {
-        const style = u(`<style>${Tour$1}</style>${this.options.stepFactory.map(step => step.Style).filter(Boolean).map(style => `<style>${style}</style`).join("")}`);
+        const style = u(`<style>${Tour$1}</style>${this.options.stepFactory.map(step => step.Style).filter(Boolean).map(style => `<style>${style}</style>`).join("")}`);
         u(this._shadowRoot).append(style);
         const colors = u(`<style>${Style.colorObjToStyleVarString(this._options.style || {}, "--tourguide")}</style>`);
         u(this._shadowRoot).append(colors);
