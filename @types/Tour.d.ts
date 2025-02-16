@@ -10,7 +10,7 @@ export enum StepsSource {
     REMOTE
 }
 
-export enum Direction {
+export enum TourNavigationDirection {
     FORWARD,
     BACKWARD
 }

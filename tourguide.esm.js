@@ -91,10 +91,10 @@ let StepsSource = /*#__PURE__*/function (StepsSource) {
   StepsSource[StepsSource["REMOTE"] = 2] = "REMOTE";
   return StepsSource;
 }({});
-let Direction = /*#__PURE__*/function (Direction) {
-  Direction[Direction["FORWARD"] = 0] = "FORWARD";
-  Direction[Direction["BACKWARD"] = 1] = "BACKWARD";
-  return Direction;
+let TourNavigationDirection = /*#__PURE__*/function (TourNavigationDirection) {
+  TourNavigationDirection[TourNavigationDirection["FORWARD"] = 0] = "FORWARD";
+  TourNavigationDirection[TourNavigationDirection["BACKWARD"] = 1] = "BACKWARD";
+  return TourNavigationDirection;
 }({});
 let TourStopState = /*#__PURE__*/function (TourStopState) {
   TourStopState[TourStopState["COMPLETE"] = 0] = "COMPLETE";
@@ -3620,7 +3620,7 @@ class Tour {
    */
   go(step) {
     if (this._active && this._current !== step) {
-      const direction = this._current < step ? Direction.FORWARD : Direction.BACKWARD;
+      const direction = this._current < step ? TourNavigationDirection.FORWARD : TourNavigationDirection.BACKWARD;
       this.currentstep?.hide();
       this._current = clamp$1(step, 0, this.length - 1);
       if (this.currentstep.data?.selector) {
@@ -3696,4 +3696,4 @@ class Tour {
   }
 }
 
-export { Tour as default, defaultKeyNavOptions, defaultOptions, defaultStyle };
+export { TourNavigationDirection, TourStopState, Tour as default, defaultKeyNavOptions, defaultOptions, defaultStyle };

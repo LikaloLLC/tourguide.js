@@ -9,7 +9,7 @@ import Guidedtour, {
   TourAction,
   Helpers,
   CacheManager,
-  Direction,
+  TourNavigationDirection,
   TourStopState,
   AbstractStep,
   StepData,
@@ -551,7 +551,7 @@ class Tour implements Guidedtour {
    */
   go(step: number) {
     if (this._active && this._current !== step) {
-      const direction = this._current < step ? Direction.FORWARD : Direction.BACKWARD;
+      const direction = this._current < step ? TourNavigationDirection.FORWARD : TourNavigationDirection.BACKWARD;
       this.currentstep?.hide();
       this._current = clamp(step, 0, this.length - 1);
       if (this.currentstep.data?.selector) {
@@ -623,6 +623,11 @@ class Tour implements Guidedtour {
   removeEventListener(type: string, listener: (event: Event) => void): void {
     this._containerElement.off(type, listener);
   }
+}
+
+export {
+  TourNavigationDirection,
+  TourStopState
 }
 
 export default  Tour;
