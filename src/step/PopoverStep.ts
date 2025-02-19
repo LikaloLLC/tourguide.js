@@ -193,12 +193,13 @@ class PopoverStep<AdditionalStepData = object> extends Step<PopoverStepData & Ad
     }
     _position($target: U) {
         const _target = $target?.first();
-        if (!_target) this.$arrow.addClass("no-arrow ");
+        const isElementVisible = this.context.helpers.isElementVisibleOnPage(_target as HTMLElement);
+        if (!isElementVisible) this.$arrow.addClass("no-arrow ");
         else this.$arrow.removeClass("no-arrow ");
         this.context.helpers.Position.position(
             _target || document.body,
             this.$tooltip?.first() as HTMLElement,
-            _target
+            isElementVisible
                 ? [
                     this.context.helpers.Position.positionabsolute(),
                     this.context.helpers.Position.autoPlacement({

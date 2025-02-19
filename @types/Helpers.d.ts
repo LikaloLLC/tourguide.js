@@ -7,6 +7,7 @@ export type Helpers = {
     clamp(value: number, min: number, max?: number): number;
     decorate(text: string, step: AbstractStep): string;
     getMaxZIndex(): number;
+    isElementVisibleOnPage(element: Element | HTMLElement | undefined): boolean;
     Color: typeof Color;
     Style: typeof Style;
     Scroll: typeof Scroll;

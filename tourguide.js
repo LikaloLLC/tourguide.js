@@ -292,6 +292,35 @@ var Tourguide = (function (exports) {
       return Math.max(...Array.from(document.querySelectorAll('body *'), el => parseFloat(window.getComputedStyle(el).zIndex)).filter(zIndex => !Number.isNaN(zIndex)), 0);
     }
 
+    /**
+     * Parses a data string into an object with default values.
+     * @param data - The input data string, where key-value pairs are separated by ";".
+     * @param defaults - An optional object containing default key-value pairs.
+     * @returns A new object constructed from the parsed data and defaults.
+     */
+    function getDataContents() {
+      let data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
+      let defaults = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      const parts = data.split(";");
+      const result = {
+        ...defaults
+      };
+      parts.forEach(part => {
+        const entries = (part || "").split(":");
+        if (entries[0]) {
+          result[(entries[0] || "").trim()] = (entries[1] || "").trim();
+        } else {
+          console.warn("Invalid key-value pair found in data string:", part);
+        }
+      });
+      return result;
+    }
+    function isElementVisibleOnPage(element) {
+      if (!element) return false;
+      const rect = element.getBoundingClientRect();
+      return rect.width !== 0 || rect.height !== 0 || rect.top !== 0 || rect.left !== 0 || rect.bottom !== 0 || rect.right !== 0;
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-namespace
     let Scroll;
     (function (_Scroll) {
@@ -365,7 +394,7 @@ var Tourguide = (function (exports) {
       _Scroll.animateScroll = animateScroll;
       function smoothScroll(element, options) {
         return new Promise(resolve => {
-          if (!element) return resolve(false);
+          if (!element || !isElementVisibleOnPage(element)) return resolve(false);
           const observer = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
               if (entry.isIntersecting) {
@@ -2551,7 +2580,9 @@ var Tourguide = (function (exports) {
         get Style () { return Style; },
         getMaxZIndex: getMaxZIndex,
         get Scroll () { return Scroll; },
-        get Position () { return Position; }
+        get Position () { return Position; },
+        getDataContents: getDataContents,
+        isElementVisibleOnPage: isElementVisibleOnPage
     });
 
     /**
@@ -2788,8 +2819,9 @@ var Tourguide = (function (exports) {
       }
       _position($target) {
         const _target = $target?.first();
-        if (!_target) this.$arrow.addClass("no-arrow ");else this.$arrow.removeClass("no-arrow ");
-        this.context.helpers.Position.position(_target || document.body, this.$tooltip?.first(), _target ? [this.context.helpers.Position.positionabsolute(), this.context.helpers.Position.autoPlacement({
+        const isElementVisible = this.context.helpers.isElementVisibleOnPage(_target);
+        if (!isElementVisible) this.$arrow.addClass("no-arrow ");else this.$arrow.removeClass("no-arrow ");
+        this.context.helpers.Position.position(_target || document.body, this.$tooltip?.first(), isElementVisible ? [this.context.helpers.Position.positionabsolute(), this.context.helpers.Position.autoPlacement({
           alignment: this.data.alignment,
           padding: 24
         }), this.context.helpers.Position.highlight({
@@ -3120,30 +3152,6 @@ var Tourguide = (function (exports) {
     }
 
     const Tour$1 = ":host {\n  position: absolute;\n  overflow: visible;\n  top: 0;\n  left: 0;\n  width: 0;\n  height: 0;\n  box-sizing: border-box;\n  line-height: 1.4;\n  text-align: left;\n  text-rendering: optimizespeed;\n  font-family: var(--tourguide-font-family);\n  font-size: var(--tourguide-font-size);\n  color: var(--tourguide-text-color);\n  /* 1 */\n  -webkit-text-size-adjust: 100%;\n  /* 2 */\n  -moz-tab-size: 4;\n  /* 3 */\n  tab-size: 4;\n  /* 3 */\n}\n:host * {\n  margin: 0;\n  padding: 0;\n  background: none;\n  border: none;\n  border-width: 0;\n  border-style: none;\n  border-color: currentColor;\n  box-shadow: none;\n  color: inherit;\n  appearance: none;\n  font-size: inherit;\n  font-weight: inherit;\n  text-decoration: none;\n}\n:host a,\n:host button {\n  cursor: pointer;\n}\n:host a:hover, :host a:focus,\n:host button:hover,\n:host button:focus {\n  outline: 5px auto var(--tourguide-focus-color);\n}";
-
-    /**
-     * Parses a data string into an object with default values.
-     * @param data - The input data string, where key-value pairs are separated by ";".
-     * @param defaults - An optional object containing default key-value pairs.
-     * @returns A new object constructed from the parsed data and defaults.
-     */
-    function getDataContents() {
-      let data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
-      let defaults = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      const parts = data.split(";");
-      const result = {
-        ...defaults
-      };
-      parts.forEach(part => {
-        const entries = (part || "").split(":");
-        if (entries[0]) {
-          result[(entries[0] || "").trim()] = (entries[1] || "").trim();
-        } else {
-          console.warn("Invalid key-value pair found in data string:", part);
-        }
-      });
-      return result;
-    }
 
     const defaultKeyNavOptions = {
       next: "ArrowRight",

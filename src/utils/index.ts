@@ -15,3 +15,4 @@ export * from "./style";
 export * from "./zindex";
 export * from "./scroll";
 export * from "./position";
+export * from "./dom";

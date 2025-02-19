@@ -17,3 +17,14 @@ export function getDataContents<T>(data = "", defaults: Record<string, string> =
   });
   return result as unknown as T;
 }
+
+export function isElementVisibleOnPage(element: HTMLElement | undefined): boolean {
+  if (!element) return false;
+  const rect = element.getBoundingClientRect();
+  return rect.width !== 0
+    || rect.height !== 0
+    || rect.top !== 0
+    || rect.left !== 0
+    || rect.bottom !== 0
+    || rect.right !== 0;
+}

@@ -31,6 +31,16 @@ describe("Scroll", () => {
             "width": 100
         }));
         element = target.first();
+        (element as any).getBoundingClientRect = jest.fn(() => ({
+            "x": 0,
+            "y": 0,
+            "bottom": 0,
+            "height": 100,
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "width": 100
+        }));
         element.scrollTo = jest.fn();
         element.scrollIntoView = jest.fn();
         document.body.appendChild(element);

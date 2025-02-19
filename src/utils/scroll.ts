@@ -1,5 +1,6 @@
 import u, { Umbrella as U } from "umbrellajs";
 import { Element } from "@types";
+import { isElementVisibleOnPage } from "./dom";
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Scroll {
@@ -116,7 +117,7 @@ export namespace Scroll {
      */
     export function smoothScroll(element: HTMLElement | undefined, options: ScrollIntoViewOptions) {
         return new Promise<boolean>((resolve) => {
-            if (!element) return resolve(false);
+            if (!element || !isElementVisibleOnPage(element)) return resolve(false);
             const observer = new IntersectionObserver(function (entries) {
                 entries.forEach(function (entry) {
                     if (entry.isIntersecting) {
