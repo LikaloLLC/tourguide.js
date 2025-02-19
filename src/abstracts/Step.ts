@@ -1,6 +1,5 @@
-import { Element } from "umbrellajs";
 import {GUID} from "../utils/guid";
-import Tour, { AbstractStep, StepData } from "@types";
+import Tour, { AbstractStep, StepData, Element } from "@types";
 
 /**
  * Represents an abstract step in a tour. 
@@ -28,7 +27,7 @@ export abstract class Step<StepDataType = StepData> implements AbstractStep<Step
    */
   context: Tour;
   /**
-   * The index of the step within its container.
+   * The index of the step in the tour.
    */
   index = 0;
   /**

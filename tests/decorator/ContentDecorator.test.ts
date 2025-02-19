@@ -1,4 +1,4 @@
-import Tour from '@types';
+import Tour from '../../@types';
 import { ContentDecorator } from '../../src/decorator/ContentDecorator';
 
 describe('ContentDecorator', () => {

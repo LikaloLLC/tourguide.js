@@ -1,5 +1,5 @@
 import ActionHandler, { ActionHandlerFn } from "../../src/handler/ActionHandler";
-import Tour, { TourAction } from "@types";
+import Tour, { TourAction } from "../../@types";
 
 describe("ActionHandler", () => {
     let mockEvent: Event;

@@ -2586,7 +2586,7 @@ class Step {
    */
 
   /**
-   * The index of the step within its container.
+   * The index of the step in the tour.
    */
   index = 0;
   /**
@@ -2648,8 +2648,7 @@ const popoverStepDataDefaults = {
   index: 0,
   selector: undefined,
   navigation: true,
-  alignment: "start",
-  hidden: false
+  alignment: "start"
 };
 
 /**
@@ -3315,7 +3314,7 @@ class Tour {
   }
 
   /**
-   * Get the total number of steps in the tour.
+   * Get the total number of visible steps in the tour.
    */
   get length() {
     return this._steps.length;
@@ -3325,7 +3324,7 @@ class Tour {
    * Get all visible steps in the tour, excluding hidden ones.
    */
   get steps() {
-    return this._steps.filter(step => !step.data.hidden);
+    return this._steps;
   }
 
   /**
@@ -3468,7 +3467,7 @@ class Tour {
     } else if (this._options.keyboardNavigation?.first && isEventAttrbutesMatched(event, this._options.keyboardNavigation.first)) {
       this.go(0);
     } else if (this._options.keyboardNavigation?.last && isEventAttrbutesMatched(event, this._options.keyboardNavigation.last)) {
-      this.go(this._steps.length - 1);
+      this.go(this.length - 1);
     } else if (this._options.keyboardNavigation?.stop && isEventAttrbutesMatched(event, this._options.keyboardNavigation.stop)) {
       this.stop();
     } else if (this._options.keyboardNavigation?.complete && isEventAttrbutesMatched(event, this._options.keyboardNavigation.complete)) {
@@ -3529,7 +3528,7 @@ class Tour {
           data.selector = step;
           return data;
         }));
-        assert(this._steps.length > 0, "Found no tour steps on page. Please verify your setup.");
+        assert(this.length > 0, "Found no tour steps on page. Please verify your setup.");
       }
       Style.setStyle(this._containerElement, {
         "z-index": getMaxZIndex() + 1

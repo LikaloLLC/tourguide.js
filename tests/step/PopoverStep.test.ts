@@ -1,5 +1,5 @@
 import PopoverStep from '../../src/step/PopoverStep'; // Adjust the import path based on your project structure
-import Tour from '@types'; // Assuming tour type is defined somewhere
+import Tour from '../../@types'; // Assuming tour type is defined somewhere
 
 describe('PopoverStep', () => {
     let popoverStep: PopoverStep;

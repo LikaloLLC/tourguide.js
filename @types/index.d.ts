@@ -45,3 +45,4 @@ export * from "./ContentDecorator";
 export * from "./Helpers";
 export * from "./Step";
 export * from "./Tour";
+export * from "./Element";

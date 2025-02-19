@@ -1,4 +1,5 @@
-import u, { Element, U } from "umbrellajs";
+import u, { Umbrella as U } from "umbrellajs";
+import { Element } from "@types";
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Scroll {
@@ -8,17 +9,17 @@ export namespace Scroll {
         x: number;
         y: number;
     }
-    
-/**
- * Retrieves the scroll coordinates of all elements that have a non-zero scrollable area.
- *
- * @param target - The initial HTML element from which to start checking for scrollable areas.
- * @returns An array of objects containing the element, its horizontal (x) and vertical (y) scroll positions.
- */
+
+    /**
+     * Retrieves the scroll coordinates of all elements that have a non-zero scrollable area.
+     *
+     * @param target - The initial HTML element from which to start checking for scrollable areas.
+     * @returns An array of objects containing the element, its horizontal (x) and vertical (y) scroll positions.
+     */
     export function getScrollCoordinates(target: Element): Array<ScrollCoordinates> {
         const scrollItems = [];
         let targetUEl: U | boolean;
-        targetUEl = u(target);
+        targetUEl = u(target as U);
 
         do {
             if (!targetUEl) targetUEl = false;

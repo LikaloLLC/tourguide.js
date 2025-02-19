@@ -1,6 +1,6 @@
 // import scrollIntoView from "scroll-into-view";
-import Tour, { AbstractStep, StepData } from "@types";
-import { Element, U } from "umbrellajs";
+import Tour, { AbstractStep, StepData, Element } from "@types";
+import { Umbrella as U } from "umbrellajs";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 import Style from "./PopoverStep.scss";
@@ -30,7 +30,6 @@ export const popoverStepDataDefaults: PopoverStepData = {
     selector: undefined,
     navigation: true,
     alignment: "start",
-    hidden: false
 }
 
 /**
@@ -109,7 +108,7 @@ class PopoverStep<AdditionalStepData = object> extends Step<PopoverStepData & Ad
         footer.find(".guided-tour-step-button-next").on("click", this.context.next);
         footer.find(".guided-tour-step-button-close").on("click", this.context.stop);
         footer.find(".guided-tour-step-button-complete").on("click", this.context.complete);
-        footer.find(".guided-tour-step-bullets button").on("click", (e: any) => this.context.go(parseInt(this.context.helpers.u(e.target as HTMLElement).data("index"))));
+        footer.find(".guided-tour-step-bullets button").on("click", (e: any) => this.context.go(parseInt(this.context.helpers.u(e.target as HTMLElement).data("index") as string)));
         return footer;
     }
     get _container(): U {
@@ -234,7 +233,7 @@ class PopoverStep<AdditionalStepData = object> extends Step<PopoverStepData & Ad
      * @param parent The parent container.
      */
     attach(parent: Element) {
-        this.context.helpers.u(parent).append(this._el);
+        this.context.helpers.u(parent as U).append(this._el);
     }
 
     /**

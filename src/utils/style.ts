@@ -1,5 +1,5 @@
-import u, { Element } from "umbrellajs";
-import { TourStyle } from "@types";
+import u, { Umbrella as U } from "umbrellajs";
+import { TourStyle, Element } from "@types";
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Style {
@@ -30,7 +30,7 @@ export namespace Style {
         Object.keys(styleObj).forEach((key) => {
             style[key] = styleObj[key] + "";
         });
-        Object.assign((u(element).first() as HTMLElement).style, style);
+        Object.assign((u(element as U).first() as HTMLElement).style, style);
         return element;
     }
 

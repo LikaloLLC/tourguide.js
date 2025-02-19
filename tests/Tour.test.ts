@@ -6,7 +6,7 @@ jest.mock("@types", () => ({
     "IsStarted": "started",
     "CurrentProgress": "progress"
   },
-  Direction: {
+  TourNavigationDirection: {
     FORWARD: 0,
     BACKWARD: 1
   },

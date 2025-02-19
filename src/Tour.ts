@@ -1,4 +1,4 @@
-import u, { U } from "umbrellajs";
+import u, { Umbrella as U } from "umbrellajs";
 
 import MemoryCacheManager from "./cachemanager/InMemoryCacheManager";
 import Guidedtour, {
@@ -224,7 +224,7 @@ class Tour implements Guidedtour {
   }
 
   /**
-   * Get the total number of steps in the tour.
+   * Get the total number of visible steps in the tour.
    */
   get length(): number {
     return this._steps.length;
@@ -234,7 +234,7 @@ class Tour implements Guidedtour {
    * Get all visible steps in the tour, excluding hidden ones.
    */
   get steps(): Array<AbstractStep> {
-    return this._steps.filter(step => !step.data.hidden);
+    return this._steps;
   }
 
   /**
@@ -370,14 +370,14 @@ class Tour implements Guidedtour {
     const style = u(
       `<style>${BaseStyle}</style>${this.options.stepFactory.map((step: any) => step.Style).filter(Boolean).map((style: string) => `<style>${style}</style>`).join("")}`
     );
-    u(this._shadowRoot as ShadowRoot).append(style);
+    u(this._shadowRoot as any).append(style);
     const colors = u(
       `<style>${Style.colorObjToStyleVarString(
         this._options.style || {},
         "--tourguide"
       )}</style>`
     );
-    u(this._shadowRoot as ShadowRoot).append(colors);
+    u(this._shadowRoot as any).append(colors);
   }
   /**
    * Handles keyboard events for navigation and actions within the tour.
@@ -403,7 +403,7 @@ class Tour implements Guidedtour {
       this._options.keyboardNavigation?.last &&
       isEventAttrbutesMatched(event, this._options.keyboardNavigation.last)
     ) {
-      this.go(this._steps.length - 1);
+      this.go(this.length - 1);
     } else if (
       this._options.keyboardNavigation?.stop &&
       isEventAttrbutesMatched(event, this._options.keyboardNavigation.stop)
@@ -466,12 +466,12 @@ class Tour implements Guidedtour {
         this._initSteps(
           u(this._options.selector)
             .nodes.map(step => {
-              const data = getDataContents<StepData>(u(step).data("tour"));
+              const data = getDataContents<StepData>(u(step).data("tour") as string);
               data.selector = step as any;
               return data;
             })
         );
-        assert(this._steps.length > 0, "Found no tour steps on page. Please verify your setup.");
+        assert(this.length > 0, "Found no tour steps on page. Please verify your setup.");
     }
       Style.setStyle(this._containerElement, { "z-index": (getMaxZIndex() + 1) });
       if (this._options.restoreinitialposition) {
@@ -482,7 +482,7 @@ class Tour implements Guidedtour {
         this.cacheManager.set(CacheKeys.IsStarted, true);
         u(this._options.root).addClass("__guided-tour-active");
         this.reset();
-        this._steps.forEach((step) => step.attach(this._shadowRoot as ShadowRoot));
+        this._steps.forEach((step) => step.attach(this._shadowRoot as unknown as U));
         this._current = NaN;
         this._active = true;
         this.go(step);
@@ -492,7 +492,7 @@ class Tour implements Guidedtour {
             Object.prototype.toString.call(this._options.keyboardNavigation) === "[object Object]",
             "keyboardNavigation option invalid. should be predefined object or false. Check documentation."
           );
-          u(":root").on<KeyboardEvent>("keyup", this._keyboardHandler);
+          u(":root").on("keyup", this._keyboardHandler as any);
   }
       } else {
         this.go(step);
@@ -576,7 +576,7 @@ class Tour implements Guidedtour {
       this._steps.forEach((step) => step.remove(this._complete ? TourStopState.COMPLETE : TourStopState.INCOMPLETE));
       u(this._options.root).removeClass("__guided-tour-active");
       if (this._options.keyboardNavigation) {
-        u(":root").off<KeyboardEvent>("keyup", this._keyboardHandler);
+        u(":root").off("keyup", this._keyboardHandler as any);
       }
       if (this._options.restoreinitialposition && this._initialposition) {
         Scroll.animateScroll(this._initialposition, 120);
@@ -621,7 +621,7 @@ class Tour implements Guidedtour {
    * @param listener - The function that handles the event.
    */
   removeEventListener(type: string, listener: (event: Event) => void): void {
-    this._containerElement.off(type, listener);
+    this._containerElement.off(type, listener as any);
   }
 }
 
