@@ -267,12 +267,12 @@ Furthermore you can handle custom actions you may define yourself.
 To handle add custom actions to the tour you may use the provided `Tourguide.ActionHandler` class.
 
 ```
-	new Tourguide.ActionHandler(actionName, actionHandlerFN);
+	Tourguide.ActionHandler(actionName, actionHandlerFN);
 ```
 Where `actionName` is the name of your action that must match with the `action` property to passed in your `Action` array. For instance if you pass `{label: "Custom", action: "custom"}` you must then pass the following action handler as part of your tour initialization options
 ```
 actionHandlers: [
-	new Tourguide.ActionHandler(
+	Tourguide.ActionHandler(
 		"custom",
 		function (event, action, context) {
 			... do something
