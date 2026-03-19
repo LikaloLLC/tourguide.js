@@ -21,8 +21,8 @@ npm i tourguidejs
 ```
 
 or add it from jsdelivr <br>
-https://cdn.jsdelivr.net/npm/tourguidejs@1.0.1/tourguide.min.js <br>
-https://cdn.jsdelivr.net/npm/tourguidejs@1.0.1/tourguide.js
+https://cdn.jsdelivr.net/npm/tourguidejs@2.0.6/tourguide.min.js <br>
+https://cdn.jsdelivr.net/npm/tourguidejs@2.0.6/tourguide.js
 
 ## Why do I need Tourguide.js
 
@@ -64,29 +64,7 @@ Before use, **Tourguide.js** must be instantiated:
 var tourguide = new Tourguide({options});
 ```
 Tour constructor accepts the following options:
-```
-const defaultOptions: {
-  root?: HTMLElement | string; // Optional, if you don't provide a selector, the tour will be initialized on `document`;
-  selector?: string; // Required for DOM steps. The selector used to pick up HTML elements that represent your steps
-  selectorSteps?: Array<string>; // If provided, will be used instead of a single selector. Useful if you have multiple steps on the same page
-  contentDecorators?: Function[] // An array of functions that are responsible for decorating your step content (optional)
-  style?: Object // A styles object applied to the container element (optional)
-  actionHandlers?: Array<{name: string, fn: Function}> // An array of custom actions you can define on your tour (optional)
-  request?: RequestInit | null; // An object containing various browser settings for the fetch() call if using `src` option. (default is { mode: 'cors' })
-  keyboardNavigation?: Object // Keyboard navigation configuration
-    next?: string | undefined; // name of the keyboard shortcut used to navigate to the next step; the default value is 'ArrowRight'
-    prev?: string | undefined; // name of the keyboard shortcut used to navigate to the previous step; the default value is 'ArrowLeft'
-    first?: string | undefined; // name of the keyboard shortcut used to navigate to the first step; the default value is 'Home'
-    last?: string | undefined; // name of the keyboard shortcut used to navigate to the last step; the default value is 'End'
-    stop?: string | undefined; // name of the keyboard shortcut used to stop the tour; the default value is 'Escape'
-    complete?: string | undefined; // name of the keyboard shortcut used to stop the tour
-  stepFactory?: Array<any> // An array of classes for creating your steps. (optional)
-    Type?: string; // Defines the type of the step to create, for example "card"
-    Style?: string; // Defines the styles applied to the created step
-  resumeOnLoad?: boolean; // If true, will start tour from last known position if one is saved. (default false)
-  restoreinitialposition?: boolean; // If true, when the tour stops, it will restore the initial scroll position of the page (default false)
-}
-```
+See the [SYSTEM.md](docs/SYSTEM.md) for complete documentation on all configuration options.
 
 Once instantiated you can use tourguide instance a several different ways:
 
@@ -107,7 +85,7 @@ var tourguide = new Tourguide();
 tourguide.start();
 ```
 
-About step details, See [Step](#Step) section.
+About step details, see [Step Classes](docs/SYSTEM.md#step-classes) in SYSTEM.md for detailed documentation.
 
 ### JSON based approach
 
@@ -139,7 +117,7 @@ var tourguide = new Tourguide({steps: steps});
 tourguide.start();
 ```
 
-About step details, See [Step](#Step) section.
+About step details, see [SYSTEM.md](docs/SYSTEM.md#step-classes) for detailed documentation.
 
 ### Remote URL approach
 
@@ -150,11 +128,7 @@ var tourguide = new Tourguide({src: "https://somedomain.com/tours/guide.json"});
 tourguide.start();
 ```
 
-About step details, See [Step](#Step) section.
-
-### Step Class Constructor
-
-The **Tourguide.js** library includes two default steps: `PopoverStep` and `CardStep`. Here is the code for these steps:
+About step details, see [Step Classes](docs/SYSTEM.md#step-classes) in SYSTEM.md for detailed documentation.
 
 ## Content decorators
 
@@ -354,7 +328,9 @@ tourguide.addEventListener('start', function(options){...});
 * action - Fires when an action is triggered (next/previous/go/custom).
 
 ## Detailed documentation:
-For more detailed documentation, please refer to the [documentation markdown file located at /docs/README.md](https://github.com/LikaloLLC/tourguide.js/docs/README.md).
+
+- **[SYSTEM.md](docs/SYSTEM.md)** - Comprehensive system documentation for AI agents and developers (recommended for understanding architecture and extensibility)
+- **[docs/README.md](docs/README.md)** - Auto-generated API reference documentation
 
 ## License
 
